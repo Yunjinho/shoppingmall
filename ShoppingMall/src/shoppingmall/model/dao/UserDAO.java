@@ -1,7 +1,7 @@
 package shoppingmall.model.dao;
 
-import shoppingmall.model.dao.idao.UserIDAO;
+import shoppingmall.model.dao.idao.IUserDAO;
 
-public class UserDAO implements UserIDAO {
+public class UserDAO implements IUserDAO {
 
 }
