@@ -11,13 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class ReviewsDTO {
-	String userId;
-	String password;
-	String userName;
-	String phoneNumber;
-	Date birthday;
-	char isAdmin;// 어드민인지 아닌지 ㅊ체크
-	char gender;
+	int reviewId;
+	int productId;
+	int userId;
+	String content;
 	Timestamp createdAt;
 	Timestamp updatedAt;
 }
