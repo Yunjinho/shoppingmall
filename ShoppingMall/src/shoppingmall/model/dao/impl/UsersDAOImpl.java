@@ -16,7 +16,6 @@ public class UsersDAOImpl implements UsersDAO {
 		String sql = "SELECT USERID FROM USERS WHERE USERID = ?";
 		Connection con = null;
 		PreparedStatement stmt = null;
-		System.out.println(userId);
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
