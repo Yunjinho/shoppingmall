@@ -22,7 +22,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 		
 		String sql="select rowNumber,productId,productName,productPrice,productStock,productinfo,categoryId,createdAt,updatedAt from "+
 					"(select rownum as rowNumber,productId,productName,productPrice,productStock,productinfo,categoryId,createdAt,updatedAt from "+
-					"(select * from products where categoryId=? order by updatedAt desc)) "+
+					"(select * from products p where p.categoryId=? and p.productStock > 0 order by updatedAt desc)) "+
 					"where rowNum between ? and ?";
 		try {
 			stmt=con.prepareStatement(sql);
@@ -99,7 +99,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 		ArrayList<ProductsDTO> list=new ArrayList<ProductsDTO>();
 		Connection con=null;
 		PreparedStatement stmt=null;
-		String sql="INSERT INTO products VALUES (PRODUCTS_SEQ.NEXTVAL,?,?,?,?,?,?,?)";
+		String sql="INSERT INTO products VALUES (PRODUCTS_SEQ.NEXTVAL,?,?,?,?,?,sysdate,sysdate)";
 		try {
 			con=ShoppingMallDataSource.getConnection();
 			stmt=con.prepareStatement(sql);
@@ -108,8 +108,6 @@ public class ProductsDAOImpl implements ProductsDAO {
 			stmt.setInt(3, prod.getProductStock());
 			stmt.setString(4, prod.getProductinfo());
 			stmt.setInt(5, prod.getCategoryId());
-			stmt.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
-			stmt.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
 			count=stmt.executeUpdate();
 		} catch (Exception e) {
 			throw new RuntimeException();
@@ -145,11 +143,11 @@ public class ProductsDAOImpl implements ProductsDAO {
 	}
 
 	@Override
-	public int updateProduct(ProductsDTO prod) {
+	public int updateProductInfo(ProductsDTO prod) {
 		int count=0;
 		Connection con=null;
 		PreparedStatement stmt=null;
-		String sql="UPDATE products SET productName=?,productPrice=?,productStock=?,productinfo=?,categoryId=?,updatedAt=?";
+		String sql="UPDATE products SET productName=?,productPrice=?,productStock=?,productinfo=?,categoryId=?,updatedAt=sysdate where productId=?";
 		try {
 			con=ShoppingMallDataSource.getConnection();
 			stmt=con.prepareStatement(sql);
@@ -158,7 +156,30 @@ public class ProductsDAOImpl implements ProductsDAO {
 			stmt.setInt(3, prod.getProductStock());
 			stmt.setString(4, prod.getProductinfo());
 			stmt.setInt(5, prod.getCategoryId());
-			stmt.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
+			stmt.setInt(6, prod.getProductId());
+			count=stmt.executeUpdate();
+		} catch (Exception e) {
+			throw new RuntimeException();
+		}finally {
+			if(con!=null)
+				ShoppingMallDataSource.closeConnection(con);
+			if(stmt!=null) 
+				try {stmt.close();}catch (SQLException e) {e.printStackTrace();}
+		}
+		return count;
+	}
+
+	@Override
+	public int updateProductStock(ProductsDTO prod, int amount) {
+		int count=0;
+		Connection con=null;
+		PreparedStatement stmt=null;
+		String sql="UPDATE products SET productStock=? updatedAt=sysdate where productId=?";
+		try {
+			con=ShoppingMallDataSource.getConnection();
+			stmt=con.prepareStatement(sql);
+			stmt.setInt(1, prod.getProductStock()+amount);
+			stmt.setInt(2, prod.getProductId());
 			count=stmt.executeUpdate();
 		} catch (Exception e) {
 			throw new RuntimeException();
