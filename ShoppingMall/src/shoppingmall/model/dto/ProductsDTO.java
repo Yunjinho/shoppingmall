@@ -1,7 +1,6 @@
 package shoppingmall.model.dto;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,13 +10,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class ProductsDTO {
-	String userId;
-	String password;
-	String userName;
-	String phoneNumber;
-	Date birthday;
-	char isAdmin;// 어드민인지 아닌지 ㅊ체크
-	char gender;
+	int productId;
+	String productName;
+	int productPrice;
+	int productStock;
+	String productinfo;
+	int categoryId;
 	Timestamp createdAt;
 	Timestamp updatedAt;
 }
