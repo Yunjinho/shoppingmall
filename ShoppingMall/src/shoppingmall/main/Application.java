@@ -87,5 +87,9 @@ public class Application {
 			login();
 		}
 
+=======
+
+	public static void main(String[] args) throws Exception  {
+>>>>>>> 817848f0b6c2b36fb9c574acaa5a77ce35cca47e
 	}
 }
