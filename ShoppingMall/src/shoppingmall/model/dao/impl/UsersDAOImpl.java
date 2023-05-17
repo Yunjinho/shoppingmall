@@ -27,21 +27,16 @@ public class UsersDAOImpl implements UsersDAO {
 				return true;
 			}
 		} catch (SQLException e) {
-			// TODO: handle exception
 			throw new RuntimeException(e);
 		} finally {
-			try {
-				stmt.close();
-			} catch (SQLException e) {
-				// TODO: handle exception
-			}
+			ShoppingMallDataSource.closePreparedStatement(stmt);
 			ShoppingMallDataSource.closeConnection(con);
 		}
 	};
 
 	@Override
 	public int signUp(UsersDTO userDto, String address) {
-		// TODO Auto-generated method stub
+
 		int count = 0;
 		int count2 = 0;
 		String sql = "INSERT INTO USERS (USERID, PASSWORD, USERNAME, PHONENUMBER, BIRTHDAY, GENDER) "
@@ -52,6 +47,7 @@ public class UsersDAOImpl implements UsersDAO {
 		PreparedStatement stmt = null;
 		PreparedStatement stmt2 = null;
 		try {
+//			con.setAutoCommit(false);
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
 			stmt.setString(1, userDto.getUserId()); // USERID
@@ -65,17 +61,15 @@ public class UsersDAOImpl implements UsersDAO {
 			stmt2.setString(2, address);
 			count = stmt.executeUpdate();
 			count2 = stmt2.executeUpdate();
+			con.commit();
 		} catch (SQLException e) {
-			// TODO: handle exception
+//			con.rollback();
 			throw new RuntimeException(e);
 		} finally {
+//			con.setAutoCommit(true);
+			ShoppingMallDataSource.closePreparedStatement(stmt);
+			ShoppingMallDataSource.closePreparedStatement(stmt2);
 			ShoppingMallDataSource.closeConnection(con);
-			try {
-				stmt.close();
-				stmt2.close();
-			} catch (SQLException e) {
-				// TODO: handle exception
-			}
 		}
 		return count;
 	}
@@ -86,36 +80,29 @@ public class UsersDAOImpl implements UsersDAO {
 		String sql = "SELECT USERID FROM USERS WHERE USERID = ? and PASSWORD = ?";
 		Connection con = null;
 		PreparedStatement stmt = null;
+		ResultSet rs = null;
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
 			stmt.setString(1, userId);
 			stmt.setNString(2, password);
-			ResultSet rs = stmt.executeQuery();
+			rs = stmt.executeQuery();
 			if (rs.next()) {
 				return count + 1;
 			}
 		} catch (SQLException e) {
-			// TODO: handle exception
 			throw new RuntimeException(e);
 		} finally {
+			ShoppingMallDataSource.closePreparedStatement(stmt);
+			ShoppingMallDataSource.closeResultSet(rs);
 			ShoppingMallDataSource.closeConnection(con);
-			try {
-				stmt.close();
-			} catch (SQLException e) {
-				// TODO: handle exception
-			}
+
 		}
 		return count;
 	}
 
 	@Override
-	public int insertUsersInformation(UsersDTO userDto) {
-		return 0;
-	};
-
-	@Override
-	public int updateUsersInformation(UsersDTO userDto) {
+	public int updateUsersInformation(String userId, String phoneNumber, String address) {
 		return 0;
 	};
 
