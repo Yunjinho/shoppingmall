@@ -13,6 +13,7 @@ public class CartsDTO {
 	int cartId;
 	String userId;
 	int productId;
+	int productCount;
 	Timestamp createdAt;
 	Timestamp updatedAt;
 }
