@@ -15,6 +15,7 @@ public class ProductsDTO {
 	int productPrice;
 	int productStock;
 	String productinfo;
+	int categoryId;
 	Timestamp createdAt;
 	Timestamp updatedAt;
 }
