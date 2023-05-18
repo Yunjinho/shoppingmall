@@ -157,9 +157,7 @@ public class Application {
 							case 4: {
 								System.out.println("카테고리별 상품 보기 페이지입니다.");
 								System.out.println();
-
-								// index = categoryId
-								System.out.println("1. 상의 | 2. 하의 | 3. 신발  ");
+								MainFunction.inquireProductsByCategory();
 								break;
 							}
 							case 5: {
