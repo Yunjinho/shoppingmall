@@ -18,6 +18,7 @@ public class ProductsDTO {
 	int categoryId;
 	Timestamp createdAt;
 	Timestamp updatedAt;
+	int productStatus;
 
 //-----------------------
 	int rowNumber;

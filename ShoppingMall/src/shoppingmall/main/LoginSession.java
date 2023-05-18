@@ -1,10 +1,5 @@
 package shoppingmall.main;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class LoginSession {
 	public static String loginUserId;
 

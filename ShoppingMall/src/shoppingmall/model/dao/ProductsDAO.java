@@ -17,5 +17,5 @@ public interface ProductsDAO {
 
 	int updateProductInfo(ProductsDTO produdctDto);// 상품 수정
 
-	int updateProductStock(ProductsDTO productDto, int amount);// 상품 수량 수정
+	int updateProductStock(int productId, int productStock);// 상품 수량 수정
 }
