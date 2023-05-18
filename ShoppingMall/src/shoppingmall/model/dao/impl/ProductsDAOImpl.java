@@ -14,7 +14,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 
 	@Override
 	public ArrayList<ProductsDTO> getProductListByCategory(int categoryId, int pageNum) {
-		ArrayList<ProductsDTO> list = new ArrayList<ProductsDTO>();
+		ArrayList<ProductsDTO> productList = new ArrayList<ProductsDTO>();
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -22,7 +22,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 		String sql = "select rowNumber,productId,productName,productPrice,productStock,productinfo,categoryId,createdAt,updatedAt from "
 				+ "(select rownum as rowNumber,productId,productName,productPrice,productStock,productinfo,categoryId,createdAt,updatedAt from "
 				+ "(select * from products p where p.categoryId=? and p.productStock > 0 order by updatedAt desc)) "
-				+ "where rowNum between ? and ?";
+				+ "where rowNumber between ? and ?";
 		try {
 			stmt = con.prepareStatement(sql);
 			stmt.setInt(1, categoryId);
@@ -40,7 +40,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 				productDto.setCreatedAt(rs.getTimestamp("createdAt"));
 				productDto.setUpdatedAt(rs.getTimestamp("updatedAt"));
 				productDto.setRowNumber(rs.getInt("rowNumber"));
-				list.add(productDto);
+				productList.add(productDto);
 			}
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -49,7 +49,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 			ShoppingMallDataSource.closeResultSet(rs);
 			ShoppingMallDataSource.closeConnection(con);
 		}
-		return list;
+		return productList;
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		String sql = "SELECT * FROM PRODUCT WHERE CATEGORYID=?";
+		String sql = "SELECT * FROM PRODUCT WHERE CATEGORYID = ?";
 		try {
 			stmt = con.prepareStatement(sql);
 			stmt.setInt(1, productId);
@@ -86,21 +86,21 @@ public class ProductsDAOImpl implements ProductsDAO {
 	}
 
 	@Override
-	public int insertProduct(ProductsDTO prod) {
+	public int insertProduct(ProductsDTO productDto) {
 		int count = 0;
 
-		ArrayList<ProductsDTO> list = new ArrayList<ProductsDTO>();
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "INSERT INTO PRODUCTS VALUES (PRODUCTS_SEQ.NEXTVAL,?,?,?,?,?,SYSDATE,SYSDATE)";
+		String sql = "INSERT INTO PRODUCTS (PRODUCTID, PRODUCTNAME, PRODUCTPRICE, PRODUCTSTOCK, PRODUCTINFO, CATEGORYID)"
+				+ " VALUES (PRODUCTS_SEQ.NEXTVAL, ?, ?, ?, ?, ?)";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
-			stmt.setString(1, prod.getProductName());
-			stmt.setInt(2, prod.getProductPrice());
-			stmt.setInt(3, prod.getProductStock());
-			stmt.setString(4, prod.getProductinfo());
-			stmt.setInt(5, prod.getCategoryId());
+			stmt.setString(1, productDto.getProductName());
+			stmt.setInt(2, productDto.getProductPrice());
+			stmt.setInt(3, productDto.getProductStock());
+			stmt.setString(4, productDto.getProductinfo());
+			stmt.setInt(5, productDto.getCategoryId());
 			count = stmt.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -132,7 +132,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 	}
 
 	@Override
-	public int updateProductInfo(ProductsDTO prod) {
+	public int updateProductInfo(ProductsDTO produdctDto) {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
@@ -140,12 +140,12 @@ public class ProductsDAOImpl implements ProductsDAO {
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
-			stmt.setString(1, prod.getProductName());
-			stmt.setInt(2, prod.getProductPrice());
-			stmt.setInt(3, prod.getProductStock());
-			stmt.setString(4, prod.getProductinfo());
-			stmt.setInt(5, prod.getCategoryId());
-			stmt.setInt(6, prod.getProductId());
+			stmt.setString(1, produdctDto.getProductName());
+			stmt.setInt(2, produdctDto.getProductPrice());
+			stmt.setInt(3, produdctDto.getProductStock());
+			stmt.setString(4, produdctDto.getProductinfo());
+			stmt.setInt(5, produdctDto.getCategoryId());
+			stmt.setInt(6, produdctDto.getProductId());
 			count = stmt.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -157,7 +157,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 	}
 
 	@Override
-	public int updateProductStock(ProductsDTO prod, int amount) {
+	public int updateProductStock(ProductsDTO productDto, int amount) {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
@@ -165,8 +165,8 @@ public class ProductsDAOImpl implements ProductsDAO {
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
-			stmt.setInt(1, prod.getProductStock() + amount);
-			stmt.setInt(2, prod.getProductId());
+			stmt.setInt(1, productDto.getProductStock() + amount);
+			stmt.setInt(2, productDto.getProductId());
 			count = stmt.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
