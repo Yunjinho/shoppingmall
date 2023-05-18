@@ -48,36 +48,21 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 
 	@Override
 	public int insertOrderProduct(OrderDetailsDTO orderDetailsDto) {
-<<<<<<< HEAD
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "insert into orderDetails values (orderDetails_seq.nextval,?,?,?,?,sysdate,sysdate)";
-=======
-		int count =0;
-		Connection con=null;
-		PreparedStatement stmt=null;
-		String sql="insert into orderDetails values (orderDetails_seq.nextval,?,?,?,'상품 준비중',sysdate,sysdate)";
->>>>>>> 0bce14ad9162154f9b00cd4b9fd7f52effaf3b5a
+		String sql = "insert into orderDetails values (orderDetails_seq.nextval,?,?,?,'상품 준비중',sysdate,sysdate)";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
 			stmt.setInt(1, orderDetailsDto.getOrderId());
 			stmt.setInt(2, orderDetailsDto.getProductId());
 			stmt.setInt(3, orderDetailsDto.getProductCount());
-<<<<<<< HEAD
 			stmt.setString(4, "상품 준비중");
 			count = stmt.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
-=======
-			count=stmt.executeUpdate();
-		} catch (Exception e) {
-			throw new RuntimeException();
-		}finally {
-			ShoppingMallDataSource.closeConnection(con);
->>>>>>> 0bce14ad9162154f9b00cd4b9fd7f52effaf3b5a
 			ShoppingMallDataSource.closePreparedStatement(stmt);
 			ShoppingMallDataSource.closeConnection(con);
 		}
