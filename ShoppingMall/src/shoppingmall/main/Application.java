@@ -20,6 +20,7 @@ public class Application {
 			}
 			// 2. 로그인
 			case 2: {
+				// login
 				boolean result = MainFunction.login();
 				// 로그인 성공
 				if (result) {
@@ -111,7 +112,7 @@ public class Application {
 							case 1: {
 								System.out.println("사용자 정보 수정페이지 입니다.");
 								System.out.println();
-								
+
 								MainFunction.modifyUserInfo(LoginSession.getLoginUserId());
 								break;
 							}
@@ -171,15 +172,15 @@ public class Application {
 								System.out.println();
 								// 1. 장바구니 조회
 								if (cartCommand == 1) {
-									
+
 								}
 								// 2. 장바구니 수정
 								else if (cartCommand == 2) {
-									
+
 								}
 								// 3. 장바구니 상품 결제
 								else if (cartCommand == 3) {
-									
+
 								}
 								// 4. 뒤로 가기
 								else if (cartCommand == 4) {
