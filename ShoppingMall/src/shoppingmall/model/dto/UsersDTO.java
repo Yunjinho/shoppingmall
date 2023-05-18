@@ -21,8 +21,8 @@ public class UsersDTO {
 	char gender;
 	Timestamp createdAt;
 	Timestamp updatedAt;
-	
-	
-	// 조인 위한 변수 
+
+	// 조인 위한 변수
 	List<AddressesDTO> addressDto;
+	String address;
 }

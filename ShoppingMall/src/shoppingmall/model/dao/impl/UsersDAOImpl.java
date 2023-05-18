@@ -103,22 +103,30 @@ public class UsersDAOImpl implements UsersDAO {
 
 	@Override
 	public int updateUsersInformation(UsersDTO userDto) {
+<<<<<<< HEAD
+		int count = 0;
+		Connection con = null;
+		PreparedStatement stmt = null;
+		String sql = "UPDATE users SET password=?, userName=? , phoneNumber=? ,birthday= " + "TO_DATE('"
+				+ userDto.getBirthday() + "', 'yy/MM/dd') updateAt=sysdate where userId=?";
+=======
 		int count=0;
 		Connection con=null;
 		PreparedStatement stmt=null;
 		String sql = "UPDATE users SET password=?, userName=? , phoneNumber=? ,birthday= "
 				+ "TO_DATE('" + userDto.getBirthday() + "', 'yy/MM/dd'), updatedAt=sysdate where userId=?";
+>>>>>>> 0bce14ad9162154f9b00cd4b9fd7f52effaf3b5a
 		try {
-			con=ShoppingMallDataSource.getConnection();
-			stmt=con.prepareStatement(sql);
+			con = ShoppingMallDataSource.getConnection();
+			stmt = con.prepareStatement(sql);
 			stmt.setString(1, userDto.getPassword());
 			stmt.setString(2, userDto.getUserName());
 			stmt.setString(3, userDto.getPhoneNumber());
 			stmt.setString(4, userDto.getUserId());
-			count=stmt.executeUpdate();
+			count = stmt.executeUpdate();
 		} catch (Exception e) {
 			throw new RuntimeException();
-		}finally {
+		} finally {
 			ShoppingMallDataSource.closeConnection(con);
 			ShoppingMallDataSource.closePreparedStatement(stmt);
 		}
@@ -127,17 +135,17 @@ public class UsersDAOImpl implements UsersDAO {
 
 	@Override
 	public UsersDTO getUserInfo(String userId) {
-		UsersDTO userDto=new UsersDTO();
-		Connection con=null;
-		PreparedStatement stmt=null;
-		ResultSet rs=null;
-		String sql="SELECT * FROM users WHERE userId=?";
+		UsersDTO userDto = new UsersDTO();
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		String sql = "SELECT * FROM users WHERE userId=?";
 		try {
-			con=ShoppingMallDataSource.getConnection();
-			stmt=con.prepareStatement(sql);
+			con = ShoppingMallDataSource.getConnection();
+			stmt = con.prepareStatement(sql);
 			stmt.setString(1, userId);
-			rs=stmt.executeQuery();
-			if(rs.next()) {
+			rs = stmt.executeQuery();
+			if (rs.next()) {
 				userDto.setUserId(rs.getString("userId"));
 				userDto.setPassword(rs.getString("password"));
 				userDto.setUserName(rs.getString("userName"));
@@ -149,12 +157,12 @@ public class UsersDAOImpl implements UsersDAO {
 			}
 		} catch (Exception e) {
 			throw new RuntimeException();
-		}finally {
+		} finally {
 			ShoppingMallDataSource.closeConnection(con);
 			ShoppingMallDataSource.closePreparedStatement(stmt);
 			ShoppingMallDataSource.closeResultSet(rs);
 		}
-		
+
 		return userDto;
 	};
 

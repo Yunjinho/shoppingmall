@@ -12,7 +12,8 @@ public class OrdersDTO {
 	String userId;
 	String address;
 	int totalPrice;
-	
-	//---
+
+	// --------------
+	UsersDTO user;
 	int currentSeqNumber;
 }

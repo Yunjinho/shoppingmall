@@ -7,25 +7,28 @@ import java.util.Scanner;
 import shoppingmall.model.dao.impl.AddressesDAOImpl;
 import shoppingmall.model.dao.impl.CartsDAOImpl;
 import shoppingmall.model.dao.impl.CategoriesDAOImpl;
+import shoppingmall.model.dao.impl.OrderDetailsDAOImpl;
 import shoppingmall.model.dao.impl.OrdersDAOImpl;
 import shoppingmall.model.dao.impl.ProductsDAOImpl;
 import shoppingmall.model.dao.impl.UsersDAOImpl;
 import shoppingmall.model.dto.AddressesDTO;
 import shoppingmall.model.dto.CartsDTO;
 import shoppingmall.model.dto.CategoriesDTO;
+import shoppingmall.model.dto.OrderDetailsDTO;
+import shoppingmall.model.dto.OrdersDTO;
 import shoppingmall.model.dto.ProductsDTO;
 import shoppingmall.model.dto.UsersDTO;
 
 public class MainFunction {
 	private static Scanner sc = new Scanner(System.in);
-	static UsersDAOImpl userDaoImpl=new UsersDAOImpl();
-	static AddressesDAOImpl addressDaoImpl=new AddressesDAOImpl();
-	static CategoriesDAOImpl categoriesDaoImpl=new CategoriesDAOImpl();
-	static ProductsDAOImpl productDaoImple=new ProductsDAOImpl();
-	static CartsDAOImpl cartDaoImpl=new CartsDAOImpl();
-	static OrdersDAOImpl orderDaoImpl =new OrdersDAOImpl();
-	
-	
+	// 로그인
+	static UsersDAOImpl userDaoImpl = new UsersDAOImpl();
+	static AddressesDAOImpl addressDaoImpl = new AddressesDAOImpl();
+	static CategoriesDAOImpl categoriesDaoImpl = new CategoriesDAOImpl();
+	static ProductsDAOImpl productDaoImple = new ProductsDAOImpl();
+	static CartsDAOImpl cartDaoImpl = new CartsDAOImpl();
+	static OrdersDAOImpl orderDaoImpl = new OrdersDAOImpl();
+
 	public static boolean login() {
 		String userId;
 		String password;
@@ -53,6 +56,7 @@ public class MainFunction {
 		}
 	}
 
+	// 회원 가입
 	public static boolean signUpUserInfo() {
 		UsersDTO user = new UsersDTO();
 		UsersDAOImpl userDao = new UsersDAOImpl();
@@ -106,6 +110,7 @@ public class MainFunction {
 		return result;
 	}
 
+	// 관리자 모든 상품 조회
 	public static void getAllProducts() {
 		int count = 0;
 		ProductsDAOImpl productDao = new ProductsDAOImpl();
@@ -127,6 +132,7 @@ public class MainFunction {
 		System.out.println();
 	}
 
+	// 상품 정보 입력
 	public static ProductsDTO insertProductInfo() {
 		ProductsDTO productDto = new ProductsDTO();
 		sc.nextLine();
@@ -150,8 +156,8 @@ public class MainFunction {
 		return productDto;
 	}
 
+	// 상품 등록
 	public static int registerProduct() {
-
 		int count = 0;
 		ProductsDAOImpl productDao = new ProductsDAOImpl();
 		ProductsDTO productDto = insertProductInfo();
@@ -161,6 +167,7 @@ public class MainFunction {
 //		System.out.println("상품 이름 :");
 		return count;
 	}
+
 	public static UsersDTO inquireUserInfo(String userId) {
 		UsersDTO userDto = null;
 		try {
@@ -175,6 +182,7 @@ public class MainFunction {
 		}
 		return userDto;
 	}
+
 	public static void modifyUserInfo(UsersDTO userDto) {
 		try {
 			userDaoImpl.updateUsersInformation(userDto);// 입력받은 데이터로 정보 수정
@@ -246,11 +254,69 @@ public class MainFunction {
 	// 상품 아이디 입력
 	public static int selectUpdateProductId() {
 		getAllProducts();
-		System.out.print("상품 번호를 선택하세요: ");
+		System.out.print("선택할 번호를 선택하세요: ");
 		int productId = sc.nextInt();
 		sc.nextLine();
 		System.out.println();
 		return productId;
+	}
+
+	// 전체 주문 목록 조회
+	public static void getAllOrderList() {
+		OrdersDAOImpl orderDao = new OrdersDAOImpl();
+		ArrayList<OrdersDTO> ordersList = new ArrayList<>();
+		ordersList = orderDao.getAllOrders();
+		for (OrdersDTO orderList : ordersList) {
+			// orderId
+			System.out.println("주문 번호 : " + orderList.getOrderId());
+
+			// address
+			System.out.println("배송지 : " + orderList.getAddress());
+
+			// totalPrice
+			System.out.println("총 가격 : " + orderList.getTotalPrice());
+
+			// userName
+			System.out.println("구매자 이름 : " + orderList.getUser().getUserName());
+
+			// phoneNumber
+			System.out.println("핸드폰 번호 : " + orderList.getUser().getPhoneNumber());
+			System.out.println();
+		}
+		System.out.println();
+	}
+
+	// 주문 목록 상세 조회
+	public static void getAllOrderDetailsList() {
+		OrderDetailsDAOImpl orderDetailsDao = new OrderDetailsDAOImpl();
+		ArrayList<OrderDetailsDTO> orderDetailsDto = orderDetailsDao.getOrderDeatils();
+		System.out.println("----------------주문 목록 상세----------------");
+		for (OrderDetailsDTO orderDetailDto : orderDetailsDto) {
+			System.out.println("상세 주문 번호 : " + orderDetailDto.getOrderDetailId());
+			System.out.println("상품 주문 개수 : " + orderDetailDto.getProductCount());
+			System.out.println("배송 상태 : " + orderDetailDto.getDeliveryStatus());
+			System.out.println("주문자 아이디 : " + orderDetailDto.getOrder().getUserId());
+			System.out.println("총 주문 금액 : " + orderDetailDto.getOrder().getTotalPrice());
+			System.out.println("배송지 : " + orderDetailDto.getOrder().getAddress());
+			System.out.println("주문 상품 이름 : " + orderDetailDto.getProduct().getProductName());
+			System.out.println("남은 상품 재고 : " + orderDetailDto.getProduct().getProductStock());
+			System.out.println("---------------------------------------");
+		}
+		System.out.println("----------------주문 목록 상세----------------");
+	}
+
+	// 주문 상태 변경
+	public static void updateOrderStatus(int orderId, String status) {
+		OrderDetailsDAOImpl orderDetailsDao = new OrderDetailsDAOImpl();
+		orderDetailsDao.updateOrderStatus(orderId, status);
+		System.out.println("배송 정보 업데이트가 완료되었습니다.");
+	}
+
+	// 번호 선택
+	public static int selectNumber() {
+		int n = sc.nextInt();
+		sc.nextLine();
+		return n;
 	}
 
 	public static void addAddress(String userId) {
@@ -264,7 +330,6 @@ public class MainFunction {
 		}
 	}
 
-	
 	public static void modifyAddress(String userId) {
 		UsersDTO userDto = new UsersDTO();
 		AddressesDTO addressDto = new AddressesDTO();
@@ -310,83 +375,82 @@ public class MainFunction {
 	}
 
 	public static int inquireProductsCategory() {
-		List<CategoriesDTO>list =new ArrayList<CategoriesDTO>();
-		list=categoriesDaoImpl.getCategoriesNames();
-		for(int i=0;i<list.size();i++) {
-			System.out.print((i+1)+". "+list.get(i).getCategoryName());
-			if(i!=categoriesDaoImpl.getCategoriesNames().size()-1) {
+		List<CategoriesDTO> list = new ArrayList<CategoriesDTO>();
+		list = categoriesDaoImpl.getCategoriesNames();
+		for (int i = 0; i < list.size(); i++) {
+			System.out.print((i + 1) + ". " + list.get(i).getCategoryName());
+			if (i != categoriesDaoImpl.getCategoriesNames().size() - 1) {
 				System.out.print(" | ");
 			}
 		}
 		System.out.println();
 		System.out.print("번호를 선택하세요.");
-		int selectNumber=sc.nextInt();
-		if(list.size()<selectNumber) {
+		int selectNumber = sc.nextInt();
+		if (list.size() < selectNumber) {
 			System.out.println("잘못된 입력입니다.");
 			return -1;
 		}
-		int categoryNumber=list.get(selectNumber-1).getCategoryId();
-		
+		int categoryNumber = list.get(selectNumber - 1).getCategoryId();
+
 		return categoryNumber;
 	}
 
 	public static boolean viewProductsByCategory(int categoryNumber, int pageNum) {
-		List<ProductsDTO>list = new ArrayList<ProductsDTO>();
-		list=productDaoImple.getProductListByCategory(categoryNumber, pageNum);
-		if(list.size()==0) {
+		List<ProductsDTO> list = new ArrayList<ProductsDTO>();
+		list = productDaoImple.getProductListByCategory(categoryNumber, pageNum);
+		if (list.size() == 0) {
 			return false;
 		}
 		System.out.println("상품 번호 |  상품 이름           | 상품 가격  | 상품 재고  | 상품 정보   |  상품 상태    |");
 		for (ProductsDTO productDto : list) {
 			System.out.printf("%d\t  %-10s\t %d\t %d\t %s\t %-10s", productDto.getProductId(),
-						productDto.getProductName(), productDto.getProductPrice(),
-						productDto.getProductStock(), "판매중", productDto.getProductInfo());
+					productDto.getProductName(), productDto.getProductPrice(), productDto.getProductStock(), "판매중",
+					productDto.getProductInfo());
 			System.out.println();
 		}
 		return true;
 	}
 
 	public static void viewProductDetail(int productId) {
-		ProductsDTO productDto=new ProductsDTO();
-		productDto=productDaoImple.getProductDetail(productId);
+		ProductsDTO productDto = new ProductsDTO();
+		productDto = productDaoImple.getProductDetail(productId);
 		System.out.println("상품 번호 |  상품 이름           | 상품 가격  | 상품 재고  | 상품 정보   |  상품 상태    |");
-		System.out.printf("%d\t  %-10s\t %d\t %d\t %s\t %-10s", productDto.getProductId(),
-				productDto.getProductName(), productDto.getProductPrice(),
-				productDto.getProductStock(), "판매중", productDto.getProductInfo());
+		System.out.printf("%d\t  %-10s\t %d\t %d\t %s\t %-10s", productDto.getProductId(), productDto.getProductName(),
+				productDto.getProductPrice(), productDto.getProductStock(), "판매중", productDto.getProductInfo());
 		System.out.println();
 		System.out.print("상품 수량: ");
-		int amount=sc.nextInt();
-		if((productDto.getProductStock()-amount)>-1) {
+		int amount = sc.nextInt();
+		if ((productDto.getProductStock() - amount) > -1) {
 			System.out.println("1. 장바구니에 넣기 | 2. 바로 구매하기");
 			System.out.print("번호 입력: ");
-			int orderCommand=sc.nextInt();
-			if(orderCommand==1) {
-				CartsDTO cartDto=new CartsDTO();
+			int orderCommand = sc.nextInt();
+			if (orderCommand == 1) {
+				CartsDTO cartDto = new CartsDTO();
 				cartDto.setProductId(productId);
 				cartDto.setUserId(LoginSession.getLoginUserId());
 				cartDto.setProductCount(amount);
 				cartDaoImpl.insertCart(cartDto);
-			}else if(orderCommand==2){
+			} else if (orderCommand == 2) {
 				UsersDTO userDto = new UsersDTO();
 				userDto.setAddressDto(addressDaoImpl.getUserAddresses(LoginSession.getLoginUserId()));
-				int count=1;
+				int count = 1;
 				for (AddressesDTO l : userDto.getAddressDto()) {
-					System.out.print(count+". 주소: " + l.getAddress() + "\n");
+					System.out.print(count + ". 주소: " + l.getAddress() + "\n");
 					count++;
 				}
 				System.out.println();
 				System.out.print("주소 선택: ");
-				int addressNum=sc.nextInt();
-				orderDaoImpl.insertUserOrderfromProductDetail(
-						productId, LoginSession.getLoginUserId(), 
-						userDto.getAddressDto().get(addressNum-1).getAddress(), amount);
-			}else {
+				int addressNum = sc.nextInt();
+				orderDaoImpl.insertUserOrderfromProductDetail(productId, LoginSession.getLoginUserId(),
+						userDto.getAddressDto().get(addressNum - 1).getAddress(), amount);
+			} else {
 				System.out.println("잘못된 선택입니다.");
 			}
-		}else {
+		} else {
 			System.out.println("재고가 부족합니다.");
+
 		}
-		
+
 	}
 
 }
