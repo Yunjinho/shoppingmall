@@ -99,13 +99,13 @@ public class MainFunction {
 		System.out.println("상품 번호 | 상품 카테고리 | 상품 이름           | 상품 가격  | 상품 재고  | 상품 정보   |  상품 상태    |");
 		for (ProductsDTO productDto : productsDto) {
 			if (productDto.getProductStatus() == 1) {
-				System.out.printf("%d\t %s\t  %-10s\t %d\t %d\t %s\t\t %-10s", productDto.getProductId(),
+				System.out.printf("%d\t %s\t  %-10s\t %d\t %d\t %s\t %-10s", productDto.getProductId(),
 						productDto.getCategoryName(), productDto.getProductName(), productDto.getProductPrice(),
-						productDto.getProductStock(), productDto.getProductInfo(), "판매중");
+						productDto.getProductStock(), "판매중", productDto.getProductInfo());
 			} else {
-				System.out.printf("%d\t %s\t  %-10s\t %d\t %d\t %s\t\t %-10s", productDto.getProductId(),
+				System.out.printf("%d\t %s\t  %-10s\t %d\t %d\t %s\t %-10s", productDto.getProductId(),
 						productDto.getCategoryName(), productDto.getProductName(), productDto.getProductPrice(),
-						productDto.getProductStock(), productDto.getProductInfo(), "판매 중지");
+						productDto.getProductStock(), "판매 중지", productDto.getProductInfo());
 			}
 			System.out.println();
 		}
