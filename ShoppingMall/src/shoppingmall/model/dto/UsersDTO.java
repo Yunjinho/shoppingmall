@@ -2,6 +2,7 @@ package shoppingmall.model.dto;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,4 +21,8 @@ public class UsersDTO {
 	char gender;
 	Timestamp createdAt;
 	Timestamp updatedAt;
+	
+	
+	// 조인 위한 변수 
+	List<AddressesDTO> addressDto;
 }

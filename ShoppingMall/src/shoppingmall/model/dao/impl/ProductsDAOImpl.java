@@ -35,7 +35,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 				productDto.setProductName(rs.getString("productName"));
 				productDto.setProductPrice(rs.getInt("productPrice"));
 				productDto.setProductStock(rs.getInt("productStock"));
-				productDto.setProductinfo(rs.getString("productinfo"));
+				productDto.setProductInfo(rs.getString("productinfo"));
 				productDto.setCategoryId(rs.getInt("categoryId"));
 				productDto.setCreatedAt(rs.getTimestamp("createdAt"));
 				productDto.setUpdatedAt(rs.getTimestamp("updatedAt"));
@@ -92,7 +92,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 				productDto.setProductName(rs.getString("productName")); // 상품 이름
 				productDto.setProductPrice(rs.getInt("productPrice")); // 상품 가격
 				productDto.setProductStock(rs.getInt("productStock")); // 상품 재고
-				productDto.setProductinfo(rs.getString("productinfo")); // 상품 정보
+				productDto.setProductInfo(rs.getString("productinfo")); // 상품 정보
 				productDto.setCategoryName(rs.getString("categoryName")); // 카테고리 이름
 				productDto.setUpdatedAt(rs.getTimestamp("updatedAt")); // 최신 등록일
 			}
@@ -120,7 +120,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 			stmt.setString(1, productDto.getProductName());
 			stmt.setInt(2, productDto.getProductPrice());
 			stmt.setInt(3, productDto.getProductStock());
-			stmt.setString(4, productDto.getProductinfo());
+			stmt.setString(4, productDto.getProductInfo());
 			stmt.setInt(5, productDto.getCategoryId());
 			count = stmt.executeUpdate();
 		} catch (SQLException e) {
@@ -164,7 +164,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 			stmt.setString(1, produdctDto.getProductName());
 			stmt.setInt(2, produdctDto.getProductPrice());
 			stmt.setInt(3, produdctDto.getProductStock());
-			stmt.setString(4, produdctDto.getProductinfo());
+			stmt.setString(4, produdctDto.getProductInfo());
 			stmt.setInt(5, produdctDto.getCategoryId());
 			stmt.setInt(6, produdctDto.getProductId());
 			count = stmt.executeUpdate();

@@ -9,5 +9,7 @@ public interface UsersDAO {
 
 	int login(String userId, String password); // 로그인
 
-	int updateUsersInformation(String userId, String phoneNumber, String address); // 사용자 정보 수정
+	int updateUsersInformation(UsersDTO userDto); // 사용자 정보 수정
+	
+	UsersDTO getUserInfo(String userId);
 }

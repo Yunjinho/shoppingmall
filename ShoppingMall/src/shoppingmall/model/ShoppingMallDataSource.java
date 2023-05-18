@@ -11,7 +11,7 @@ public class ShoppingMallDataSource {
 
 	private static final String DRIVER = "oracle.jdbc.OracleDriver";
 	// 192.168.0.142
-	private static final String URL = "jdbc:oracle:thin:@localhost:1521:xe";
+	private static final String URL = "jdbc:oracle:thin:@192.168.0.142:1521:xe";
 	private static final String USERNAME = "hr";
 	private static final String PASSWORD = "hr";
 
