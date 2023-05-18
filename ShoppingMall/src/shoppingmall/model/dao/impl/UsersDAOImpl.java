@@ -61,7 +61,7 @@ public class UsersDAOImpl implements UsersDAO {
 			stmt2.setString(2, address);
 			count = stmt.executeUpdate();
 			count2 = stmt2.executeUpdate();
-			con.commit();
+//			con.commit();
 		} catch (SQLException e) {
 //			con.rollback();
 			throw new RuntimeException(e);

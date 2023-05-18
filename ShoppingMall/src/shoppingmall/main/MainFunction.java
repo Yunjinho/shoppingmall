@@ -1,5 +1,6 @@
 package shoppingmall.main;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import shoppingmall.model.dao.impl.ProductsDAOImpl;
@@ -91,13 +92,28 @@ public class MainFunction {
 	}
 
 	public static void getAllProducts() {
-
+		int count = 0;
+		ProductsDAOImpl productDao = new ProductsDAOImpl();
+		ArrayList<ProductsDTO> productsDto = new ArrayList<>();
+		productsDto = productDao.getProductsList();
+		System.out.println("상품 번호 | 상품 카테고리 | 상품 이름           | 상품 가격  | 상품 재고  | 상품 정보   |  상품 상태    |");
+		for (ProductsDTO productDto : productsDto) {
+			if (productDto.getProductStatus() == 1) {
+				System.out.printf("%d\t %s\t  %-10s\t %d\t %d\t %s\t\t %-10s", productDto.getProductId(),
+						productDto.getCategoryName(), productDto.getProductName(), productDto.getProductPrice(),
+						productDto.getProductStock(), productDto.getProductInfo(), "판매중");
+			} else {
+				System.out.printf("%d\t %s\t  %-10s\t %d\t %d\t %s\t\t %-10s", productDto.getProductId(),
+						productDto.getCategoryName(), productDto.getProductName(), productDto.getProductPrice(),
+						productDto.getProductStock(), productDto.getProductInfo(), "판매 중지");
+			}
+			System.out.println();
+		}
+		System.out.println();
 	}
 
-	public static int registerProduct() {
-		int count = 0;
+	public static ProductsDTO insertProductInfo() {
 		ProductsDTO productDto = new ProductsDTO();
-		ProductsDAOImpl productDao = new ProductsDAOImpl();
 		sc.nextLine();
 		System.out.print("상품 이름 [String] : ");
 		productDto.setProductName(sc.nextLine());
@@ -110,18 +126,81 @@ public class MainFunction {
 		sc.nextLine();
 
 		System.out.print("상품 정보 [String] : ");
-		productDto.setProductinfo(sc.nextLine());
+		productDto.setProductInfo(sc.nextLine());
 
 		System.out.print("상품 카테고리 [Integer] [1.상의 | 2.하의 | 3.신발] : ");
 		productDto.setCategoryId(sc.nextInt());
 		sc.nextLine();
 		System.out.println();
+		return productDto;
+	}
 
+	public static int registerProduct() {
+
+		int count = 0;
+		ProductsDAOImpl productDao = new ProductsDAOImpl();
+		ProductsDTO productDto = insertProductInfo();
 		count = productDao.insertProduct(productDto);
 		System.out.println("상품 등록이 완료되었습니다.");
 //		System.out.println("[등록 상품 내용]");
 //		System.out.println("상품 이름 :");
 		return count;
+	}
+
+	// 상품번호로 상품 수정
+	public static int updateProductByProductId() {
+		int productId = selectUpdateProductId();
+		ProductsDAOImpl productDao = new ProductsDAOImpl();
+		ProductsDTO productDto = new ProductsDTO();
+		productDto = insertProductInfo();
+
+		productDto.setProductId(productId);
+		productDao.updateProductInfo(productDto);
+
+		System.out.println("상품 업데이트가 완료되었습니다.");
+		return 0;
+	}
+
+	// 상품 재고 변경
+	public static void updateProductStock() {
+		int productId = selectUpdateProductId();
+		int productStock = changeProductStock();
+		ProductsDAOImpl productDao = new ProductsDAOImpl();
+		productDao.updateProductStock(productId, productStock);
+		System.out.println("상품 재고 변경이 완료되었습니다.");
+
+	}
+
+	// 상품 삭제 (상품 상태 변경)
+	public static void deleteProductByProductId() {
+		int productId = selectUpdateProductId();
+		ProductsDAOImpl productDao = new ProductsDAOImpl();
+		int count = productDao.deleteProduct(productId);
+		if (count > 0) {
+			System.out.println(productId + "번 상품이 판매 중지로 변경되었습니다.");
+		} else {
+			System.out.println("상품 번호를 잘못 입력하였습니다.");
+		}
+	}
+
+	// 상품 재고 변경
+	public static int changeProductStock() {
+		// 상품 중에 고르기
+		System.out.print("변경할 상품 재고를 입력하세요: ");
+		int productStock = sc.nextInt();
+		sc.nextLine();
+		System.out.println();
+		return productStock;
+	}
+
+	// 상품 아이디 입력
+	public static int selectUpdateProductId() {
+		getAllProducts();
+		System.out.print("상품 번호를 선택하세요: ");
+		int productId = sc.nextInt();
+		sc.nextLine();
+		System.out.println();
+		return productId;
 	}
 
 }

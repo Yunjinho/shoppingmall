@@ -16,7 +16,7 @@ public class UsersDTO {
 	String userName;
 	String phoneNumber;
 	Date birthday; // java.sql.Date
-	char isAdmin; // 어드민인지 아닌지 ㅊ체크
+	char isAdmin; // 어드민인지 아닌지 체크
 	char gender;
 	Timestamp createdAt;
 	Timestamp updatedAt;

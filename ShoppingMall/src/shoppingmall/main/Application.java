@@ -29,24 +29,24 @@ public class Application {
 						boolean adminFlag = true;
 						// 상품 등록/수정/삭제
 						while (adminFlag) {
-							System.out
-									.println("1. 상품 등록 | 2. 상품 수정 | 3. 상품 삭제 | 4. 배송 목록 조회 | 5. 배송 상태 조회 | 6. 로그 아웃 ");
+							System.out.println(
+									"1. 상품 목록 조회 | 2. 상품 등록 | 3. 상품 수정 | 4. 상품 삭제 | 5. 배송 목록 조회 | 6. 배송 상태 조회 | 7. 로그 아웃 ");
 							System.out.print("번호를 입력하세요: ");
 							int adminCommand = sc.nextInt();
 							switch (adminCommand) {
 							case 1:
-								System.out.println("상품 등록 페이지 입니다.");
-								System.out.println();
-
-								MainFunction.registerProduct();
+								System.out.println("상품 목록 조회입니다.");
+								MainFunction.getAllProducts();
 								break;
 							case 2:
+								System.out.println("상품 등록 페이지 입니다.");
+								int count = MainFunction.registerProduct();
+								System.out.println();
+								break;
+							case 3:
 								System.out.println("상품 수정 페이지 입니다.");
 								System.out.println();
 								// 상품 목록 보여주고 선택
-								/*
-								 * boolean productFlag = true; while(productFlag)
-								 */
 								boolean productFlag = true;
 								while (productFlag) {
 									System.out.println("1. 상품 수정 | 2. 상품 수량 수정 | 3. 뒤로 가기");
@@ -54,30 +54,36 @@ public class Application {
 									int productCommand = sc.nextInt();
 									// 1. 상품 수정
 									if (productCommand == 1) {
-
+										MainFunction.updateProductByProductId();
+										System.out.println();
 									}
 									// 2. 상품 수량 수정
 									else if (productCommand == 2) {
+										MainFunction.updateProductStock();
+										System.out.println();
 									} else if (productCommand == 3) {
+										System.out.println("뒤로가기를 눌렀습니다.");
 										productFlag = false;
 									} else {
 										System.out.println("번호를 잘못 입력하였습니다.");
 									}
 								}
 								break;
-							case 3:
-								System.out.println("상품 삭제 페이지 입니다.");
-								System.out.println();
-								break;
 							case 4:
-								System.out.println("배송 목록 조회 페이지 입니다.");
+								System.out.println("상품 삭제 페이지 입니다.");
+								MainFunction.deleteProductByProductId();
 								System.out.println();
 								break;
 							case 5:
-								System.out.println("배송 상태 조회 페이지 입니다. ");
+								System.out.println("배송 목록 조회 페이지 입니다.");
+
 								System.out.println();
 								break;
 							case 6:
+								System.out.println("배송 상태 조회 페이지 입니다. ");
+								System.out.println();
+								break;
+							case 7:
 								System.out.println("로그아웃 되었습니다.");
 								System.out.println();
 								LoginSession.setLoginUserId("");
@@ -87,7 +93,7 @@ public class Application {
 								System.out.println();
 								break;
 							}
-							if (adminCommand == 6)
+							if (adminCommand == 7)
 								break;
 						}
 					}

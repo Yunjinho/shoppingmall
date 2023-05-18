@@ -24,6 +24,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 				+ "(select * from products p where p.categoryId=? and p.productStock > 0 order by updatedAt desc)) "
 				+ "where rowNumber between ? and ?";
 		try {
+			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
 			stmt.setInt(1, categoryId);
 			stmt.setInt(2, (pageNum * 10) + 1);
@@ -35,7 +36,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 				productDto.setProductName(rs.getString("productName"));
 				productDto.setProductPrice(rs.getInt("productPrice"));
 				productDto.setProductStock(rs.getInt("productStock"));
-				productDto.setProductinfo(rs.getString("productinfo"));
+				productDto.setProductInfo(rs.getString("productinfo"));
 				productDto.setCategoryId(rs.getInt("categoryId"));
 				productDto.setCreatedAt(rs.getTimestamp("createdAt"));
 				productDto.setUpdatedAt(rs.getTimestamp("updatedAt"));
@@ -58,10 +59,25 @@ public class ProductsDAOImpl implements ProductsDAO {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		String sql = "SELECT p.productId, c.categoryName, p.productName, p.productPrice, p.productStock, p.productInfo"
-				+ " FROM PRODUCTS p LEFT JOIN CATEGORIES c ON p.categoryId = c.categoryId " + "ORDER BY p.productId";
+		String sql = "SELECT p.productId, c.categoryName, p.productName, p.productPrice, p.productStock, p.productInfo, p.productStatus"
+				+ " FROM PRODUCTS p LEFT JOIN CATEGORIES c ON p.categoryId = c.categoryId ORDER BY p.productId";
+
 		try {
+			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				ProductsDTO productDto = new ProductsDTO();
+				productDto.setProductId(rs.getInt("productId"));
+				productDto.setCategoryName(rs.getString("categoryName"));
+				productDto.setProductName(rs.getString("productName"));
+				productDto.setProductPrice(rs.getInt("productPrice"));
+				productDto.setProductStock(rs.getInt("productStock"));
+				productDto.setProductInfo(rs.getString("productInfo"));
+				productDto.setProductStatus(rs.getInt("productStatus"));
+
+				productsList.add(productDto);
+			}
 		} catch (SQLException e) {
 			// TODO: handle exception
 			throw new RuntimeException(e);
@@ -83,6 +99,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 				+ "FROM PRODUCTS p LEFT JOIN CATEGORIES c"
 				+ " ON p.categoryId = c.categoryId WHERE p.categoryId = ? and p.productId = ? ORDER BY ProductId;";
 		try {
+			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
 			stmt.setInt(1, productId);
 			rs = stmt.executeQuery();
@@ -92,7 +109,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 				productDto.setProductName(rs.getString("productName")); // 상품 이름
 				productDto.setProductPrice(rs.getInt("productPrice")); // 상품 가격
 				productDto.setProductStock(rs.getInt("productStock")); // 상품 재고
-				productDto.setProductinfo(rs.getString("productinfo")); // 상품 정보
+				productDto.setProductInfo(rs.getString("productinfo")); // 상품 정보
 				productDto.setCategoryName(rs.getString("categoryName")); // 카테고리 이름
 				productDto.setUpdatedAt(rs.getTimestamp("updatedAt")); // 최신 등록일
 			}
@@ -120,7 +137,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 			stmt.setString(1, productDto.getProductName());
 			stmt.setInt(2, productDto.getProductPrice());
 			stmt.setInt(3, productDto.getProductStock());
-			stmt.setString(4, productDto.getProductinfo());
+			stmt.setString(4, productDto.getProductInfo());
 			stmt.setInt(5, productDto.getCategoryId());
 			count = stmt.executeUpdate();
 		} catch (SQLException e) {
@@ -137,7 +154,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "DELETE FROM PRODUCTS WHERE PRODUCTID=?";
+		String sql = "UPDATE PRODUCTS SET PRODUCTSTATUS = 0 WHERE PRODUCTID = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -153,20 +170,20 @@ public class ProductsDAOImpl implements ProductsDAO {
 	}
 
 	@Override
-	public int updateProductInfo(ProductsDTO produdctDto) {
+	public int updateProductInfo(ProductsDTO productDto) {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "UPDATE PRODUCTS SET productName=?,productPrice=?,productStock=?,productinfo=?,categoryId=?,updatedAt=sysdate where productId=?";
+		String sql = "UPDATE PRODUCTS SET PRODUCTNAME = ?, PRODUCTPRICE = ?, PRODUCTSTOCK = ?,PRODUCTINFO = ?, CATEGORYID = ?,UPDATEDAT = SYSDATE WHERE PRODUCTID = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
-			stmt.setString(1, produdctDto.getProductName());
-			stmt.setInt(2, produdctDto.getProductPrice());
-			stmt.setInt(3, produdctDto.getProductStock());
-			stmt.setString(4, produdctDto.getProductinfo());
-			stmt.setInt(5, produdctDto.getCategoryId());
-			stmt.setInt(6, produdctDto.getProductId());
+			stmt.setString(1, productDto.getProductName());
+			stmt.setInt(2, productDto.getProductPrice());
+			stmt.setInt(3, productDto.getProductStock());
+			stmt.setString(4, productDto.getProductInfo());
+			stmt.setInt(5, productDto.getCategoryId());
+			stmt.setInt(6, productDto.getProductId());
 			count = stmt.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -178,16 +195,16 @@ public class ProductsDAOImpl implements ProductsDAO {
 	}
 
 	@Override
-	public int updateProductStock(ProductsDTO productDto, int amount) {
+	public int updateProductStock(int productId, int productStock) {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "UPDATE PRODUCTS SET productStock=? updatedAt=sysdate where productId=?";
+		String sql = "UPDATE PRODUCTS SET PRODUCTSTOCK = ?, UPDATEDAT = SYSDATE WHERE PRODUCTID = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
-			stmt.setInt(1, productDto.getProductStock() + amount);
-			stmt.setInt(2, productDto.getProductId());
+			stmt.setInt(1, productStock);
+			stmt.setInt(2, productId);
 			count = stmt.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
