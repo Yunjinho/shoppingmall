@@ -153,23 +153,24 @@ public class Application {
 						// while문 탈출 시킬 flag
 						boolean userFlag = true;
 						while (userFlag) {
-							System.out.println("1. 사용자 정보 수정 | 2. 주소지 추가/수정  | 3. 카테고리별 상품 보기 | 4. 장바구니 목록 조회 및 결제 | 5. 로그아웃");
+							System.out.println(
+									"1. 사용자 정보 수정 | 2. 주소지 추가/수정  | 3. 카테고리별 상품 보기 | 4. 장바구니 목록 조회 및 결제 | 5. 로그아웃");
 							System.out.print("번호를 입력하세요: ");
 							int userCommand = sc.nextInt();
 							switch (userCommand) {
 							case 1: {
 								System.out.println("사용자 정보 수정페이지 입니다.");
 								System.out.println();
-								UsersDTO userDto=null;
+								UsersDTO userDto = null;
 								try {
-									userDto =MainFunction.inquireUserInfo(LoginSession.getLoginUserId());
-								}catch (RuntimeException e) {
+									userDto = MainFunction.inquireUserInfo(LoginSession.getLoginUserId());
+								} catch (RuntimeException e) {
 									System.out.println(e.getMessage());
 								}
-								
-								boolean flag=true;
-								
-								while(flag){
+
+								boolean flag = true;
+
+								while (flag) {
 									System.out.println("1. 일반 정보 수정 | 2. 비밀번호 변경 | 3. 뒤로가기");
 									System.out.print("번호를 입력하세요: ");
 									int command = sc.nextInt();
@@ -246,17 +247,18 @@ public class Application {
 							case 3: {
 								System.out.println("카테고리별 상품 보기 페이지입니다.");
 								System.out.println();
-								int categoryNumber=MainFunction.inquireProductsCategory();
-								int currentPage=0;
-								int beforePage=0;
-								if(categoryNumber>-1) {
-									boolean flag=true;
-									while(flag) {
-										
-										boolean existProduct = MainFunction.viewProductsByCategory(categoryNumber, currentPage);
+								int categoryNumber = MainFunction.inquireProductsCategory();
+								int currentPage = 0;
+								int beforePage = 0;
+								if (categoryNumber > -1) {
+									boolean flag = true;
+									while (flag) {
+
+										boolean existProduct = MainFunction.viewProductsByCategory(categoryNumber,
+												currentPage);
 										// 페이징 처리
 										if (existProduct) {
-											beforePage=currentPage;
+											beforePage = currentPage;
 											if (currentPage == 0) {
 												System.out.println("1. 다음  | 2. 상품 선택 | 3. 뒤로가기");
 												int pageCommand = sc.nextInt();
@@ -292,28 +294,24 @@ public class Application {
 												}
 												System.out.println();
 											}
-										}else {
+										} else {
 											System.out.println("더 이상 페이지를 이동할 수 없습니다.");
 											System.out.println();
-											currentPage=beforePage;
+											currentPage = beforePage;
 										}
 									}
 								}
 								break;
 							}
 							case 4: {
-<<<<<<< HEAD
 								System.out.println("카테고리별 상품 보기 페이지입니다.");
 								System.out.println();
 
 								// index = categoryId
 								System.out.println("1. 상의 | 2. 하의 | 3. 신발  ");
-								MainFunction.inquireProductsByCategory();
 								break;
 							}
 							case 5: {
-=======
->>>>>>> 0bce14ad9162154f9b00cd4b9fd7f52effaf3b5a
 								System.out.println("장바구니 목록 조회 페이지 입니다.");
 								System.out.println();
 								// boolean cartFlag = true; while(cartFlag)
@@ -339,7 +337,7 @@ public class Application {
 								}
 								break;
 							}
-							case 5: {
+							case 6: {
 								System.out.println("로그아웃 되었습니다.");
 								System.out.println();
 								LoginSession.loginUserId = "";
