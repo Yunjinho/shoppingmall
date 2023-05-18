@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import shoppingmall.model.dao.impl.AddressesDAOImpl;
+import shoppingmall.model.dao.impl.CategoriesDAOImpl;
 import shoppingmall.model.dao.impl.OrderDetailsDAOImpl;
 import shoppingmall.model.dao.impl.OrdersDAOImpl;
 import shoppingmall.model.dao.impl.ProductsDAOImpl;
 import shoppingmall.model.dao.impl.UsersDAOImpl;
 import shoppingmall.model.dto.AddressesDTO;
+import shoppingmall.model.dto.CategoriesDTO;
 import shoppingmall.model.dto.OrderDetailsDTO;
 import shoppingmall.model.dto.OrdersDTO;
 import shoppingmall.model.dto.ProductsDTO;
@@ -16,10 +18,12 @@ import shoppingmall.model.dto.UsersDTO;
 
 public class MainFunction {
 	private static Scanner sc = new Scanner(System.in);
+	// 로그인
 	static UsersDAOImpl userDaoImpl = new UsersDAOImpl();
 	static AddressesDAOImpl addressDaoImpl = new AddressesDAOImpl();
 
-	// 로그인
+	static CategoriesDAOImpl categoriesDaoImpl = new CategoriesDAOImpl();
+
 	public static boolean login() {
 		String userId;
 		String password;
@@ -398,4 +402,9 @@ public class MainFunction {
 		}
 	}
 
+	public static void inquireProductsByCategory() {
+		for (CategoriesDTO category : categoriesDaoImpl.getCategoriesNames()) {
+		}
+
+	}
 }

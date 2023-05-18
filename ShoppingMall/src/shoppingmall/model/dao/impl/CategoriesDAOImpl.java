@@ -18,12 +18,13 @@ public class CategoriesDAOImpl implements CategoriesDAO {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
-			String sql = "select * from categories";
+			String sql = "select rowNumber,categoryId,categoryName from (select rownum as rowNumber,categoryId,categoryName from (select * from categories) order by categoryId";
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
 			rs = stmt.executeQuery();
 			while (rs.next()) {
 				CategoriesDTO categoriesDto = new CategoriesDTO();
+				categoriesDto.setRowNumber(rs.getInt("rowNuber"));
 				categoriesDto.setCategoryId(rs.getInt("categoryId"));
 				categoriesDto.setCategoryName(rs.getString("categoryName"));
 				categoryList.add(categoriesDto);

@@ -10,4 +10,6 @@ import lombok.NoArgsConstructor;
 public class CategoriesDTO {
 	int categoryId;
 	String categoryName;
+	//----
+	int rowNumber;
 }

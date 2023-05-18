@@ -206,7 +206,7 @@ public class Application {
 
 								// index = categoryId
 								System.out.println("1. 상의 | 2. 하의 | 3. 신발  ");
-
+								MainFunction.inquireProductsByCategory();
 								break;
 							}
 							case 5: {
