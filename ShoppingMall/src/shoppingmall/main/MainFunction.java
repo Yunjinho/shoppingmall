@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Scanner;
 
 import shoppingmall.model.dao.impl.AddressesDAOImpl;
+import shoppingmall.model.dao.impl.CategoriesDAOImpl;
 import shoppingmall.model.dao.impl.ProductsDAOImpl;
 import shoppingmall.model.dao.impl.UsersDAOImpl;
 import shoppingmall.model.dto.AddressesDTO;
+import shoppingmall.model.dto.CategoriesDTO;
 import shoppingmall.model.dto.ProductsDTO;
 import shoppingmall.model.dto.UsersDTO;
 
@@ -14,6 +16,7 @@ public class MainFunction {
 	private static Scanner sc = new Scanner(System.in);
 	static UsersDAOImpl userDaoImpl=new UsersDAOImpl();
 	static AddressesDAOImpl addressDaoImpl=new AddressesDAOImpl();
+	static CategoriesDAOImpl categoriesDaoImpl=new CategoriesDAOImpl();
 	
 	public static boolean login() {
 		String userId;
@@ -253,5 +256,10 @@ public class MainFunction {
 			System.out.println(e.getMessage());
 		}
 	}
-	
+
+	public static void inquireProductsByCategory() {
+		for(CategoriesDTO category:categoriesDaoImpl.getCategoriesNames()) {
+		}
+		
+	}
 }
