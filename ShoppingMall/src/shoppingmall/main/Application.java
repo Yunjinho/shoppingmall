@@ -2,6 +2,8 @@ package shoppingmall.main;
 
 import java.util.Scanner;
 
+import shoppingmall.model.dto.UsersDTO;
+
 public class Application {
 	private static Scanner sc = new Scanner(System.in);
 
@@ -104,16 +106,61 @@ public class Application {
 						// while문 탈출 시킬 flag
 						boolean userFlag = true;
 						while (userFlag) {
-							System.out.println(
-									"1. 사용자 정보 수정 | 2. 주소지 추가/수정  | 3. 전체 상품 목록 조회 | 4. 카테고리별 상품 보기 | 5. 장바구니 목록 조회 및 결제 | 6. 로그아웃");
+							System.out.println("1. 사용자 정보 수정 | 2. 주소지 추가/수정  | 3. 카테고리별 상품 보기 | 4. 장바구니 목록 조회 및 결제 | 5. 로그아웃");
 							System.out.print("번호를 입력하세요: ");
 							int userCommand = sc.nextInt();
 							switch (userCommand) {
 							case 1: {
 								System.out.println("사용자 정보 수정페이지 입니다.");
 								System.out.println();
-
-								MainFunction.modifyUserInfo(LoginSession.getLoginUserId());
+								UsersDTO userDto=null;
+								try {
+									userDto =MainFunction.inquireUserInfo(LoginSession.getLoginUserId());
+								}catch (RuntimeException e) {
+									System.out.println(e.getMessage());
+								}
+								
+								boolean flag=true;
+								
+								while(flag){
+									System.out.println("1. 일반 정보 수정 | 2. 비밀번호 변경 | 3. 뒤로가기");
+									System.out.print("번호를 입력하세요: ");
+									int command = sc.nextInt();
+									switch (command) {
+									case 1:
+										System.out.println("-----수정 정보 입력----");
+										System.out.print("이름: ");
+										userDto.setUserName(sc.next());
+										System.out.print("핸드폰 번호[010-1234-1234]: ");
+										userDto.setPhoneNumber(sc.next());
+										System.out.print("생일[YYYY-MM-DD]: ");
+										String birth = sc.next();
+										java.sql.Date date = java.sql.Date.valueOf(birth);
+										userDto.setBirthday(date);
+										try {
+											MainFunction.modifyUserInfo(userDto);// 입력받은 데이터로 정보 수정
+										} catch (RuntimeException e) {
+											System.out.println(e.getMessage());
+										}
+										flag = false;
+										break;
+									case 2:
+										System.out.println("-----수정 비밀번호 입력----");
+										System.out.print("비밀번호: ");
+										userDto.setPassword(sc.next());
+										try {
+											MainFunction.modifyUserInfo(userDto);// 입력받은 데이터로 정보 수정
+										} catch (RuntimeException e) {
+											System.out.println(e.getMessage());
+										}
+										flag = false;
+										break;
+									case 3:
+										flag = false;
+									default:
+										System.out.println("다시 입력 하세요.");
+									}
+								}
 								break;
 							}
 							case 2: {
@@ -150,17 +197,64 @@ public class Application {
 								break;
 							}
 							case 3: {
-								System.out.println("전체 상품 목록 조회 페이지입니다.");
+								System.out.println("카테고리별 상품 보기 페이지입니다.");
 								System.out.println();
+								int categoryNumber=MainFunction.inquireProductsCategory();
+								int currentPage=0;
+								int beforePage=0;
+								if(categoryNumber>-1) {
+									boolean flag=true;
+									while(flag) {
+										
+										boolean existProduct = MainFunction.viewProductsByCategory(categoryNumber, currentPage);
+										// 페이징 처리
+										if (existProduct) {
+											beforePage=currentPage;
+											if (currentPage == 0) {
+												System.out.println("1. 다음  | 2. 상품 선택 | 3. 뒤로가기");
+												int pageCommand = sc.nextInt();
+												if (pageCommand == 1) {
+													currentPage++;
+												} else if (pageCommand == 2) {
+													System.out.println();
+													System.out.print("상품 번호를 입력하세요: ");
+													int selectProduct = sc.nextInt();
+													MainFunction.viewProductDetail(selectProduct);
+												} else if (pageCommand == 3) {
+													flag = false;
+												} else {
+													System.out.println("잘못 입력하셨습니다.");
+												}
+												System.out.println();
+											} else {
+												System.out.println("1. 이전  | 2. 다음  | 3.상품 선택  | 4.뒤로가기");
+												int pageCommand = sc.nextInt();
+												if (pageCommand == 1) {
+													currentPage--;
+												} else if (pageCommand == 2) {
+													currentPage++;
+												} else if (pageCommand == 3) {
+
+													System.out.print("상품 번호를 입력하세요: ");
+													int selectProduct = sc.nextInt();
+													MainFunction.viewProductDetail(selectProduct);
+												} else if (pageCommand == 4) {
+													flag = false;
+												} else {
+													System.out.println("잘못 입력 하셨습니다.");
+												}
+												System.out.println();
+											}
+										}else {
+											System.out.println("더 이상 페이지를 이동할 수 없습니다.");
+											System.out.println();
+											currentPage=beforePage;
+										}
+									}
+								}
 								break;
 							}
 							case 4: {
-								System.out.println("카테고리별 상품 보기 페이지입니다.");
-								System.out.println();
-								MainFunction.inquireProductsByCategory();
-								break;
-							}
-							case 5: {
 								System.out.println("장바구니 목록 조회 페이지 입니다.");
 								System.out.println();
 								// boolean cartFlag = true; while(cartFlag)
@@ -186,7 +280,7 @@ public class Application {
 								}
 								break;
 							}
-							case 6: {
+							case 5: {
 								System.out.println("로그아웃 되었습니다.");
 								System.out.println();
 								LoginSession.loginUserId = "";

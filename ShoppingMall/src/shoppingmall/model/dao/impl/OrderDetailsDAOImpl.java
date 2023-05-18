@@ -49,14 +49,13 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 		int count =0;
 		Connection con=null;
 		PreparedStatement stmt=null;
-		String sql="insert into orderDetails values (orderDetails_seq.nextval,?,?,?,?,sysdate,sysdate)";
+		String sql="insert into orderDetails values (orderDetails_seq.nextval,?,?,?,'상품 준비중',sysdate,sysdate)";
 		try {
 			con=ShoppingMallDataSource.getConnection();
 			stmt=con.prepareStatement(sql);
 			stmt.setInt(1, orderDetailsDto.getOrderId());
 			stmt.setInt(2, orderDetailsDto.getProductId());
 			stmt.setInt(3, orderDetailsDto.getProductCount());
-			stmt.setString(4, "상품 준비중");
 			count=stmt.executeUpdate();
 		} catch (Exception e) {
 			throw new RuntimeException();

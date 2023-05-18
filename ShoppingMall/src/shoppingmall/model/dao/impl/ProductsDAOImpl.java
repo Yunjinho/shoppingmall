@@ -21,14 +21,14 @@ public class ProductsDAOImpl implements ProductsDAO {
 
 		String sql = "select rowNumber,productId,productName,productPrice,productStock,productinfo,categoryId,createdAt,updatedAt from "
 				+ "(select rownum as rowNumber,productId,productName,productPrice,productStock,productinfo,categoryId,createdAt,updatedAt from "
-				+ "(select * from products p where p.categoryId=? and p.productStock > 0 order by updatedAt desc)) "
+				+ "(select * from products p where p.categoryId=? and p.productStock > 0 and p.productstatus=1 order by createdAt desc)) "
 				+ "where rowNumber between ? and ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
 			stmt.setInt(1, categoryId);
-			stmt.setInt(2, (pageNum * 10) + 1);
-			stmt.setInt(3, (pageNum + 1) * 10);
+			stmt.setInt(2, (pageNum * 5) + 1);
+			stmt.setInt(3, (pageNum + 1) * 5);
 			rs = stmt.executeQuery();
 			while (rs.next()) {
 				ProductsDTO productDto = new ProductsDTO();
@@ -95,9 +95,14 @@ public class ProductsDAOImpl implements ProductsDAO {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		String sql = "SELECT p.productId, p.productName, p.productPrice, p.productStock, p.productInfo, c.categoryName, p.updatedAt"
-				+ "FROM PRODUCTS p LEFT JOIN CATEGORIES c"
-				+ " ON p.categoryId = c.categoryId WHERE p.categoryId = ? and p.productId = ? ORDER BY ProductId;";
+		String sql="SELECT * FROM products WHERE productId=?";
+		/*
+		 * String sql =
+		 * "SELECT p.productId, p.productName, p.productPrice, p.productStock, p.productInfo, c.categoryName, p.updatedAt"
+		 * + "FROM PRODUCTS p LEFT JOIN CATEGORIES c" +
+		 * " ON p.categoryId = c.categoryId WHERE p.categoryId = ? and p.productId = ? ORDER BY ProductId;"
+		 * ;
+		 */
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -110,7 +115,6 @@ public class ProductsDAOImpl implements ProductsDAO {
 				productDto.setProductPrice(rs.getInt("productPrice")); // 상품 가격
 				productDto.setProductStock(rs.getInt("productStock")); // 상품 재고
 				productDto.setProductInfo(rs.getString("productinfo")); // 상품 정보
-				productDto.setCategoryName(rs.getString("categoryName")); // 카테고리 이름
 				productDto.setUpdatedAt(rs.getTimestamp("updatedAt")); // 최신 등록일
 			}
 		} catch (SQLException e) {

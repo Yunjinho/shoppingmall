@@ -107,7 +107,7 @@ public class UsersDAOImpl implements UsersDAO {
 		Connection con=null;
 		PreparedStatement stmt=null;
 		String sql = "UPDATE users SET password=?, userName=? , phoneNumber=? ,birthday= "
-				+ "TO_DATE('" + userDto.getBirthday() + "', 'yy/MM/dd') updateAt=sysdate where userId=?";
+				+ "TO_DATE('" + userDto.getBirthday() + "', 'yy/MM/dd'), updatedAt=sysdate where userId=?";
 		try {
 			con=ShoppingMallDataSource.getConnection();
 			stmt=con.prepareStatement(sql);
