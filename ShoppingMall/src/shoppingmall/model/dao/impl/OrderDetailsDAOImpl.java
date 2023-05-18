@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import shoppingmall.model.ShoppingMallDataSource;
 import shoppingmall.model.dao.OrderDetailsDAO;
 import shoppingmall.model.dto.OrderDetailsDTO;
+import shoppingmall.model.dto.OrdersDTO;
 import shoppingmall.model.dto.ProductsDTO;
-import shoppingmall.model.dto.UsersDTO;
 
 public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 
@@ -136,38 +136,33 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 	@Override
 	public ArrayList<OrderDetailsDTO> getOrderDeatils() {
 		ArrayList<OrderDetailsDTO> orderDetailsList = new ArrayList<OrderDetailsDTO>();
-		OrderDetailsDTO orderDetailsDto = new OrderDetailsDTO();
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		String sql = "SELECT od.orderDetailId, od.orderId, od.productCount, od.deliveryStatus, od.createdAt, us.userId, us.userName, us.address, us.phoneNumber, p.productId, p.productName, p.productStock "
-				+ "FROM ORDERDETAILS od JOIN PRODUCTS p ON od.productId = p.productId "
-				+ "JOIN (SELECT o.orderId, o.userId, o.address, o.totalPrice, u.userName, u.phoneNumber FROM ORDERS o JOIN USERS u ON o.userId = u.userId) us "
-				+ "ON us.orderId = od.orderId ORDER BY od.createdAt";
+		String sql = "SELECT od.orderDetailId, od.productCount, od.deliveryStatus, o.userId, o.totalPrice, o.address, p.productName, p.productStock "
+				+ "FROM orderDetails od LEFT JOIN orders o ON o.orderId = od.orderId "
+				+ "LEFT JOIN products p on p.productId = od.productId";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
 			rs = stmt.executeQuery();
 			while (rs.next()) {
-				UsersDTO u = new UsersDTO();
-				u.setUserId(rs.getString("userId"));
-				u.setUserName(rs.getString("userName"));
-				u.setPhoneNumber(rs.getString("phoneNumber"));
-				u.setAddress(rs.getString("address"));
-
+				OrderDetailsDTO orderDetailsDto = new OrderDetailsDTO();
 				ProductsDTO p = new ProductsDTO();
-				p.setProductId(rs.getInt("productId"));
 				p.setProductName(rs.getString("productName"));
 				p.setProductStock(rs.getInt("productStock"));
+				orderDetailsDto.setProduct(p);
+
+				OrdersDTO o = new OrdersDTO();
+				o.setUserId(rs.getString("userId"));
+				o.setTotalPrice(rs.getInt("totalPrice"));
+				o.setAddress(rs.getString("address"));
+				orderDetailsDto.setOrder(o);
 
 				orderDetailsDto.setOrderDetailId(rs.getInt("orderDetailId"));
-				orderDetailsDto.setOrderId(rs.getInt("orderId"));
 				orderDetailsDto.setProductCount(rs.getInt("productCount"));
 				orderDetailsDto.setDeliveryStatus(rs.getString("deliveryStatus"));
-				orderDetailsDto.setCreatedAt(rs.getTimestamp("createdAt"));
 
-				orderDetailsDto.setUser(u);
-				orderDetailsDto.setProduct(p);
 				orderDetailsList.add(orderDetailsDto);
 			}
 		} catch (SQLException e) {

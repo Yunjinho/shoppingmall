@@ -117,8 +117,8 @@ public class OrdersDAOImpl implements OrdersDAO {
 				ordersDto.setOrderId(rs.getInt("orderId"));
 				ordersDto.setUserId(rs.getString("userId"));
 				ordersDto.setTotalPrice(rs.getInt("totalPrice"));
+				ordersDto.setAddress(rs.getString("address"));
 				UsersDTO u = new UsersDTO();
-				u.setAddress(rs.getString("address"));
 				u.setUserName(rs.getString("userName"));
 				u.setPhoneNumber(rs.getString("phoneNumber"));
 				ordersDto.setUser(u);

@@ -20,4 +20,5 @@ public class OrderDetailsDTO {
 	// ----------------------
 	ProductsDTO product;
 	UsersDTO user;
+	OrdersDTO order;
 }

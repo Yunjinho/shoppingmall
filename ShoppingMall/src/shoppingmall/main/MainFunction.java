@@ -1,6 +1,5 @@
 package shoppingmall.main;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -294,14 +293,16 @@ public class MainFunction {
 		for (OrdersDTO orderList : ordersList) {
 			// orderId
 			System.out.println("주문 번호 : " + orderList.getOrderId());
-			// userId
-			System.out.println("배송지 : " + orderList.getUser().getAddress());
+
+			// address
+			System.out.println("배송지 : " + orderList.getAddress());
+
 			// totalPrice
 			System.out.println("총 가격 : " + orderList.getTotalPrice());
-			// address
-			System.out.println("주소 : " + orderList.getAddress());
+
 			// userName
 			System.out.println("구매자 이름 : " + orderList.getUser().getUserName());
+
 			// phoneNumber
 			System.out.println("핸드폰 번호 : " + orderList.getUser().getPhoneNumber());
 			System.out.println();
@@ -315,31 +316,15 @@ public class MainFunction {
 		ArrayList<OrderDetailsDTO> orderDetailsDto = orderDetailsDao.getOrderDeatils();
 		System.out.println("----------------주문 목록 상세----------------");
 		for (OrderDetailsDTO orderDetailDto : orderDetailsDto) {
-			System.out.printf("주문 상세 번호: %d\n", orderDetailDto.getOrderDetailId());
-			orderDetailDto.getOrderDetailId(); // 주문 상세 번호
-
-			String orderTime = new SimpleDateFormat("yy/MM/dd").format(orderDetailDto.getCreatedAt());
-			System.out.printf("주문 상품 개수 : %d | 주문 일자 : %s | 배송 상태: %-10s |\n", orderDetailDto.getProductCount(),
-					orderTime, orderDetailDto.getDeliveryStatus());
-			orderDetailDto.getProductCount(); // 상품 개수
-			orderDetailDto.getCreatedAt(); // 주문 일자
-			orderDetailDto.getDeliveryStatus(); // 배송 상태
-
-//			orderDetailDto.getOrderId(); // 주문 아이디
-			System.out.printf("주문한 사용자 이름 : %s | 주문한 사용자 휴대폰 번호 : %s | 주문한 사용자 주소 : %s |\n",
-					orderDetailDto.getUser().getUserName(), orderDetailDto.getUser().getPhoneNumber(),
-					orderDetailDto.getUser().getAddress());
-			orderDetailDto.getUser().getUserName(); // 주문한 사용자 이름
-			orderDetailDto.getUser().getPhoneNumber(); // 주문한 사용자 휴대폰 번호
-			orderDetailDto.getUser().getAddress(); // 주문한 사용자 주소
-
-			System.out.printf("주문한 상품 이름 : %s | 주문한 상품 재고 : %d |\n", orderDetailDto.getProduct().getProductName(),
-					orderDetailDto.getProduct().getProductStock());
-			System.out.println();
-			orderDetailDto.getProduct().getProductName(); // 주문한 상품 이름
-			orderDetailDto.getProduct().getProductStock(); // 주문한 상품 재고
-
-			System.out.println();
+			System.out.println("상세 주문 번호 : " + orderDetailDto.getOrderDetailId());
+			System.out.println("상품 주문 개수 : " + orderDetailDto.getProductCount());
+			System.out.println("배송 상태 : " + orderDetailDto.getDeliveryStatus());
+			System.out.println("주문자 아이디 : " + orderDetailDto.getOrder().getUserId());
+			System.out.println("총 주문 금액 : " + orderDetailDto.getOrder().getTotalPrice());
+			System.out.println("배송지 : " + orderDetailDto.getOrder().getAddress());
+			System.out.println("주문 상품 이름 : " + orderDetailDto.getProduct().getProductName());
+			System.out.println("남은 상품 재고 : " + orderDetailDto.getProduct().getProductStock());
+			System.out.println("---------------------------------------");
 		}
 		System.out.println("----------------주문 목록 상세----------------");
 	}
