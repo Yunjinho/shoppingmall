@@ -3,6 +3,7 @@ package shoppingmall.model.dao.impl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import shoppingmall.model.ShoppingMallDataSource;
@@ -10,6 +11,7 @@ import shoppingmall.model.dao.OrdersDAO;
 import shoppingmall.model.dto.AddressesDTO;
 import shoppingmall.model.dto.OrdersDTO;
 import shoppingmall.model.dto.ProductsDTO;
+import shoppingmall.model.dto.UsersDTO;
 
 public class OrdersDAOImpl implements OrdersDAO {
 	@Override
@@ -18,7 +20,7 @@ public class OrdersDAOImpl implements OrdersDAO {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		String sql = "SELECT * FROM ORDERS WHERE USERID=?";
+		String sql = "SELECT * FROM ORDERS WHERE USERID = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -30,7 +32,7 @@ public class OrdersDAOImpl implements OrdersDAO {
 				ordersDto.setUserId(rs.getString("userId"));
 				list.add(ordersDto);
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
 			ShoppingMallDataSource.closePreparedStatement(stmt);
@@ -47,17 +49,17 @@ public class OrdersDAOImpl implements OrdersDAO {
 		CartsDAOImpl cartsDaoImpl = new CartsDAOImpl();
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "INSERT INTO ORDERS VALUES(ORDERS_SEQ.NEXTVAL,?,?)";
+		String sql = "INSERT INTO ORDERS VALUES(ORDERS_SEQ.NEXTVAL,?,?,?)";
 
 		try {
 			cartTotalPrice = cartsDaoImpl.getCartTotalPrice(cartId);
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
 			stmt.setString(1, userId);
-			stmt.setString(2, address.getAddress());
-			stmt.setInt(3, cartTotalPrice);
+			stmt.setInt(2, cartTotalPrice);
+			stmt.setString(3, address.getAddress());
 			count = stmt.executeUpdate();
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
 			ShoppingMallDataSource.closePreparedStatement(stmt);
@@ -67,25 +69,26 @@ public class OrdersDAOImpl implements OrdersDAO {
 	}
 
 	@Override
-	public int insertUserOrderfromProductDetail(int productId, String userId, int addressId, int amount,AddressesDTO address) {
+	public int insertUserOrderfromProductDetail(int productId, String userId, int addressId, int amount,
+			AddressesDTO address) {
 		int count = 0;
-		int cartTotalPrice=0;
+		int cartTotalPrice = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		ProductsDAOImpl productsDaoImpl=new ProductsDAOImpl();
-		ProductsDTO productDto=new ProductsDTO();
-		
+		ProductsDAOImpl productsDaoImpl = new ProductsDAOImpl();
+		ProductsDTO productDto = new ProductsDTO();
+
 		String sql = "INSERT INTO ORDERS VALUES(ORDERS_SEQ.NEXTVAL,?,?,?)";
 		try {
-			productDto=productsDaoImpl.getProductDetail(productId);
-			cartTotalPrice=productDto.getProductPrice()*amount;
+			productDto = productsDaoImpl.getProductDetail(productId);
+			cartTotalPrice = productDto.getProductPrice() * amount;
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
 			stmt.setString(1, userId);
-			stmt.setString(2, address.getAddress());
-			stmt.setInt(3, cartTotalPrice);
+			stmt.setInt(2, cartTotalPrice);
+			stmt.setString(3, address.getAddress());
 			count = stmt.executeUpdate();
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
 			ShoppingMallDataSource.closePreparedStatement(stmt);
@@ -94,5 +97,44 @@ public class OrdersDAOImpl implements OrdersDAO {
 		return count;
 	}
 
+	@Override
+	public ArrayList<OrdersDTO> getAllOrders() {
+		int count = 0;
+		int cartTotalPrice = 0;
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		ArrayList<OrdersDTO> ordersList = new ArrayList<>();
+		OrdersDTO ordersDto = new OrdersDTO();
+
+		String sql = "SELECT o.orderId, o.userId, o.totalPrice, us.phoneNumber, us.address " + "FROM ORDERS o "
+				+ "JOIN (SELECT u.userId, u.phoneNumber, a.address FROM USERS u JOIN ADDRESSES a ON u.userId = a.userId) us "
+				+ "ON o.userId = us.userId";
+		try {
+			con = ShoppingMallDataSource.getConnection();
+			stmt = con.prepareStatement(sql);
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				ordersDto.setOrderId(rs.getInt("orderId"));
+				ordersDto.setUserId(rs.getString("userId"));
+				ordersDto.setTotalPrice(rs.getInt("totalPrice"));
+				UsersDTO u = new UsersDTO();
+				u.setPhoneNumber(rs.getString("phoneNumber"));
+				u.setAddress(rs.getString("address"));
+				ordersDto.setUser(u);
+
+				ordersList.add(ordersDto);
+			}
+
+		} catch (SQLException e) {
+			// TODO: handle exception
+			throw new RuntimeException(e);
+		} finally {
+			ShoppingMallDataSource.closePreparedStatement(stmt);
+			ShoppingMallDataSource.closeResultSet(rs);
+			ShoppingMallDataSource.closeConnection(con);
+		}
+		return ordersList;
+	}
 
 }

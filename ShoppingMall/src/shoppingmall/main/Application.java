@@ -30,20 +30,23 @@ public class Application {
 						boolean adminFlag = true;
 						// 상품 등록/수정/삭제
 						while (adminFlag) {
-							System.out.println(
-									"1. 상품 목록 조회 | 2. 상품 등록 | 3. 상품 수정 | 4. 상품 삭제 | 5. 배송 목록 조회 | 6. 배송 상태 조회 | 7. 로그 아웃 ");
+							System.out
+									.println("1. 상품 목록 조회 | 2. 상품 등록 | 3. 상품 수정 | 4. 상품 삭제 | 5. 배송 목록 조회 | 6. 로그 아웃 ");
 							System.out.print("번호를 입력하세요: ");
 							int adminCommand = sc.nextInt();
 							switch (adminCommand) {
+							// 1. 상품 목록 조회
 							case 1:
 								System.out.println("상품 목록 조회입니다.");
 								MainFunction.getAllProducts();
 								break;
+							// 2. 상품 등록
 							case 2:
 								System.out.println("상품 등록 페이지 입니다.");
 								int count = MainFunction.registerProduct();
 								System.out.println();
 								break;
+							// 3. 상품 수정
 							case 3:
 								System.out.println("상품 수정 페이지 입니다.");
 								System.out.println();
@@ -70,20 +73,42 @@ public class Application {
 									}
 								}
 								break;
+							// 4. 상품 삭제
 							case 4:
 								System.out.println("상품 삭제 페이지 입니다.");
 								MainFunction.deleteProductByProductId();
 								System.out.println();
 								break;
+							// 5. 배송 목록 조회
 							case 5:
 								System.out.println("배송 목록 조회 페이지 입니다.");
+								System.out.println("1. 주문 목록 조회 | 2. 주문 상태 변경 | 3. 뒤로 가기");
+								int n = sc.nextInt();
+								sc.nextLine();
 
 								System.out.println();
-								break;
-							case 6:
-								System.out.println("배송 상태 조회 페이지 입니다. ");
+								// 주문 목록 조회
+								if (n == 1) {
+									MainFunction.getAllOrderList();
+								}
+								// 주문 상태 변경
+								else if (n == 2) {
+									MainFunction.getAllOrderList();
+									System.out.println("주문 상태를 변경할 주문 번호를 입력하세요: ");
+									int orderId = sc.nextInt();
+									sc.nextLine();
+									MainFunction.updateOrderStatus(orderId);
+								}
+								// 뒤로 가기
+								else if (n == 3) {
+									System.out.println("뒤로 가기를 눌렀습니다.");
+									// break에 걸림
+								} else {
+									System.out.println("잘못 입력하였습니다.");
+								}
 								System.out.println();
 								break;
+							// 6. 로그아웃
 							case 7:
 								System.out.println("로그아웃 되었습니다.");
 								System.out.println();
@@ -94,7 +119,7 @@ public class Application {
 								System.out.println();
 								break;
 							}
-							if (adminCommand == 7)
+							if (adminCommand == 6)
 								break;
 						}
 					}
@@ -160,6 +185,7 @@ public class Application {
 
 								// index = categoryId
 								System.out.println("1. 상의 | 2. 하의 | 3. 신발  ");
+
 								break;
 							}
 							case 5: {

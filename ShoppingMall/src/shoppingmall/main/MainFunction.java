@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import shoppingmall.model.dao.impl.AddressesDAOImpl;
+import shoppingmall.model.dao.impl.OrderDetailsDAOImpl;
+import shoppingmall.model.dao.impl.OrdersDAOImpl;
 import shoppingmall.model.dao.impl.ProductsDAOImpl;
 import shoppingmall.model.dao.impl.UsersDAOImpl;
 import shoppingmall.model.dto.AddressesDTO;
+import shoppingmall.model.dto.OrdersDTO;
 import shoppingmall.model.dto.ProductsDTO;
 import shoppingmall.model.dto.UsersDTO;
 
@@ -15,6 +18,7 @@ public class MainFunction {
 	static UsersDAOImpl userDaoImpl = new UsersDAOImpl();
 	static AddressesDAOImpl addressDaoImpl = new AddressesDAOImpl();
 
+	// 로그인
 	public static boolean login() {
 		String userId;
 		String password;
@@ -42,6 +46,7 @@ public class MainFunction {
 		}
 	}
 
+	// 회원 가입
 	public static boolean signUpUserInfo() {
 		UsersDTO user = new UsersDTO();
 		UsersDAOImpl userDao = new UsersDAOImpl();
@@ -95,6 +100,7 @@ public class MainFunction {
 		return result;
 	}
 
+	// 관리자 모든 상품 조회
 	public static void getAllProducts() {
 		int count = 0;
 		ProductsDAOImpl productDao = new ProductsDAOImpl();
@@ -116,6 +122,7 @@ public class MainFunction {
 		System.out.println();
 	}
 
+	// 상품 정보 입력
 	public static ProductsDTO insertProductInfo() {
 		ProductsDTO productDto = new ProductsDTO();
 		sc.nextLine();
@@ -139,8 +146,8 @@ public class MainFunction {
 		return productDto;
 	}
 
+	// 상품 등록
 	public static int registerProduct() {
-
 		int count = 0;
 		ProductsDAOImpl productDao = new ProductsDAOImpl();
 		ProductsDTO productDto = insertProductInfo();
@@ -270,11 +277,34 @@ public class MainFunction {
 	// 상품 아이디 입력
 	public static int selectUpdateProductId() {
 		getAllProducts();
-		System.out.print("상품 번호를 선택하세요: ");
+		System.out.print("선택할 번호를 선택하세요: ");
 		int productId = sc.nextInt();
 		sc.nextLine();
 		System.out.println();
 		return productId;
+	}
+
+	// 전체 주문 목록 조회
+	public static void getAllOrderList() {
+		OrdersDAOImpl orderDao = new OrdersDAOImpl();
+		ArrayList<OrdersDTO> ordersList = new ArrayList<>();
+		ordersList = orderDao.getAllOrders();
+		for (OrdersDTO orderList : ordersList) {
+			System.out.println(orderList.getUser().getPhoneNumber() + "전화 번호");
+		}
+		System.out.println();
+	}
+
+	// 주문 상태 변경
+	public static void updateOrderStatus(int orderId) {
+		OrderDetailsDAOImpl orderDetailsDao = new OrderDetailsDAOImpl();
+		orderDetailsDao.updateOrderStatus(orderId);
+	}
+
+	public static int selectNumber() {
+		int n = sc.nextInt();
+		sc.nextLine();
+		return n;
 	}
 
 	public static void addAddress(String userId) {
