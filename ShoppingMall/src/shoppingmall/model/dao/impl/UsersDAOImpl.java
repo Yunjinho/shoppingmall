@@ -55,11 +55,11 @@ public class UsersDAOImpl implements UsersDAO {
 			stmt.setString(3, userDto.getUserName()); // USERNAME
 			stmt.setString(4, userDto.getPhoneNumber()); // PHONENUMBER
 			stmt.setString(5, String.valueOf(userDto.getGender())); // GENDER
+			count = stmt.executeUpdate();
 
 			stmt2 = con.prepareStatement(addressSql);
 			stmt2.setString(1, userDto.getUserId());
 			stmt2.setString(2, address);
-			count = stmt.executeUpdate();
 			count2 = stmt2.executeUpdate();
 //			con.commit();
 		} catch (SQLException e) {
@@ -102,8 +102,60 @@ public class UsersDAOImpl implements UsersDAO {
 	}
 
 	@Override
-	public int updateUsersInformation(String userId, String phoneNumber, String address) {
-		return 0;
+	public int updateUsersInformation(UsersDTO userDto) {
+		int count=0;
+		Connection con=null;
+		PreparedStatement stmt=null;
+		String sql = "UPDATE users SET password=?, userName=? , phoneNumber=? ,birthday= "
+				+ "TO_DATE('" + userDto.getBirthday() + "', 'yy/MM/dd') updateAt=sysdate where userId=?";
+		try {
+			con=ShoppingMallDataSource.getConnection();
+			stmt=con.prepareStatement(sql);
+			stmt.setString(1, userDto.getPassword());
+			stmt.setString(2, userDto.getUserName());
+			stmt.setString(3, userDto.getPhoneNumber());
+			stmt.setString(4, userDto.getUserId());
+			count=stmt.executeUpdate();
+		} catch (Exception e) {
+			throw new RuntimeException();
+		}finally {
+			ShoppingMallDataSource.closeConnection(con);
+			ShoppingMallDataSource.closePreparedStatement(stmt);
+		}
+		return count;
+	}
+
+	@Override
+	public UsersDTO getUserInfo(String userId) {
+		UsersDTO userDto=new UsersDTO();
+		Connection con=null;
+		PreparedStatement stmt=null;
+		ResultSet rs=null;
+		String sql="SELECT * FROM users WHERE userId=?";
+		try {
+			con=ShoppingMallDataSource.getConnection();
+			stmt=con.prepareStatement(sql);
+			stmt.setString(1, userId);
+			rs=stmt.executeQuery();
+			if(rs.next()) {
+				userDto.setUserId(rs.getString("userId"));
+				userDto.setPassword(rs.getString("password"));
+				userDto.setUserName(rs.getString("userName"));
+				userDto.setPhoneNumber(rs.getString("phoneNumber"));
+				userDto.setBirthday(rs.getDate("birthday"));
+				userDto.setGender(rs.getString("gender").charAt(0));
+				userDto.setCreatedAt(rs.getTimestamp("createdAt"));
+				userDto.setUpdatedAt(rs.getTimestamp("updatedAt"));
+			}
+		} catch (Exception e) {
+			throw new RuntimeException();
+		}finally {
+			ShoppingMallDataSource.closeConnection(con);
+			ShoppingMallDataSource.closePreparedStatement(stmt);
+			ShoppingMallDataSource.closeResultSet(rs);
+		}
+		
+		return userDto;
 	};
 
 }

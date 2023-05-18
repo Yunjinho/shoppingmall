@@ -178,12 +178,14 @@ public class ProductsDAOImpl implements ProductsDAO {
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
+
 			stmt.setString(1, productDto.getProductName());
 			stmt.setInt(2, productDto.getProductPrice());
 			stmt.setInt(3, productDto.getProductStock());
 			stmt.setString(4, productDto.getProductInfo());
 			stmt.setInt(5, productDto.getCategoryId());
 			stmt.setInt(6, productDto.getProductId());
+
 			count = stmt.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

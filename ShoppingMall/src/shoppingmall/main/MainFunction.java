@@ -3,13 +3,17 @@ package shoppingmall.main;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import shoppingmall.model.dao.impl.AddressesDAOImpl;
 import shoppingmall.model.dao.impl.ProductsDAOImpl;
 import shoppingmall.model.dao.impl.UsersDAOImpl;
+import shoppingmall.model.dto.AddressesDTO;
 import shoppingmall.model.dto.ProductsDTO;
 import shoppingmall.model.dto.UsersDTO;
 
 public class MainFunction {
 	private static Scanner sc = new Scanner(System.in);
+	static UsersDAOImpl userDaoImpl = new UsersDAOImpl();
+	static AddressesDAOImpl addressDaoImpl = new AddressesDAOImpl();
 
 	public static boolean login() {
 		String userId;
@@ -147,6 +151,76 @@ public class MainFunction {
 		return count;
 	}
 
+	public static void modifyUserInfo(String userId) {
+		UsersDTO userDto = null;
+
+		try {
+			userDto = userDaoImpl.getUserInfo(userId);// 로그인한 정보 얻어오기
+			System.out.print("고객 아이디  : " + userDto.getUserId() + "\n");
+			System.out.print("고객 이름  : " + userDto.getUserName() + "\n");
+			System.out.print("고객 전화번호  : " + userDto.getPhoneNumber() + "\n");
+			System.out.print("고객 생년월일  : " + userDto.getBirthday() + "\n");
+			System.out.print("고객 성별  : " + userDto.getGender() + "\n");
+		} catch (RuntimeException e) {
+			System.out.println(e.getMessage());
+		}
+
+		System.out.println("1. 일반 정보 수정 | 2. 비밀번호 변경 | 3. 뒤로가기");
+		System.out.print("번호를 입력하세요: ");
+		int command = sc.nextInt();
+		boolean flag = true;
+		while (flag) {
+			switch (command) {
+			case 1:
+				System.out.println("-----수정 정보 입력----");
+				System.out.print("이름: ");
+				userDto.setUserName(sc.next());
+				System.out.print("핸드폰 번호[010-1234-1234]: ");
+				userDto.setPhoneNumber(sc.next());
+				System.out.print("생일[YYYY-MM-DD]: ");
+				String birth = sc.next();
+				java.sql.Date date = java.sql.Date.valueOf(birth);
+				userDto.setBirthday(date);
+				try {
+					userDaoImpl.updateUsersInformation(userDto);// 입력받은 데이터로 정보 수정
+				} catch (RuntimeException e) {
+					System.out.println(e.getMessage());
+				}
+				flag = false;
+				break;
+			case 2:
+				System.out.println("-----수정 비밀번호 입력----");
+				System.out.print("비밀번호: ");
+				userDto.setPassword(sc.next());
+				try {
+					userDaoImpl.updateUsersInformation(userDto);// 입력받은 데이터로 정보 수정
+				} catch (RuntimeException e) {
+					System.out.println(e.getMessage());
+				}
+				flag = false;
+				break;
+			case 3:
+				flag = false;
+			default:
+				System.out.println("다시 입력 하세요.");
+			}
+		}
+
+	}
+
+	public static void inquireAddress(String userId) {
+		UsersDTO userDto = new UsersDTO();
+		try {
+			userDto.setAddressDto(addressDaoImpl.getUserAddresses(userId));
+		} catch (RuntimeException e) {
+			System.out.println(e.getMessage());
+		}
+		for (AddressesDTO l : userDto.getAddressDto()) {
+			System.out.print("주소: " + l.getAddress() + "\n");
+		}
+		System.out.println();
+	}
+
 	// 상품번호로 상품 수정
 	public static int updateProductByProductId() {
 		int productId = selectUpdateProductId();
@@ -201,6 +275,61 @@ public class MainFunction {
 		sc.nextLine();
 		System.out.println();
 		return productId;
+	}
+
+	public static void addAddress(String userId) {
+		System.out.print("주소 입력: ");
+		sc.nextLine();
+		String address = sc.nextLine();
+		try {
+			addressDaoImpl.insertAddresses(userId, address);
+		} catch (RuntimeException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+
+	public static void modifyAddress(String userId) {
+		UsersDTO userDto = new UsersDTO();
+		AddressesDTO addressDto = new AddressesDTO();
+		try {
+			userDto.setAddressDto(addressDaoImpl.getUserAddresses(userId));
+			for (int i = 0; i < userDto.getAddressDto().size(); i++) {
+				System.out.print((i + 1) + "번. 주소: " + userDto.getAddressDto().get(i).getAddress() + "\n");
+			}
+			System.out.println();
+			System.out.print("수정하고 싶은 주소 번호: ");
+			int modifyNum = sc.nextInt();
+			addressDto = userDto.getAddressDto().get(modifyNum - 1);
+			System.out.println();
+			sc.nextLine();
+			System.out.print("주소 입력: ");
+			String address = sc.nextLine();
+
+			addressDto.setAddress(address);
+			addressDaoImpl.updateAddresses(addressDto);
+		} catch (RuntimeException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+
+	public static void deleteAddress(String userId) {
+		UsersDTO userDto = new UsersDTO();
+		AddressesDTO addressDto = new AddressesDTO();
+		try {
+			userDto.setAddressDto(addressDaoImpl.getUserAddresses(userId));
+			for (int i = 0; i < userDto.getAddressDto().size(); i++) {
+				System.out.print((i + 1) + "번. 주소: " + userDto.getAddressDto().get(i).getAddress() + "\n");
+			}
+			System.out.println();
+			System.out.print("삭제하고 싶은 주소 번호: ");
+			int modifyNum = sc.nextInt();
+			addressDto = userDto.getAddressDto().get(modifyNum - 1);
+			sc.nextLine();
+			System.out.println();
+			addressDaoImpl.deleteAddresses(addressDto.getAddressId());
+		} catch (RuntimeException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 }

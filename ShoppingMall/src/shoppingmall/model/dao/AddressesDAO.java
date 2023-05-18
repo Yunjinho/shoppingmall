@@ -7,7 +7,7 @@ import shoppingmall.model.dto.AddressesDTO;
 public interface AddressesDAO {
 	ArrayList<AddressesDTO> getUserAddresses(String userId); // 사용자 주소 모두 조회
 
-	int insertAddresses(AddressesDTO addressesDto); // 주소 등록
+	int insertAddresses(String userId,String address); // 주소 등록
 
 	int deleteAddresses(int addressesId); // 주소 삭제
 

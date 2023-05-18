@@ -43,7 +43,7 @@ public class AddressesDAOImpl implements AddressesDAO {
 	}
 
 	@Override
-	public int insertAddresses(AddressesDTO addressesDto) {
+	public int insertAddresses(String userId,String address) {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
@@ -51,8 +51,8 @@ public class AddressesDAOImpl implements AddressesDAO {
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
-			stmt.setString(1, addressesDto.getUserId());
-			stmt.setString(2, addressesDto.getAddress());
+			stmt.setString(1, userId);
+			stmt.setString(2, address);
 			count = stmt.executeUpdate();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -68,7 +68,7 @@ public class AddressesDAOImpl implements AddressesDAO {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "DELETE FROM ADDRESSES WHERE addressesId=?";
+		String sql = "DELETE FROM ADDRESSES WHERE addressId=?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
