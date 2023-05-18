@@ -2,121 +2,29 @@ package shoppingmall.main;
 
 import java.util.Scanner;
 
-import shoppingmall.model.dao.impl.ProductsDAOImpl;
-import shoppingmall.model.dao.impl.UsersDAOImpl;
-import shoppingmall.model.dto.ProductsDTO;
-import shoppingmall.model.dto.UsersDTO;
-
 public class Application {
 	private static Scanner sc = new Scanner(System.in);
-	private static String loginUserId = "";
-
-	static boolean login() {
-		String userId;
-		String password;
-
-		System.out.print("아이디를 입력하세요: ");
-		userId = sc.next();
-
-		System.out.print("비밀번호를 입력하세요: ");
-		password = sc.next();
-
-		UsersDAOImpl userDao = new UsersDAOImpl();
-		int check = userDao.login(userId, password);
-		// 로그인 성공
-		if (check > 0) {
-			System.out.println("로그인 되었습니다.");
-			System.out.println();
-			loginUserId = userId;
-			return true;
-		}
-		// 로그인 실패
-		else {
-			System.out.println("아이디나 비밀번호가 틀렸습니다. 다시 선택해 주세요.");
-			System.out.println();
-			return false;
-		}
-	}
-
-	static boolean signUpUserInfo() {
-		UsersDTO user = new UsersDTO();
-		UsersDAOImpl userDao = new UsersDAOImpl();
-		boolean result = false;
-		try {
-			System.out.print("아이디: ");
-			user.setUserId(sc.next());
-			boolean idCheck = userDao.checkUserId(user.getUserId());
-			// 아이디가 존재할 경우
-			if (idCheck == false) {
-				System.out.println("이미 존재하는 아이디입니다. 다른 아이디를 입력해주세요.");
-				System.out.println();
-				return result;
-			}
-
-			System.out.print("비밀번호: ");
-			user.setPassword(sc.next());
-
-			System.out.print("이름: ");
-			user.setUserName(sc.next());
-
-			System.out.print("핸드폰 번호[010-1234-1234]: ");
-			user.setPhoneNumber(sc.next());
-
-			System.out.print("생일[YYYY-MM-DD]: ");
-			String birth = sc.next();
-			java.sql.Date date = java.sql.Date.valueOf(birth);
-			user.setBirthday(date);
-
-			System.out.print("성별[W/M]: ");
-			user.setGender(sc.next().charAt(0));
-			sc.nextLine();
-
-			System.out.print("주소: ");
-			String address = sc.nextLine();
-			int check = userDao.signUp(user, address);
-			// 회원가입 성공 시
-			if (check >= 1) {
-				result = true;
-				System.out.println("회원가입이 완료되었습니다. 로그인 해주세요.");
-				System.out.println();
-			} else {
-				System.out.println("회원가입에 실패하였습니다. 다시 선택해주세요.");
-				System.out.println();
-			}
-
-		} catch (Exception e) {
-			// TODO: handle exception
-			System.out.println(e.getMessage());
-		}
-		return result;
-	}
-
-	static int registerProduct() {
-		int count = 0;
-		ProductsDTO productsDto = new ProductsDTO();
-		ProductsDAOImpl productsDao = new ProductsDAOImpl();
-		return count;
-	}
 
 	public static void main(String[] args) {
+
 		while (true) {
 			System.out.println("1. 회원가입 | 2. 로그인 | 3. 나가기");
 			int cmd = sc.nextInt();
 			switch (cmd) {
 			// 1. 회원가입
 			case 1: {
-				boolean result = signUpUserInfo();
+				boolean result = MainFunction.signUpUserInfo();
 				// 회원가입 성공 result = true
 				// 회원가입 실패 result = false;
 				break;
 			}
 			// 2. 로그인
 			case 2: {
-				boolean result = login();
+				boolean result = MainFunction.login();
 				// 로그인 성공
 				if (result) {
 					// 관리자일 경우
-					if (loginUserId.equals("admin")) {
+					if (LoginSession.getLoginUserId().equals("admin")) {
 						// while문 탈출 시킬 flag
 						boolean adminFlag = true;
 						// 상품 등록/수정/삭제
@@ -130,7 +38,7 @@ public class Application {
 								System.out.println("상품 등록 페이지 입니다.");
 								System.out.println();
 
-								registerProduct();
+								MainFunction.registerProduct();
 								break;
 							case 2:
 								System.out.println("상품 수정 페이지 입니다.");
@@ -139,19 +47,22 @@ public class Application {
 								/*
 								 * boolean productFlag = true; while(productFlag)
 								 */
-								System.out.println("1. 상품 수정 | 2. 상품 수량 수정 | 3. 뒤로 가기");
-								System.out.println("번호를 입력하세요: ");
-								int productCommand = sc.nextInt();
-								// 1. 상품 수정
-								if (productCommand == 1) {
+								boolean productFlag = true;
+								while (productFlag) {
+									System.out.println("1. 상품 수정 | 2. 상품 수량 수정 | 3. 뒤로 가기");
+									System.out.print("번호를 입력하세요: ");
+									int productCommand = sc.nextInt();
+									// 1. 상품 수정
+									if (productCommand == 1) {
 
-								}
-								// 2. 상품 수량 수정
-								else if (productCommand == 2) {
-								} else if (productCommand == 3) {
-									// productFlag = false;
-								} else {
-									System.out.println("번호를 잘못 입력하였습니다.");
+									}
+									// 2. 상품 수량 수정
+									else if (productCommand == 2) {
+									} else if (productCommand == 3) {
+										productFlag = false;
+									} else {
+										System.out.println("번호를 잘못 입력하였습니다.");
+									}
 								}
 								break;
 							case 3:
@@ -169,7 +80,7 @@ public class Application {
 							case 6:
 								System.out.println("로그아웃 되었습니다.");
 								System.out.println();
-								loginUserId = "";
+								LoginSession.setLoginUserId("");
 								break;
 							default:
 								System.out.println("숫자를 잘못 입력하였습니다.");
@@ -264,7 +175,7 @@ public class Application {
 							case 6: {
 								System.out.println("로그아웃 되었습니다.");
 								System.out.println();
-								loginUserId = "";
+								LoginSession.loginUserId = "";
 								break;
 							}
 							default: {

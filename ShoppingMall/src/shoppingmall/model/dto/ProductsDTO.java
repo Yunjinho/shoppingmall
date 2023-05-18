@@ -18,7 +18,8 @@ public class ProductsDTO {
 	int categoryId;
 	Timestamp createdAt;
 	Timestamp updatedAt;
-	
+
 //-----------------------
 	int rowNumber;
+	String categoryName;
 }
