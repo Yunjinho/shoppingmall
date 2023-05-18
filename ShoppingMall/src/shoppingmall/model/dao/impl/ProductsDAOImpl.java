@@ -22,7 +22,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 		String sql = "select rowNumber,productId,productName,productPrice,productStock,productinfo,categoryId,createdAt,updatedAt from "
 				+ "(select rownum as rowNumber,productId,productName,productPrice,productStock,productinfo,categoryId,createdAt,updatedAt from "
 				+ "(select * from products p where p.categoryId=? and p.productStock > 0 order by updatedAt desc)) "
-				+ "where rowNum between ? and ?";
+				+ "where rowNumber between ? and ?";
 		try {
 			stmt = con.prepareStatement(sql);
 			stmt.setInt(1, categoryId);
@@ -88,8 +88,6 @@ public class ProductsDAOImpl implements ProductsDAO {
 	@Override
 	public int insertProduct(ProductsDTO prod) {
 		int count = 0;
-
-		ArrayList<ProductsDTO> list = new ArrayList<ProductsDTO>();
 		Connection con = null;
 		PreparedStatement stmt = null;
 		String sql = "INSERT INTO PRODUCTS VALUES (PRODUCTS_SEQ.NEXTVAL,?,?,?,?,?,SYSDATE,SYSDATE)";

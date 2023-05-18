@@ -12,4 +12,6 @@ public interface CartsDAO {
 	int deleteFromCart(int cartId); // 장바구니에서 삭제
 
 	int updateFromCart(CartsDTO cartsDto); // 장바구니 업데이트
+	
+	int getCartTotalPrice(int cartId);// 카트에 담겨있는 상품의 총 합
 }

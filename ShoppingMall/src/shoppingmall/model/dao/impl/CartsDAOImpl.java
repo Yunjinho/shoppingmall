@@ -106,4 +106,29 @@ public class CartsDAOImpl implements CartsDAO {
 		return count;
 	}
 
+	@Override
+	public int getCartTotalPrice(int cartId) {
+		int totalPrice=0;
+		Connection con=null;
+		PreparedStatement stmt=null;
+		ResultSet rs=null;
+		String sql="select sum(c.productcount*p.productprice) as cartTotalPrice from carts c join products p on c.productId=p.productId where cartId=?";
+		try {
+			con=ShoppingMallDataSource.getConnection();
+			stmt=con.prepareStatement(sql);
+			stmt.setInt(1, cartId);
+			rs=stmt.executeQuery();
+			if(rs.next()) {
+				totalPrice=rs.getInt("cartTotalPrice");
+			}
+		} catch (Exception e) {
+			throw new RuntimeException();
+		}finally {
+			ShoppingMallDataSource.closeConnection(con);
+			ShoppingMallDataSource.closePreparedStatement(stmt);
+			ShoppingMallDataSource.closeResultSet(rs);
+		}
+		return totalPrice;
+	}
+
 }
