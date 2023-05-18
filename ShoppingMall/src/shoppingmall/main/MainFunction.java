@@ -1,13 +1,17 @@
 package shoppingmall.main;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import shoppingmall.model.dao.impl.AddressesDAOImpl;
+import shoppingmall.model.dao.impl.CartsDAOImpl;
 import shoppingmall.model.dao.impl.CategoriesDAOImpl;
+import shoppingmall.model.dao.impl.OrdersDAOImpl;
 import shoppingmall.model.dao.impl.ProductsDAOImpl;
 import shoppingmall.model.dao.impl.UsersDAOImpl;
 import shoppingmall.model.dto.AddressesDTO;
+import shoppingmall.model.dto.CartsDTO;
 import shoppingmall.model.dto.CategoriesDTO;
 import shoppingmall.model.dto.ProductsDTO;
 import shoppingmall.model.dto.UsersDTO;
@@ -17,6 +21,10 @@ public class MainFunction {
 	static UsersDAOImpl userDaoImpl=new UsersDAOImpl();
 	static AddressesDAOImpl addressDaoImpl=new AddressesDAOImpl();
 	static CategoriesDAOImpl categoriesDaoImpl=new CategoriesDAOImpl();
+	static ProductsDAOImpl productDaoImple=new ProductsDAOImpl();
+	static CartsDAOImpl cartDaoImpl=new CartsDAOImpl();
+	static OrdersDAOImpl orderDaoImpl =new OrdersDAOImpl();
+	
 	
 	public static boolean login() {
 		String userId;
@@ -153,10 +161,8 @@ public class MainFunction {
 //		System.out.println("상품 이름 :");
 		return count;
 	}
-
-	public static void modifyUserInfo(String userId) {
+	public static UsersDTO inquireUserInfo(String userId) {
 		UsersDTO userDto = null;
-
 		try {
 			userDto = userDaoImpl.getUserInfo(userId);// 로그인한 정보 얻어오기
 			System.out.print("고객 아이디  : " + userDto.getUserId() + "\n");
@@ -167,46 +173,13 @@ public class MainFunction {
 		} catch (RuntimeException e) {
 			System.out.println(e.getMessage());
 		}
-
-		System.out.println("1. 일반 정보 수정 | 2. 비밀번호 변경 | 3. 뒤로가기");
-		System.out.print("번호를 입력하세요: ");
-		int command = sc.nextInt();
-		boolean flag = true;
-		while (flag) {
-			switch (command) {
-			case 1:
-				System.out.println("-----수정 정보 입력----");
-				System.out.print("이름: ");
-				userDto.setUserName(sc.next());
-				System.out.print("핸드폰 번호[010-1234-1234]: ");
-				userDto.setPhoneNumber(sc.next());
-				System.out.print("생일[YYYY-MM-DD]: ");
-				String birth = sc.next();
-				java.sql.Date date = java.sql.Date.valueOf(birth);
-				userDto.setBirthday(date);
-				try {
-					userDaoImpl.updateUsersInformation(userDto);// 입력받은 데이터로 정보 수정
-				} catch (RuntimeException e) {
-					System.out.println(e.getMessage());
-				}
-				flag = false;
-				break;
-			case 2:
-				System.out.println("-----수정 비밀번호 입력----");
-				System.out.print("비밀번호: ");
-				userDto.setPassword(sc.next());
-				try {
-					userDaoImpl.updateUsersInformation(userDto);// 입력받은 데이터로 정보 수정
-				} catch (RuntimeException e) {
-					System.out.println(e.getMessage());
-				}
-				flag = false;
-				break;
-			case 3:
-				flag = false;
-			default:
-				System.out.println("다시 입력 하세요.");
-			}
+		return userDto;
+	}
+	public static void modifyUserInfo(UsersDTO userDto) {
+		try {
+			userDaoImpl.updateUsersInformation(userDto);// 입력받은 데이터로 정보 수정
+		} catch (RuntimeException e) {
+			System.out.println(e.getMessage());
 		}
 
 	}
@@ -291,6 +264,7 @@ public class MainFunction {
 		}
 	}
 
+	
 	public static void modifyAddress(String userId) {
 		UsersDTO userDto = new UsersDTO();
 		AddressesDTO addressDto = new AddressesDTO();
@@ -335,9 +309,84 @@ public class MainFunction {
 		}
 	}
 
-	public static void inquireProductsByCategory() {
-		for(CategoriesDTO category:categoriesDaoImpl.getCategoriesNames()) {
+	public static int inquireProductsCategory() {
+		List<CategoriesDTO>list =new ArrayList<CategoriesDTO>();
+		list=categoriesDaoImpl.getCategoriesNames();
+		for(int i=0;i<list.size();i++) {
+			System.out.print((i+1)+". "+list.get(i).getCategoryName());
+			if(i!=categoriesDaoImpl.getCategoriesNames().size()-1) {
+				System.out.print(" | ");
+			}
+		}
+		System.out.println();
+		System.out.print("번호를 선택하세요.");
+		int selectNumber=sc.nextInt();
+		if(list.size()<selectNumber) {
+			System.out.println("잘못된 입력입니다.");
+			return -1;
+		}
+		int categoryNumber=list.get(selectNumber-1).getCategoryId();
+		
+		return categoryNumber;
+	}
+
+	public static boolean viewProductsByCategory(int categoryNumber, int pageNum) {
+		List<ProductsDTO>list = new ArrayList<ProductsDTO>();
+		list=productDaoImple.getProductListByCategory(categoryNumber, pageNum);
+		if(list.size()==0) {
+			return false;
+		}
+		System.out.println("상품 번호 |  상품 이름           | 상품 가격  | 상품 재고  | 상품 정보   |  상품 상태    |");
+		for (ProductsDTO productDto : list) {
+			System.out.printf("%d\t  %-10s\t %d\t %d\t %s\t %-10s", productDto.getProductId(),
+						productDto.getProductName(), productDto.getProductPrice(),
+						productDto.getProductStock(), "판매중", productDto.getProductInfo());
+			System.out.println();
+		}
+		return true;
+	}
+
+	public static void viewProductDetail(int productId) {
+		ProductsDTO productDto=new ProductsDTO();
+		productDto=productDaoImple.getProductDetail(productId);
+		System.out.println("상품 번호 |  상품 이름           | 상품 가격  | 상품 재고  | 상품 정보   |  상품 상태    |");
+		System.out.printf("%d\t  %-10s\t %d\t %d\t %s\t %-10s", productDto.getProductId(),
+				productDto.getProductName(), productDto.getProductPrice(),
+				productDto.getProductStock(), "판매중", productDto.getProductInfo());
+		System.out.println();
+		System.out.print("상품 수량: ");
+		int amount=sc.nextInt();
+		if((productDto.getProductStock()-amount)>-1) {
+			System.out.println("1. 장바구니에 넣기 | 2. 바로 구매하기");
+			System.out.print("번호 입력: ");
+			int orderCommand=sc.nextInt();
+			if(orderCommand==1) {
+				CartsDTO cartDto=new CartsDTO();
+				cartDto.setProductId(productId);
+				cartDto.setUserId(LoginSession.getLoginUserId());
+				cartDto.setProductCount(amount);
+				cartDaoImpl.insertCart(cartDto);
+			}else if(orderCommand==2){
+				UsersDTO userDto = new UsersDTO();
+				userDto.setAddressDto(addressDaoImpl.getUserAddresses(LoginSession.getLoginUserId()));
+				int count=1;
+				for (AddressesDTO l : userDto.getAddressDto()) {
+					System.out.print(count+". 주소: " + l.getAddress() + "\n");
+					count++;
+				}
+				System.out.println();
+				System.out.print("주소 선택: ");
+				int addressNum=sc.nextInt();
+				orderDaoImpl.insertUserOrderfromProductDetail(
+						productId, LoginSession.getLoginUserId(), 
+						userDto.getAddressDto().get(addressNum-1).getAddress(), amount);
+			}else {
+				System.out.println("잘못된 선택입니다.");
+			}
+		}else {
+			System.out.println("재고가 부족합니다.");
 		}
 		
 	}
+
 }

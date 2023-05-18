@@ -10,7 +10,7 @@ public interface OrdersDAO {
 
 	int insertUserOrderfromCart(int cartId,String userId, AddressesDTO address);// 장바구니에서 주문
 
-	int insertUserOrderfromProductDetail(int productId, String userId, int addressId, int amount, AddressesDTO address); // 상품 디테일에서 주문
+	int insertUserOrderfromProductDetail(int productId, String userId, String address, int amount); // 상품 디테일에서 주문
 
 	//int deleteUserOrder(int orderId); // 주문 취소
 }
