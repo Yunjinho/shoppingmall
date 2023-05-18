@@ -105,6 +105,8 @@ public class Application {
 							case 1: {
 								System.out.println("사용자 정보 수정페이지 입니다.");
 								System.out.println();
+								
+								MainFunction.modifyUserInfo(LoginSession.getLoginUserId());
 								break;
 							}
 							case 2: {
@@ -120,15 +122,19 @@ public class Application {
 								// 뒤로가기 하려면 if문 / 상관없으면 switch
 								// 1.주소 목록 조회
 								if (addressCommand == 1) {
+									MainFunction.inquireAddress(LoginSession.getLoginUserId());
 								}
 								// 2. 주소지 추가
 								else if (addressCommand == 2) {
+									MainFunction.addAddress(LoginSession.getLoginUserId());
 								}
 								// 3. 주소지 수정
 								else if (addressCommand == 3) {
+									MainFunction.modifyAddress(LoginSession.getLoginUserId());
 								}
 								// 4. 주소지 삭제
 								else if (addressCommand == 4) {
+									MainFunction.deleteAddress(LoginSession.getLoginUserId());
 								}
 								// 5. 뒤로 가기
 								else {
@@ -159,12 +165,15 @@ public class Application {
 								System.out.println();
 								// 1. 장바구니 조회
 								if (cartCommand == 1) {
+									
 								}
 								// 2. 장바구니 수정
 								else if (cartCommand == 2) {
+									
 								}
 								// 3. 장바구니 상품 결제
 								else if (cartCommand == 3) {
+									
 								}
 								// 4. 뒤로 가기
 								else if (cartCommand == 4) {
