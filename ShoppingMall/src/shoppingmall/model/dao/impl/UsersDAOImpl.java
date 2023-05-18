@@ -103,11 +103,19 @@ public class UsersDAOImpl implements UsersDAO {
 
 	@Override
 	public int updateUsersInformation(UsersDTO userDto) {
+<<<<<<< HEAD
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
 		String sql = "UPDATE users SET password=?, userName=? , phoneNumber=? ,birthday= " + "TO_DATE('"
 				+ userDto.getBirthday() + "', 'yy/MM/dd') updateAt=sysdate where userId=?";
+=======
+		int count=0;
+		Connection con=null;
+		PreparedStatement stmt=null;
+		String sql = "UPDATE users SET password=?, userName=? , phoneNumber=? ,birthday= "
+				+ "TO_DATE('" + userDto.getBirthday() + "', 'yy/MM/dd'), updatedAt=sysdate where userId=?";
+>>>>>>> 0bce14ad9162154f9b00cd4b9fd7f52effaf3b5a
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);

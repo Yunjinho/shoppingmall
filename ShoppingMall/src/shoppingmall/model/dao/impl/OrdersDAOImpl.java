@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import shoppingmall.model.ShoppingMallDataSource;
 import shoppingmall.model.dao.OrdersDAO;
 import shoppingmall.model.dto.AddressesDTO;
+import shoppingmall.model.dto.OrderDetailsDTO;
 import shoppingmall.model.dto.OrdersDTO;
 import shoppingmall.model.dto.ProductsDTO;
 import shoppingmall.model.dto.UsersDTO;
@@ -69,8 +70,8 @@ public class OrdersDAOImpl implements OrdersDAO {
 	}
 
 	@Override
-	public int insertUserOrderfromProductDetail(int productId, String userId, int addressId, int amount,
-			AddressesDTO address) {
+	public int insertUserOrderfromProductDetail(int productId, String userId, String address, int amount) {
+
 		int count = 0;
 		int cartTotalPrice = 0;
 		Connection con = null;
@@ -82,13 +83,42 @@ public class OrdersDAOImpl implements OrdersDAO {
 		try {
 			productDto = productsDaoImpl.getProductDetail(productId);
 			cartTotalPrice = productDto.getProductPrice() * amount;
+		PreparedStatement stmt2 = null;
+		ProductsDAOImpl productsDaoImpl = new ProductsDAOImpl();
+		OrderDetailsDAOImpl orderDetailsDaoImpl=new OrderDetailsDAOImpl();
+		ProductsDTO productDto = new ProductsDTO();
+		
+		ResultSet rs=null;
+		String sql = "INSERT INTO ORDERS VALUES(?,?,?,?)";
+		String sql2= "select ORDERS_SEQ.NEXTVAL as currentSeqNumber from dual";
+		try {
+			
+			productDto=productsDaoImpl.getProductDetail(productId);
+			cartTotalPrice=productDto.getProductPrice()*amount;
 			con = ShoppingMallDataSource.getConnection();
+			
+			//order 테이블에 넣기
+			stmt2=con.prepareStatement(sql2);
+			rs=stmt2.executeQuery();
+			int orderPk=0;
+			if(rs.next()) {
+				orderPk=rs.getInt("currentSeqNumber");
+			}
+			
 			stmt = con.prepareStatement(sql);
-			stmt.setString(1, userId);
-			stmt.setInt(2, cartTotalPrice);
-			stmt.setString(3, address.getAddress());
+			stmt.setInt(1, orderPk);
+			stmt.setString(2, userId);
+			stmt.setInt(3, cartTotalPrice);
+			stmt.setString(4, address);
 			count = stmt.executeUpdate();
-		} catch (SQLException e) {
+			//위에서 넣었던 오더테이블 pk 얻어오기
+			OrderDetailsDTO orderDetailsDto=new OrderDetailsDTO(0,orderPk,productId,amount,null,null,null);
+			orderDetailsDaoImpl.insertOrderProduct(orderDetailsDto);
+			//상품 수량 수정
+			productsDaoImpl.updateProductStock(productId, productDto.getProductStock()-amount);
+			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			throw new RuntimeException(e);
 		} finally {
 			ShoppingMallDataSource.closePreparedStatement(stmt);

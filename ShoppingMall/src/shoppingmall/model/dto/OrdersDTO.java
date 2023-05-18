@@ -15,4 +15,5 @@ public class OrdersDTO {
 
 	// --------------
 	UsersDTO user;
+	int currentSeqNumber;
 }
