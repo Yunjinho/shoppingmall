@@ -14,7 +14,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 
 	@Override
 	public ArrayList<ProductsDTO> getProductListByCategory(int categoryId, int pageNum) {
-		ArrayList<ProductsDTO> productList = new ArrayList<ProductsDTO>();
+		ArrayList<ProductsDTO> productList = new ArrayList<>();
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -53,26 +53,48 @@ public class ProductsDAOImpl implements ProductsDAO {
 	}
 
 	@Override
-	public ProductsDTO getProductDetail(int productId) {
-		ProductsDTO productDto = null;
+	public ArrayList<ProductsDTO> getProductsList() {
+		ArrayList<ProductsDTO> productsList = new ArrayList<>();
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		String sql = "SELECT * FROM PRODUCT WHERE CATEGORYID = ?";
+		String sql = "SELECT p.productId, c.categoryName, p.productName, p.productPrice, p.productStock, p.productInfo"
+				+ " FROM PRODUCTS p LEFT JOIN CATEGORIES c ON p.categoryId = c.categoryId " + "ORDER BY p.productId";
+		try {
+			stmt = con.prepareStatement(sql);
+		} catch (SQLException e) {
+			// TODO: handle exception
+			throw new RuntimeException(e);
+		} finally {
+			ShoppingMallDataSource.closePreparedStatement(stmt);
+			ShoppingMallDataSource.closeResultSet(rs);
+			ShoppingMallDataSource.closeConnection(con);
+		}
+		return productsList;
+	}
+
+	@Override
+	public ProductsDTO getProductDetail(int productId) {
+		ProductsDTO productDto = new ProductsDTO();
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		String sql = "SELECT p.productId, p.productName, p.productPrice, p.productStock, p.productInfo, c.categoryName, p.updatedAt"
+				+ "FROM PRODUCTS p LEFT JOIN CATEGORIES c"
+				+ " ON p.categoryId = c.categoryId WHERE p.categoryId = ? and p.productId = ? ORDER BY ProductId;";
 		try {
 			stmt = con.prepareStatement(sql);
 			stmt.setInt(1, productId);
 			rs = stmt.executeQuery();
 			if (rs.next()) {
 				productDto = new ProductsDTO();
-				productDto.setProductId(rs.getInt("productId"));
-				productDto.setProductName(rs.getString("productName"));
-				productDto.setProductPrice(rs.getInt("productPrice"));
-				productDto.setProductStock(rs.getInt("productStock"));
-				productDto.setProductinfo(rs.getString("productinfo"));
-				productDto.setCategoryId(rs.getInt("categoryId"));
-				productDto.setCreatedAt(rs.getTimestamp("createdAt"));
-				productDto.setUpdatedAt(rs.getTimestamp("updatedAt"));
+				productDto.setProductId(rs.getInt("productId")); // 상품 번호
+				productDto.setProductName(rs.getString("productName")); // 상품 이름
+				productDto.setProductPrice(rs.getInt("productPrice")); // 상품 가격
+				productDto.setProductStock(rs.getInt("productStock")); // 상품 재고
+				productDto.setProductinfo(rs.getString("productinfo")); // 상품 정보
+				productDto.setCategoryName(rs.getString("categoryName")); // 카테고리 이름
+				productDto.setUpdatedAt(rs.getTimestamp("updatedAt")); // 최신 등록일
 			}
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

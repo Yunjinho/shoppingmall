@@ -7,6 +7,8 @@ import shoppingmall.model.dto.ProductsDTO;
 public interface ProductsDAO {
 	ArrayList<ProductsDTO> getProductListByCategory(int categoryId, int pageNum);// 카테고리 별 상품 목록 출력 10개씩 끊어서
 
+	ArrayList<ProductsDTO> getProductsList(); // 모든 상품 조회
+
 	ProductsDTO getProductDetail(int productId);// 상품 디테일
 
 	int insertProduct(ProductsDTO productDto);// 상품 등록
