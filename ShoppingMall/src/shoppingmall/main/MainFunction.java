@@ -1,5 +1,6 @@
 package shoppingmall.main;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -9,6 +10,7 @@ import shoppingmall.model.dao.impl.OrdersDAOImpl;
 import shoppingmall.model.dao.impl.ProductsDAOImpl;
 import shoppingmall.model.dao.impl.UsersDAOImpl;
 import shoppingmall.model.dto.AddressesDTO;
+import shoppingmall.model.dto.OrderDetailsDTO;
 import shoppingmall.model.dto.OrdersDTO;
 import shoppingmall.model.dto.ProductsDTO;
 import shoppingmall.model.dto.UsersDTO;
@@ -290,17 +292,66 @@ public class MainFunction {
 		ArrayList<OrdersDTO> ordersList = new ArrayList<>();
 		ordersList = orderDao.getAllOrders();
 		for (OrdersDTO orderList : ordersList) {
-			System.out.println(orderList.getUser().getPhoneNumber() + "전화 번호");
+			// orderId
+			System.out.println("주문 번호 : " + orderList.getOrderId());
+			// userId
+			System.out.println("배송지 : " + orderList.getUser().getAddress());
+			// totalPrice
+			System.out.println("총 가격 : " + orderList.getTotalPrice());
+			// address
+			System.out.println("주소 : " + orderList.getAddress());
+			// userName
+			System.out.println("구매자 이름 : " + orderList.getUser().getUserName());
+			// phoneNumber
+			System.out.println("핸드폰 번호 : " + orderList.getUser().getPhoneNumber());
+			System.out.println();
 		}
 		System.out.println();
 	}
 
-	// 주문 상태 변경
-	public static void updateOrderStatus(int orderId) {
+	// 주문 목록 상세 조회
+	public static void getAllOrderDetailsList() {
 		OrderDetailsDAOImpl orderDetailsDao = new OrderDetailsDAOImpl();
-		orderDetailsDao.updateOrderStatus(orderId);
+		ArrayList<OrderDetailsDTO> orderDetailsDto = orderDetailsDao.getOrderDeatils();
+		System.out.println("----------------주문 목록 상세----------------");
+		for (OrderDetailsDTO orderDetailDto : orderDetailsDto) {
+			System.out.printf("주문 상세 번호: %d\n", orderDetailDto.getOrderDetailId());
+			orderDetailDto.getOrderDetailId(); // 주문 상세 번호
+
+			String orderTime = new SimpleDateFormat("yy/MM/dd").format(orderDetailDto.getCreatedAt());
+			System.out.printf("주문 상품 개수 : %d | 주문 일자 : %s | 배송 상태: %-10s |\n", orderDetailDto.getProductCount(),
+					orderTime, orderDetailDto.getDeliveryStatus());
+			orderDetailDto.getProductCount(); // 상품 개수
+			orderDetailDto.getCreatedAt(); // 주문 일자
+			orderDetailDto.getDeliveryStatus(); // 배송 상태
+
+//			orderDetailDto.getOrderId(); // 주문 아이디
+			System.out.printf("주문한 사용자 이름 : %s | 주문한 사용자 휴대폰 번호 : %s | 주문한 사용자 주소 : %s |\n",
+					orderDetailDto.getUser().getUserName(), orderDetailDto.getUser().getPhoneNumber(),
+					orderDetailDto.getUser().getAddress());
+			orderDetailDto.getUser().getUserName(); // 주문한 사용자 이름
+			orderDetailDto.getUser().getPhoneNumber(); // 주문한 사용자 휴대폰 번호
+			orderDetailDto.getUser().getAddress(); // 주문한 사용자 주소
+
+			System.out.printf("주문한 상품 이름 : %s | 주문한 상품 재고 : %d |\n", orderDetailDto.getProduct().getProductName(),
+					orderDetailDto.getProduct().getProductStock());
+			System.out.println();
+			orderDetailDto.getProduct().getProductName(); // 주문한 상품 이름
+			orderDetailDto.getProduct().getProductStock(); // 주문한 상품 재고
+
+			System.out.println();
+		}
+		System.out.println("----------------주문 목록 상세----------------");
 	}
 
+	// 주문 상태 변경
+	public static void updateOrderStatus(int orderId, String status) {
+		OrderDetailsDAOImpl orderDetailsDao = new OrderDetailsDAOImpl();
+		orderDetailsDao.updateOrderStatus(orderId, status);
+		System.out.println("배송 정보 업데이트가 완료되었습니다.");
+	}
+
+	// 번호 선택
 	public static int selectNumber() {
 		int n = sc.nextInt();
 		sc.nextLine();

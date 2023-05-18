@@ -17,4 +17,7 @@ public class OrderDetailsDTO {
 	String deliveryStatus;
 	Timestamp createdAt;
 	Timestamp updatedAt;
+	// ----------------------
+	ProductsDTO product;
+	UsersDTO user;
 }

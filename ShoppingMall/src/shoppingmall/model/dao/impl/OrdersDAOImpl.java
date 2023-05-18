@@ -105,22 +105,22 @@ public class OrdersDAOImpl implements OrdersDAO {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		ArrayList<OrdersDTO> ordersList = new ArrayList<>();
-		OrdersDTO ordersDto = new OrdersDTO();
 
-		String sql = "SELECT o.orderId, o.userId, o.totalPrice, us.phoneNumber, us.address " + "FROM ORDERS o "
-				+ "JOIN (SELECT u.userId, u.phoneNumber, a.address FROM USERS u JOIN ADDRESSES a ON u.userId = a.userId) us "
-				+ "ON o.userId = us.userId";
+		String sql = "SELECT o.orderId, o.userId, o.totalPrice, o.address, u.userName, u.phoneNumber "
+				+ "FROM ORDERS o JOIN USERS u ON o.userId = u.userId ORDER BY ORDERID";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
 			rs = stmt.executeQuery();
 			while (rs.next()) {
+				OrdersDTO ordersDto = new OrdersDTO();
 				ordersDto.setOrderId(rs.getInt("orderId"));
 				ordersDto.setUserId(rs.getString("userId"));
 				ordersDto.setTotalPrice(rs.getInt("totalPrice"));
 				UsersDTO u = new UsersDTO();
-				u.setPhoneNumber(rs.getString("phoneNumber"));
 				u.setAddress(rs.getString("address"));
+				u.setUserName(rs.getString("userName"));
+				u.setPhoneNumber(rs.getString("phoneNumber"));
 				ordersDto.setUser(u);
 
 				ordersList.add(ordersDto);

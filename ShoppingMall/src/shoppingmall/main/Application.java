@@ -82,29 +82,50 @@ public class Application {
 							// 5. 배송 목록 조회
 							case 5:
 								System.out.println("배송 목록 조회 페이지 입니다.");
+								System.out.println();
+
 								System.out.println("1. 주문 목록 조회 | 2. 주문 상태 변경 | 3. 뒤로 가기");
+								System.out.print("번호를 입력하세요: ");
 								int n = sc.nextInt();
 								sc.nextLine();
-
 								System.out.println();
 								// 주문 목록 조회
 								if (n == 1) {
 									MainFunction.getAllOrderList();
+									System.out.println("1. 주문 상세 조회 | 2. 뒤로 가기");
+									System.out.print("번호를 입력하세요: ");
+									int r = sc.nextInt();
+									sc.nextLine();
+									System.out.println();
+									// 주문 상세 조회
+									if (r == 1) {
+										MainFunction.getAllOrderDetailsList();
+									}
+									// 뒤로가기
+									else if (r == 2) {
+										System.out.println("뒤로 가기를 눌렀습니다.");
+									}
+									// 잘못 입력
+									else {
+										System.out.println("숫자를 잘못 입력하였습니다.");
+									}
 								}
 								// 주문 상태 변경
 								else if (n == 2) {
-									MainFunction.getAllOrderList();
-									System.out.println("주문 상태를 변경할 주문 번호를 입력하세요: ");
+									MainFunction.getAllOrderDetailsList();
+									System.out.print("주문 상태를 변경할 주문 상세 번호를 입력하세요: ");
 									int orderId = sc.nextInt();
 									sc.nextLine();
-									MainFunction.updateOrderStatus(orderId);
+									System.out.println("주문 상태를 입력하세요: ");
+									String status = sc.nextLine();
+									MainFunction.updateOrderStatus(orderId, status);
 								}
 								// 뒤로 가기
 								else if (n == 3) {
 									System.out.println("뒤로 가기를 눌렀습니다.");
 									// break에 걸림
 								} else {
-									System.out.println("잘못 입력하였습니다.");
+									System.out.println("숫자를 잘못 입력하였습니다.");
 								}
 								System.out.println();
 								break;

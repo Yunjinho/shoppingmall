@@ -7,6 +7,8 @@ import shoppingmall.model.dto.OrderDetailsDTO;
 public interface OrderDetailsDAO {
 	ArrayList<OrderDetailsDTO> getUserOrderProducts(int orderDetailId); // 사용자 주문 상품 조회
 
+	ArrayList<OrderDetailsDTO> getOrderDeatils();
+
 	int insertOrderProduct(OrderDetailsDTO orderDetailsDto); // 사용자 상품 주문
 
 	int updateOrderProductfromUser(OrderDetailsDTO orderDetailsDto); // 사용자 주문
@@ -15,5 +17,6 @@ public interface OrderDetailsDAO {
 
 	int deleteOrderProduct(int orderDetailId); // 사용자 주문 삭제
 
-	int updateOrderStatus(int orderId);
+	int updateOrderStatus(int orderId, String status); // 주문 상태 수정
+
 }

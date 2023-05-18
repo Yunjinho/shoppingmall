@@ -9,12 +9,14 @@ import java.util.ArrayList;
 import shoppingmall.model.ShoppingMallDataSource;
 import shoppingmall.model.dao.OrderDetailsDAO;
 import shoppingmall.model.dto.OrderDetailsDTO;
+import shoppingmall.model.dto.ProductsDTO;
+import shoppingmall.model.dto.UsersDTO;
 
 public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 
 	@Override
 	public ArrayList<OrderDetailsDTO> getUserOrderProducts(int orderId) {
-		ArrayList<OrderDetailsDTO> list = new ArrayList<OrderDetailsDTO>();
+		ArrayList<OrderDetailsDTO> orderDetailsList = new ArrayList<OrderDetailsDTO>();
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -32,7 +34,7 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 				orderDetailsDto.setDeliveryStatus(rs.getString("deliveryStatus"));
 				orderDetailsDto.setCreatedAt(rs.getTimestamp("createdAt"));
 				orderDetailsDto.setUpdatedAt(rs.getTimestamp("updatedAt"));
-				list.add(orderDetailsDto);
+				orderDetailsList.add(orderDetailsDto);
 			}
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -41,7 +43,7 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 			ShoppingMallDataSource.closeResultSet(rs);
 			ShoppingMallDataSource.closeConnection(con);
 		}
-		return list;
+		return orderDetailsList;
 	}
 
 	@Override
@@ -131,13 +133,64 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 		return count;
 	}
 
-	public int updateOrderStatus(int orderId) {
+	@Override
+	public ArrayList<OrderDetailsDTO> getOrderDeatils() {
+		ArrayList<OrderDetailsDTO> orderDetailsList = new ArrayList<OrderDetailsDTO>();
+		OrderDetailsDTO orderDetailsDto = new OrderDetailsDTO();
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "";
+		ResultSet rs = null;
+		String sql = "SELECT od.orderDetailId, od.orderId, od.productCount, od.deliveryStatus, od.createdAt, us.userId, us.userName, us.address, us.phoneNumber, p.productId, p.productName, p.productStock "
+				+ "FROM ORDERDETAILS od JOIN PRODUCTS p ON od.productId = p.productId "
+				+ "JOIN (SELECT o.orderId, o.userId, o.address, o.totalPrice, u.userName, u.phoneNumber FROM ORDERS o JOIN USERS u ON o.userId = u.userId) us "
+				+ "ON us.orderId = od.orderId ORDER BY od.createdAt";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				UsersDTO u = new UsersDTO();
+				u.setUserId(rs.getString("userId"));
+				u.setUserName(rs.getString("userName"));
+				u.setPhoneNumber(rs.getString("phoneNumber"));
+				u.setAddress(rs.getString("address"));
+
+				ProductsDTO p = new ProductsDTO();
+				p.setProductId(rs.getInt("productId"));
+				p.setProductName(rs.getString("productName"));
+				p.setProductStock(rs.getInt("productStock"));
+
+				orderDetailsDto.setOrderDetailId(rs.getInt("orderDetailId"));
+				orderDetailsDto.setOrderId(rs.getInt("orderId"));
+				orderDetailsDto.setProductCount(rs.getInt("productCount"));
+				orderDetailsDto.setDeliveryStatus(rs.getString("deliveryStatus"));
+				orderDetailsDto.setCreatedAt(rs.getTimestamp("createdAt"));
+
+				orderDetailsDto.setUser(u);
+				orderDetailsDto.setProduct(p);
+				orderDetailsList.add(orderDetailsDto);
+			}
+		} catch (SQLException e) {
+			// TODO: handle exception
+			throw new RuntimeException(e);
+		} finally {
+			ShoppingMallDataSource.closePreparedStatement(stmt);
+			ShoppingMallDataSource.closeResultSet(rs);
+			ShoppingMallDataSource.closeConnection(con);
+		}
+		return orderDetailsList;
+	}
+
+	@Override
+	public int updateOrderStatus(int orderId, String status) {
+		Connection con = null;
+		PreparedStatement stmt = null;
+		String sql = "UPDATE ORDERDETAILS SET DELIVERYSTATUS = ? WHERE ORDERDETAILID = ?";
+		try {
+			con = ShoppingMallDataSource.getConnection();
+			stmt = con.prepareStatement(sql);
+			stmt.setString(1, status);
+			stmt.setInt(2, orderId);
 		} catch (SQLException e) {
 			// TODO: handle exception
 			throw new RuntimeException(e);
