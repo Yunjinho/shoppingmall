@@ -373,6 +373,12 @@ public class Application {
 											while (modifyFlag) {
 												System.out.println(
 														"----------------------[ 카테고리별 상품 보기 ] -> [ 장바구니 수정 ]----------------------");
+												if (cartsList.isEmpty()) {
+													System.out.println();
+													System.out.println("장바구니에 아무것도 없어요~");
+													modifyFlag = false;
+													continue;
+												}
 												System.out.println("1. 상품 수량 수정 | 2. 상품 삭제 | 3. 뒤로 가기");
 												System.out.print("번호를 입력하세요: ");
 												int modifyCommand = sc.nextInt();
