@@ -441,8 +441,8 @@ public class MainFunction {
 				System.out.println();
 				System.out.print("주소 선택: ");
 				int addressNum = sc.nextInt();
-//				orderDaoImpl.insertUserOrderfromProductDetail(productId, LoginSession.getLoginUserId(),
-//						userDto.getAddressDto().get(addressNum - 1).getAddress(), amount);
+				orderDaoImpl.insertUserOrderfromProductDetail(productId, LoginSession.getLoginUserId(),
+						userDto.getAddressDto().get(addressNum - 1).getAddress(), amount);
 			} else {
 				System.out.println("잘못된 선택입니다.");
 			}

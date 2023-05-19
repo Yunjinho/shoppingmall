@@ -58,7 +58,6 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 			stmt.setInt(1, orderDetailsDto.getOrderId());
 			stmt.setInt(2, orderDetailsDto.getProductId());
 			stmt.setInt(3, orderDetailsDto.getProductCount());
-			stmt.setString(4, "상품 준비중");
 			count = stmt.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

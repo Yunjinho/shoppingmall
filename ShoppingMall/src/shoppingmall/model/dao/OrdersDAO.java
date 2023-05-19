@@ -15,6 +15,6 @@ public interface OrdersDAO {
 
 	ArrayList<OrdersDTO> getAllOrders();
 
-//	int insertUserOrderfromProductDetail(int productId, String userId, String address, int amount); // 상품 디테일에서 주문
+	int insertUserOrderfromProductDetail(int productId, String userId, String address, int amount); // 상품 디테일에서 주문
 
 }
