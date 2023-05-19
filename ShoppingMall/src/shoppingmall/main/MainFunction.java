@@ -292,6 +292,7 @@ public class MainFunction {
 			System.out.println("1. 이전 페이지 | 2. 다음 페이지 | 3. 주문 목록 상세 조회 | 4. 뒤로 가기");
 			System.out.print("숫자를 입력하세요: ");
 			int count = sc.nextInt();
+			System.out.println();
 			// 1. 이전 페이지
 			if (count == 1) {
 				if (currentPage == 0) {

@@ -122,40 +122,44 @@ public class Application {
 								case 4:
 									System.out.println(
 											"------------------------- [관리자 페이지] -> [배송 목록 조회] --------------------------");
-									System.out.println(
-											"1.[전체 주문 목록 조회 ] | 2.[전체 주문 상세 목록 조회] | 3.[배송 상태 변경] | 4.[뒤로 가기]");
-									System.out.print("번호를 입력하세요: ");
-									int n = sc.nextInt();
-									sc.nextLine();
-									System.out.println();
-									// 1. 전체 주문 목록 조회
-									if (n == 1) {
-										MainFunction.getAllOrderList();
-									}
-									// 2. 전체 주문 목록 상세 조회
-									else if (n == 2) {
-										MainFunction.getAllOrderDetailsList();
-									}
-									// 배송 상태 변경 By orderId
-									else if (n == 3) {
-										MainFunction.getAllOrderListByPage();
-										System.out.print("배송 상태를 변경할 주문 번호를 입력하세요: ");
-										int orderId = sc.nextInt();
+									boolean orderFlag = true;
+									while (orderFlag) {
+										System.out.println(
+												"1.[전체 주문 목록 조회 ] | 2.[전체 주문 상세 목록 조회] | 3.[배송 상태 변경] | 4.[뒤로 가기]");
+										System.out.print("번호를 입력하세요: ");
+										int n = sc.nextInt();
 										sc.nextLine();
-
-										System.out.print("배송 상태를 입력하세요 [1.상품 준비중 | 2.배송중 | 3.배송 완료] : ");
-										int statusId = sc.nextInt();
-										sc.nextLine();
-
 										System.out.println();
-										MainFunction.updateOrderStatus(orderId, statusId);
-									}
-									// 뒤로 가기
-									else if (n == 4) {
-										System.out.println("뒤로 가기를 눌렀습니다.");
-										// break에 걸림
-									} else {
-										System.out.println("숫자를 잘못 입력하였습니다.");
+										// 1. 전체 주문 목록 조회
+										if (n == 1) {
+											MainFunction.getAllOrderList();
+										}
+										// 2. 전체 주문 상세 목록 조회
+										else if (n == 2) {
+											MainFunction.getAllOrderDetailsList();
+										}
+										// 배송 상태 변경 By orderId
+										else if (n == 3) {
+											MainFunction.getAllOrderListByPage();
+											System.out.print("배송 상태를 변경할 주문 번호를 입력하세요: ");
+											int orderId = sc.nextInt();
+											sc.nextLine();
+
+											System.out.print("배송 상태를 입력하세요 [1.상품 준비중 | 2.배송중 | 3.배송 완료] : ");
+											int statusId = sc.nextInt();
+											sc.nextLine();
+
+											System.out.println();
+											MainFunction.updateOrderStatus(orderId, statusId);
+										}
+										// 뒤로 가기
+										else if (n == 4) {
+											System.out.println("뒤로 가기를 눌렀습니다.");
+											break;
+											// break에 걸림
+										} else {
+											System.out.println("숫자를 잘못 입력하였습니다.");
+										}
 									}
 									System.out.println();
 									break;
