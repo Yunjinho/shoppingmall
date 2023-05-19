@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import shoppingmall.model.ShoppingMallDataSource;
 import shoppingmall.model.dao.OrderDetailsDAO;
@@ -196,6 +197,45 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 			ShoppingMallDataSource.closeConnection(con);
 		}
 		return count;
+	}
+
+	@Override
+	public List<OrderDetailsDTO> getOrderListForUser(String deliverySatuts, String userId) {
+		List<OrderDetailsDTO> orderDetailsList=new ArrayList<OrderDetailsDTO>();
+		
+		Connection con= null;
+		PreparedStatement stmt=null;
+		ResultSet rs=null;
+		String sql="SELECT p.productname AS productname, p.productprice AS productprice, od.productcount AS productcount,od.deliverystatus AS deliverystatus,od.createdAT AS createdAT FROM orderDetails od "+
+					"join orders o on od.orderid=o.orderid "+
+					"join products p on od.productid=p.productId "+
+					"WHERE od.deliverystatus=? AND o.userId=? order by createdAt";
+		try {
+			con=ShoppingMallDataSource.getConnection();
+			stmt=con.prepareStatement(sql);
+			stmt.setString(1, deliverySatuts);
+			stmt.setNString(2, userId);
+			rs=stmt.executeQuery();
+			while(rs.next()) {
+				OrderDetailsDTO orderDetailsDto=new OrderDetailsDTO();
+				ProductsDTO productDto=new ProductsDTO();
+				productDto.setProductPrice(rs.getInt("productprice"));
+				productDto.setProductName(rs.getString("productname"));
+				orderDetailsDto.setProductDto(productDto);
+				orderDetailsDto.setProductCount(rs.getInt("productcount"));
+				orderDetailsDto.setDeliveryStatus(rs.getString("deliverystatus"));
+				orderDetailsDto.setCreatedAt(rs.getTimestamp("createdAt"));
+				orderDetailsList.add(orderDetailsDto);
+				
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}finally {
+			ShoppingMallDataSource.closeConnection(con);
+			ShoppingMallDataSource.closePreparedStatement(stmt);
+			ShoppingMallDataSource.closeResultSet(rs);
+		}
+		return orderDetailsList;
 	}
 
 }
