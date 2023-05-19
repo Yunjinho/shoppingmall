@@ -116,6 +116,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 				productDto.setProductStock(rs.getInt("productStock")); // 상품 재고
 				productDto.setProductInfo(rs.getString("productinfo")); // 상품 정보
 				productDto.setUpdatedAt(rs.getTimestamp("updatedAt")); // 최신 등록일
+				productDto.setProductStatus(rs.getInt("productStatus"));//판매상태
 			}
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

@@ -9,7 +9,9 @@ public interface CartsDAO {
 
 	int insertCart(CartsDTO cartsDto); // 장바구니 담기
 
-	int deleteFromCart(int cartId); // 장바구니에서 삭제
+	int deleteCartProduct(int cartId); // 장바구니에서 상품 한개 삭제
+
+	int deleteCartProducts(String userId); // 장바구니에서 상품 구매 후 장바구니 비우기
 
 	int updateFromCart(CartsDTO cartsDto); // 장바구니 업데이트
 	

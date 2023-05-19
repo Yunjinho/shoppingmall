@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import shoppingmall.model.ShoppingMallDataSource;
 import shoppingmall.model.dao.CartsDAO;
 import shoppingmall.model.dto.CartsDTO;
+import shoppingmall.model.dto.ProductsDTO;
 
 public class CartsDAOImpl implements CartsDAO {
 
@@ -17,7 +18,7 @@ public class CartsDAOImpl implements CartsDAO {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		String sql = "SELECT * FROM CARTS WHERE USERID=?";
+		String sql = "SELECT * FROM carts c JOIN products p ON c.productid=p.productid WHERE USERID=?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -25,12 +26,18 @@ public class CartsDAOImpl implements CartsDAO {
 			rs = stmt.executeQuery();
 			while (rs.next()) {
 				CartsDTO cartsDto = new CartsDTO();
+				ProductsDTO productDto =new ProductsDTO();
 				cartsDto.setCartId(rs.getInt("cartId"));
 				cartsDto.setUserId(rs.getString("userId"));
 				cartsDto.setProductId(rs.getInt("productId"));
 				cartsDto.setProductCount(rs.getInt("productCount"));
 				cartsDto.setCreatedAt(rs.getTimestamp("createdAt"));
 				cartsDto.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
+				
+				productDto.setProductStatus(rs.getInt("productstatus"));
+				productDto.setProductName(rs.getString("productName"));
+				productDto.setProductPrice(rs.getInt("productPrice"));
+				cartsDto.setProductDto(productDto);
 				list.add(cartsDto);
 			}
 		} catch (Exception e) {
@@ -48,7 +55,7 @@ public class CartsDAOImpl implements CartsDAO {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "INSERT INTO CARTS VALUES(CARTS_SEQ.NEXTVAL,?,?,?,SYSDATE,SYSDATE)";
+		String sql = "INSERT INTO CARTS(cartId,userId,productId,productCount) VALUES(CARTS_SEQ.NEXTVAL,?,?,?)";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -64,9 +71,9 @@ public class CartsDAOImpl implements CartsDAO {
 		}
 		return count;
 	}
-
+	//장바구니에서 상품 한개 삭제
 	@Override
-	public int deleteFromCart(int cartId) {
+	public int deleteCartProduct(int cartId) {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
@@ -129,6 +136,26 @@ public class CartsDAOImpl implements CartsDAO {
 			ShoppingMallDataSource.closeResultSet(rs);
 		}
 		return totalPrice;
+	}
+	//장바구니에서 상품 일괄 구매 후 카트 전체 삭제
+	@Override
+	public int deleteCartProducts(String userId) {
+		int count = 0;
+		Connection con = null;
+		PreparedStatement stmt = null;
+		String sql = "DELETE FROM carts WHERE userId=?";
+		try {
+			con = ShoppingMallDataSource.getConnection();
+			stmt = con.prepareStatement(sql);
+			stmt.setString(1, userId);
+			count = stmt.executeUpdate();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			ShoppingMallDataSource.closePreparedStatement(stmt);
+			ShoppingMallDataSource.closeConnection(con);
+		}
+		return count;
 	}
 
 }

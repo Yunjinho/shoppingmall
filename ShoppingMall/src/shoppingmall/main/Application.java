@@ -1,7 +1,10 @@
 package shoppingmall.main;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
+import shoppingmall.model.dto.CartsDTO;
 import shoppingmall.model.dto.UsersDTO;
 
 public class Application {
@@ -200,7 +203,7 @@ public class Application {
 								System.out.println();
 								UsersDTO userDto = null;
 								try {
-									userDto = MainFunction.inquireUserInfo(LoginSession.getLoginUserId());
+									userDto = MainFunction.viewUserInfo(LoginSession.getLoginUserId());
 								} catch (RuntimeException e) {
 									System.out.println(e.getMessage());
 								}
@@ -251,48 +254,50 @@ public class Application {
 							case 2: {
 								System.out.println("주소지 추가/수정 페이지 입니다.");
 								System.out.println();
-								/*
-								 * boolean addressFlag = true; while(addressFlag)
-								 */
-								System.out.println("1. 주소 목록 조회  | 2. 주소지 추가 | 3.주소지 수정 | 4. 주소지 삭제 | 5. 뒤로 가기");
-								System.out.print("번호를 입력하세요: ");
-								int addressCommand = sc.nextInt();
-								System.out.println();
-								// 뒤로가기 하려면 if문 / 상관없으면 switch
-								// 1.주소 목록 조회
-								if (addressCommand == 1) {
-									MainFunction.inquireAddress(LoginSession.getLoginUserId());
-								}
-								// 2. 주소지 추가
-								else if (addressCommand == 2) {
-									MainFunction.addAddress(LoginSession.getLoginUserId());
-								}
-								// 3. 주소지 수정
-								else if (addressCommand == 3) {
-									MainFunction.modifyAddress(LoginSession.getLoginUserId());
-								}
-								// 4. 주소지 삭제
-								else if (addressCommand == 4) {
-									MainFunction.deleteAddress(LoginSession.getLoginUserId());
-								}
-								// 5. 뒤로 가기
-								else {
-									// addressFlag = false;
+								
+								boolean addressFlag = true; 
+								while(addressFlag) {
+									System.out.println("1. 주소 목록 조회  | 2. 주소지 추가 | 3.주소지 수정 | 4. 주소지 삭제 | 5. 뒤로 가기");
+									System.out.print("번호를 입력하세요: ");
+									int addressCommand = sc.nextInt();
+									sc.nextLine();
+									System.out.println();
+									// 뒤로가기 하려면 if문 / 상관없으면 switch
+									// 1.주소 목록 조회
+									if (addressCommand == 1) {
+										MainFunction.viewAddress(LoginSession.getLoginUserId());
+									}
+									// 2. 주소지 추가
+									else if (addressCommand == 2) {
+										MainFunction.addAddress(LoginSession.getLoginUserId());
+									}
+									// 3. 주소지 수정
+									else if (addressCommand == 3) {
+										MainFunction.modifyAddress(LoginSession.getLoginUserId());
+									}
+									// 4. 주소지 삭제
+									else if (addressCommand == 4) {
+										MainFunction.deleteAddress(LoginSession.getLoginUserId());
+									}
+									// 5. 뒤로 가기
+									else {
+										addressFlag = false;
+									}
 								}
 								break;
 							}
 							case 3: {
 								System.out.println("카테고리별 상품 보기 페이지입니다.");
 								System.out.println();
-								int categoryNumber = MainFunction.inquireProductsCategory();
+								int categoryNumber = MainFunction.viewProductsCategory();
 								int currentPage = 0;
 								int beforePage = 0;
 								if (categoryNumber > -1) {
 									boolean flag = true;
 									while (flag) {
-
 										boolean existProduct = MainFunction.viewProductsByCategory(categoryNumber,
 												currentPage);
+										System.out.println();
 										// 페이징 처리
 										if (existProduct) {
 											beforePage = currentPage;
@@ -341,42 +346,62 @@ public class Application {
 								break;
 							}
 							case 4: {
-								System.out.println("카테고리별 상품 보기 페이지입니다.");
+								System.out.println("장바구니 목록 조회 페이지 입니다.");
 								System.out.println();
-
-								// index = categoryId
-								System.out.println("1. 상의 | 2. 하의 | 3. 신발  ");
+								//조회 페이지 들어가면 바로 카트 리스트 출력
+								boolean cartFlag=true;
+								while(cartFlag) {
+									
+									List<CartsDTO> cartList=new ArrayList<CartsDTO>();
+									cartList=MainFunction.viewCartList(LoginSession.getLoginUserId());
+								
+									System.out.println();
+									System.out.println("1. 장바구니 수정 | 2. 장바구니 상품 결제 | 3. 뒤로 가기");
+									System.out.print("번호를 입력하세요: ");
+									int cartCommand = sc.nextInt();
+									System.out.println();
+									// 1. 장바구니 수정
+									if (cartCommand == 1) {
+										boolean modifyFlag=true;
+										while(modifyFlag) {
+											System.out.println();
+											System.out.println("1. 상품 수량 수정 | 2. 상품 삭제 | 3. 뒤로 가기");
+											System.out.print("번호를 입력하세요: ");
+											int modifyCommand = sc.nextInt();
+											if(modifyCommand==1) {
+												MainFunction.modifyCartProductCount(LoginSession.loginUserId,cartList);
+											}else if(modifyCommand==2) {
+												MainFunction.deleteCartProduct(LoginSession.loginUserId,cartList);
+											}else if(modifyCommand==3) {
+												modifyFlag=false;
+											}else {
+												System.out.println("잘못된 입력입니다.");
+												System.out.println();
+											}
+										}
+									}
+									// 2. 장바구니 상품결제
+									else if (cartCommand == 2) {
+										if(cartList.isEmpty()) {
+											System.out.println("장바구니에 아무것도 없어요~");
+											continue;
+										}
+										MainFunction.orderFromCart(LoginSession.loginUserId,cartList);
+									}
+									// 3. 뒤로가기
+									else if (cartCommand == 3) {	
+										cartFlag=false;
+									}else {
+										System.out.println("잘못된 입력입니다.");
+										System.out.println();
+									}
+								}
 								break;
 							}
 							case 5: {
-								System.out.println("장바구니 목록 조회 페이지 입니다.");
-								System.out.println();
-								// boolean cartFlag = true; while(cartFlag)
-								System.out.println("1. 장바구니 조회 | 2. 장바구니 수정 | 3. 장바구니 상품 결제 | 4. 뒤로 가기");
-								System.out.print("번호를 입력하세요: ");
-								int cartCommand = sc.nextInt();
-								System.out.println();
-								// 1. 장바구니 조회
-								if (cartCommand == 1) {
-
-								}
-								// 2. 장바구니 수정
-								else if (cartCommand == 2) {
-
-								}
-								// 3. 장바구니 상품 결제
-								else if (cartCommand == 3) {
-
-								}
-								// 4. 뒤로 가기
-								else if (cartCommand == 4) {
-									// cartFlag = false;
-								}
-								break;
-							}
-							case 6: {
 								System.out.println("로그아웃 되었습니다.");
 								System.out.println();
+								userFlag=false;
 								LoginSession.loginUserId = "";
 								break;
 							}
