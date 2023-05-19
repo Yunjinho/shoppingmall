@@ -13,9 +13,9 @@ public interface ProductsDAO {
 
 	int insertProduct(ProductsDTO productDto);// 상품 등록
 
-	int deleteProduct(int productId);// 상품 삭제
-
 	int updateProductInfo(ProductsDTO produdctDto);// 상품 수정
 
 	int updateProductStock(int productId, int productStock);// 상품 수량 수정
+
+	int updateProductStatus(int updateProductId, int productStatus); // 상품 상태 변경
 }
