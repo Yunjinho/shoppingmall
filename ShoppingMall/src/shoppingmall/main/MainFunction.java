@@ -25,7 +25,7 @@ public class MainFunction {
 	static UsersDAOImpl userDaoImpl = new UsersDAOImpl();
 	static AddressesDAOImpl addressDaoImpl = new AddressesDAOImpl();
 	static CategoriesDAOImpl categoriesDaoImpl = new CategoriesDAOImpl();
-	static ProductsDAOImpl productDaoImple = new ProductsDAOImpl();
+	static ProductsDAOImpl productDaoImpl = new ProductsDAOImpl();
 	static CartsDAOImpl cartDaoImpl = new CartsDAOImpl();
 	static OrdersDAOImpl orderDaoImpl = new OrdersDAOImpl();
 
@@ -167,8 +167,8 @@ public class MainFunction {
 //		System.out.println("상품 이름 :");
 		return count;
 	}
-
-	public static UsersDTO inquireUserInfo(String userId) {
+	//유저 정보 조회
+	public static UsersDTO viewUserInfo(String userId) {
 		UsersDTO userDto = null;
 		try {
 			userDto = userDaoImpl.getUserInfo(userId);// 로그인한 정보 얻어오기
@@ -182,7 +182,7 @@ public class MainFunction {
 		}
 		return userDto;
 	}
-
+	//유저 정보 수정
 	public static void modifyUserInfo(UsersDTO userDto) {
 		try {
 			userDaoImpl.updateUsersInformation(userDto);// 입력받은 데이터로 정보 수정
@@ -191,8 +191,8 @@ public class MainFunction {
 		}
 
 	}
-
-	public static void inquireAddress(String userId) {
+	//주소목록 조회
+	public static void viewAddress(String userId) {
 		UsersDTO userDto = new UsersDTO();
 		try {
 			userDto.setAddressDto(addressDaoImpl.getUserAddresses(userId));
@@ -318,7 +318,7 @@ public class MainFunction {
 		sc.nextLine();
 		return n;
 	}
-
+	//주소 추가
 	public static void addAddress(String userId) {
 		System.out.print("주소 입력: ");
 		sc.nextLine();
@@ -329,7 +329,7 @@ public class MainFunction {
 			System.out.println(e.getMessage());
 		}
 	}
-
+	//주소 수정
 	public static void modifyAddress(String userId) {
 		UsersDTO userDto = new UsersDTO();
 		AddressesDTO addressDto = new AddressesDTO();
@@ -353,7 +353,7 @@ public class MainFunction {
 			System.out.println(e.getMessage());
 		}
 	}
-
+	//주소 삭제
 	public static void deleteAddress(String userId) {
 		UsersDTO userDto = new UsersDTO();
 		AddressesDTO addressDto = new AddressesDTO();
@@ -373,8 +373,8 @@ public class MainFunction {
 			System.out.println(e.getMessage());
 		}
 	}
-
-	public static int inquireProductsCategory() {
+	//상품 카테고리 보기
+	public static int viewProductsCategory() {
 		List<CategoriesDTO> list = new ArrayList<CategoriesDTO>();
 		list = categoriesDaoImpl.getCategoriesNames();
 		for (int i = 0; i < list.size(); i++) {
@@ -394,10 +394,10 @@ public class MainFunction {
 
 		return categoryNumber;
 	}
-
+	//카테고리별 상품보기
 	public static boolean viewProductsByCategory(int categoryNumber, int pageNum) {
 		List<ProductsDTO> list = new ArrayList<ProductsDTO>();
-		list = productDaoImple.getProductListByCategory(categoryNumber, pageNum);
+		list = productDaoImpl.getProductListByCategory(categoryNumber, pageNum);
 		if (list.size() == 0) {
 			return false;
 		}
@@ -410,10 +410,10 @@ public class MainFunction {
 		}
 		return true;
 	}
-
+	//상품 디테일 보기
 	public static void viewProductDetail(int productId) {
 		ProductsDTO productDto = new ProductsDTO();
-		productDto = productDaoImple.getProductDetail(productId);
+		productDto = productDaoImpl.getProductDetail(productId);
 		System.out.println("상품 번호 |  상품 이름           | 상품 가격  | 상품 재고  | 상품 정보   |  상품 상태    |");
 		System.out.printf("%d\t  %-10s\t %d\t %d\t %s\t %-10s", productDto.getProductId(), productDto.getProductName(),
 				productDto.getProductPrice(), productDto.getProductStock(), "판매중", productDto.getProductInfo());
@@ -452,5 +452,111 @@ public class MainFunction {
 		}
 
 	}
+	//카트 리스트 보기
+	public static List<CartsDTO> viewCartList(String userId) {
+		List<CartsDTO> cartList = new ArrayList<CartsDTO>();
+		cartList = cartDaoImpl.getUsersCartList(userId);
+		if(cartList.size()>0) {
+			System.out.println("카트 번호 |   상품 이름      |   구매 수량      |   상품 가격     |  상품   상태  |");
+			for(int i=0;i<cartList.size();i++) {
+				System.out.printf("%d\t  %-10s\t %d\t %d\t\t %-20s\n",
+						(i+1),cartList.get(i).getProductDto().getProductName(),cartList.get(i).getProductCount(),
+						cartList.get(i).getProductDto().getProductPrice(),cartList.get(i).getProductDto().getProductStatus()==1?"판매 중":"판매 중지");
+			}
+			int totalPrice=0;
+			for(CartsDTO l:cartList) {
+				totalPrice+=cartDaoImpl.getCartTotalPrice(l.getCartId());
+			}
+			System.out.println("총 금액: "+totalPrice);
+		}else {
+			System.out.println("텅~");
+		}
+		return cartList;
+	}
+	//상품 수량 수정
+	public static void modifyCartProductCount(String loginUserId, List<CartsDTO> cartList) {
+		CartsDTO cartDto=new CartsDTO();
+		System.out.println("수정하실 카트 번호와 수량을 입력하세요");
+		System.out.print("카트 번호 : ");
+		int cartNumber=sc.nextInt();
+		if(cartNumber<1 || cartList.size()<cartNumber) {
+			System.out.println("잘못 입력하셨습니다 :)");
+			System.out.println();
+			return;
+		}
+		cartDto=cartList.get(cartNumber-1);
+		
+		System.out.print("수량 : ");
+		int productCount=sc.nextInt();
+		
+		//입력받은 수량이 음수가 되는건 아닌지 체크
+		if(productCount<1) {
+			System.out.println("수량을 다시 확인해 주세요 :)");
+		}else {
+			cartDto.setProductCount(productCount);
+			cartDaoImpl.updateFromCart(cartDto);
+		}
+	}
+	//상품  삭제
+	public static void deleteCartProduct(String loginUserId, List<CartsDTO> cartList) {
+		CartsDTO cartDto=new CartsDTO();
+		System.out.println("삭제하실 카트 번호를 입력해주세요.");
+		System.out.print("카트 번호: ");
+		int cartNumber=sc.nextInt();
+		if(cartNumber<1 || cartList.size()<cartNumber) {
+			System.out.println("잘못 입력하셨습니다 :)");
+			System.out.println();
+			return;
+		}
+		cartDto=cartList.get(cartNumber-1);
+		cartDaoImpl.deleteCartProduct(cartDto.getCartId());
+	}
 
+	public static void orderFromCart(String userId, List<CartsDTO> cartList) {
+		UsersDTO userDto = new UsersDTO();
+		try {
+			userDto.setAddressDto(addressDaoImpl.getUserAddresses(userId));
+		} catch (RuntimeException e) {
+			System.out.println(e.getMessage());
+		}
+		for (int i=0;i<userDto.getAddressDto().size();i++) {
+			System.out.print((i+1)+". 주소: " + userDto.getAddressDto().get(i).getAddress() + "\n");
+		}
+		System.out.println();
+		System.out.println("주소를 선택해 주세요: ");
+		System.out.print("번호 입력: ");
+		int addressNumber=sc.nextInt();
+		if(addressNumber<1||userDto.getAddressDto().size()<addressNumber) {
+			System.out.println("잘못된 입력입니다.");
+			return;
+		}
+		//상품 수량 체크
+		if(checkProductStock(cartList)) {
+			//오더테이블에 넣기
+			orderDaoImpl.insertUserOrderfromCart(
+					userId, userDto.getAddressDto().get(addressNumber-1).getAddress(),
+					cartDaoImpl.getCartTotalPrice(cartList.get(0).getCartId()),cartList);
+			// 넣은 계정의 카트는 삭제
+			cartDaoImpl.deleteCartProducts(userId);
+		}
+	}
+	
+	//구매목록에 넣기전 수량 체크
+	private static boolean checkProductStock(List<CartsDTO> cartList) {
+		ProductsDTO productDto=new ProductsDTO();
+		//카트 리스트 순회
+		for(CartsDTO l:cartList) {
+			productDto=productDaoImpl.getProductDetail(l.getProductId());
+			if(productDto.getProductStatus()==0) {
+				System.out.println(productDto.getProductName()+"의 상품은 판매 중지 상태입니다. 장바구니에서 제거해주세요.");
+				return false;
+			}else {
+				if(productDto.getProductStock()-l.getProductCount()<0) {
+					System.out.println(productDto.getProductName()+"의 상품의 재고가"+Math.abs(productDto.getProductStock()-l.getProductCount())+"개 부족합니다 . 장바구니에서 수량을 수정해주세요.");
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 }

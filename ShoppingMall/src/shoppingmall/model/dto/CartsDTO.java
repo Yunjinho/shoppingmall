@@ -18,4 +18,5 @@ public class CartsDTO {
 	Timestamp updatedAt;
 	//-----------------
 	int cartTotalPrice;
+	ProductsDTO productDto;
 }
