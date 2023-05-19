@@ -15,7 +15,7 @@ public class Application {
 		try {
 
 			while (true) {
-				System.out.println("1. 회원가입 | 2. 로그인 | 3. 나가기");
+				System.out.println("1.[회원가입] | 2.[로그인] | 3.[나가기]");
 				System.out.print("번호 입력: ");
 				int cmd = sc.nextInt();
 				switch (cmd) {
@@ -39,7 +39,7 @@ public class Application {
 							// 상품 등록/수정/삭제
 							while (adminFlag) {
 								System.out.println("---------------------------관리자 페이지---------------------------");
-								System.out.println("1. 상품 목록 조회 | 2. 상품 등록 | 3. 상품 수정 | 4. 배송 목록 조회 | 5. 로그 아웃 ");
+								System.out.println("1.[상품 목록 조회] | 2.[상품 등록] | 3.[상품 수정] | 4.[배송 목록 조회] | 5.[로그 아웃] ");
 								System.out.print("번호를 입력하세요: ");
 								int adminCommand = sc.nextInt();
 								sc.nextLine();
@@ -122,37 +122,23 @@ public class Application {
 								case 4:
 									System.out.println(
 											"------------------------- [관리자 페이지] -> [배송 목록 조회] --------------------------");
-									System.out.println("1.[전체 주문 목록 조회 ] | 2.[배송 상태 변경] | 3.[뒤로 가기]");
+									System.out.println(
+											"1.[전체 주문 목록 조회 ] | 2.[전체 주문 상세 목록 조회] | 3.[배송 상태 변경] | 4.[뒤로 가기]");
 									System.out.print("번호를 입력하세요: ");
 									int n = sc.nextInt();
 									sc.nextLine();
 									System.out.println();
-									// 주문 목록 조회
+									// 1. 전체 주문 목록 조회
 									if (n == 1) {
 										MainFunction.getAllOrderList();
-										System.out.println("1.[주문 상세 조회] | 2.[뒤로 가기]");
-										System.out.print("번호를 입력하세요: ");
-										int r = sc.nextInt();
-										sc.nextLine();
-										System.out.println();
-										// 주문 상세 조회
-										if (r == 1) {
-											MainFunction.getAllOrderDetailsList();
-										}
-										// 뒤로가기
-										else if (r == 2) {
-											System.out.println("뒤로 가기를 눌렀습니다.");
-											System.out.println();
-										}
-										// 잘못 입력
-										else {
-											System.out.println("숫자를 잘못 입력하였습니다.");
-											System.out.println();
-										}
 									}
-									// 배송 상태 변경 By order
+									// 2. 전체 주문 목록 상세 조회
 									else if (n == 2) {
-										MainFunction.getAllOrderList();
+										MainFunction.getAllOrderDetailsList();
+									}
+									// 배송 상태 변경 By orderId
+									else if (n == 3) {
+										MainFunction.getAllOrderListByPage();
 										System.out.print("배송 상태를 변경할 주문 번호를 입력하세요: ");
 										int orderId = sc.nextInt();
 										sc.nextLine();
@@ -165,7 +151,7 @@ public class Application {
 										MainFunction.updateOrderStatus(orderId, statusId);
 									}
 									// 뒤로 가기
-									else if (n == 3) {
+									else if (n == 4) {
 										System.out.println("뒤로 가기를 눌렀습니다.");
 										// break에 걸림
 									} else {
@@ -173,7 +159,7 @@ public class Application {
 									}
 									System.out.println();
 									break;
-								// 6. 로그아웃
+								// 5. 로그아웃
 								case 5:
 									System.out.println("로그아웃 되었습니다.");
 									System.out.println();
@@ -301,8 +287,9 @@ public class Application {
 									if (categoryNumber > -1) {
 										boolean flag = true;
 										while (flag) {
-											List<ProductsDTO> productList=new ArrayList<ProductsDTO>(); 
-											productList = MainFunction.viewProductsByCategory(categoryNumber,currentPage);
+											List<ProductsDTO> productList = new ArrayList<ProductsDTO>();
+											productList = MainFunction.viewProductsByCategory(categoryNumber,
+													currentPage);
 											System.out.println();
 											// 페이징 처리
 											if (!productList.isEmpty()) {
@@ -317,13 +304,14 @@ public class Application {
 														System.out.print("상품 번호를 입력하세요: ");
 														int selectProduct = sc.nextInt();
 														System.out.println();
-														//상품번호 범위 초과
-														if(selectProduct<1 || productList.size()<selectProduct) {
+														// 상품번호 범위 초과
+														if (selectProduct < 1 || productList.size() < selectProduct) {
 															System.out.println("잘못 입력하셨습니다.");
 															System.out.println();
 															continue;
 														}
-														MainFunction.viewProductDetail(productList.get(selectProduct-1));
+														MainFunction
+																.viewProductDetail(productList.get(selectProduct - 1));
 													} else if (pageCommand == 3) {
 														flag = false;
 													} else {
@@ -340,13 +328,14 @@ public class Application {
 														System.out.println();
 														System.out.print("상품 번호를 입력하세요: ");
 														int selectProduct = sc.nextInt();
-														//상품번호 범위 초과
-														if(selectProduct<1 || productList.size()<selectProduct) {
+														// 상품번호 범위 초과
+														if (selectProduct < 1 || productList.size() < selectProduct) {
 															System.out.println("잘못 입력하셨습니다.");
 															System.out.println();
 															continue;
 														}
-														MainFunction.viewProductDetail(productList.get(selectProduct-1));
+														MainFunction
+																.viewProductDetail(productList.get(selectProduct - 1));
 													} else if (pageCommand == 4) {
 														flag = false;
 													} else {
@@ -432,31 +421,31 @@ public class Application {
 									System.out.println();
 									System.out.println("----------------------[ 구매 목록 보기 ]----------------------");
 									System.out.println();
-									boolean deliveryFlag=true;
-									while(deliveryFlag) {
+									boolean deliveryFlag = true;
+									while (deliveryFlag) {
 										System.out.println("1. 준비중인 상품 | 2. 배송중인 상품 | 3. 배송 완료된 상품 | 4. 뒤로가기");
 										System.out.print("번호 입력: ");
-										int deliveryNumber=sc.nextInt();
+										int deliveryNumber = sc.nextInt();
 										switch (deliveryNumber) {
 										case 1: {
-											MainFunction.viewOrderList("상품 준비중",LoginSession.getLoginUserId());
+											MainFunction.viewOrderList("상품 준비중", LoginSession.getLoginUserId());
 											break;
 										}
-										case 2:{
-											MainFunction.viewOrderList("배송중",LoginSession.getLoginUserId());
+										case 2: {
+											MainFunction.viewOrderList("배송중", LoginSession.getLoginUserId());
 											break;
 										}
-										case 3:{
-											MainFunction.viewOrderList("배송 완료",LoginSession.getLoginUserId());
+										case 3: {
+											MainFunction.viewOrderList("배송 완료", LoginSession.getLoginUserId());
 											break;
 										}
-										case 4:{
-											deliveryFlag=false;
+										case 4: {
+											deliveryFlag = false;
 										}
 										default:
 											System.out.println("잘못 입력하셨습니다.");
 										}
-										
+
 									}
 									break;
 								}
