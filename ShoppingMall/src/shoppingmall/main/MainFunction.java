@@ -1,5 +1,6 @@
 package shoppingmall.main;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -448,26 +449,22 @@ public class MainFunction {
 	}
 
 	// 카테고리별 상품보기
-	public static boolean viewProductsByCategory(int categoryNumber, int pageNum) {
+	public static List<ProductsDTO> viewProductsByCategory(int categoryNumber, int pageNum) {
 		List<ProductsDTO> productsList = new ArrayList<ProductsDTO>();
 		productsList = productDao.getProductListByCategory(categoryNumber, pageNum);
-		if (productsList.size() == 0) {
-			return false;
-		}
+		
 		System.out.println("상품 번호 |  상품 이름           | 상품 가격  | 상품 재고  | 상품 정보   |  상품 상태    |");
-		for (ProductsDTO productList : productsList) {
-			System.out.printf("%d\t  %-10s\t %d\t %d\t %s\t %-10s", productList.getProductId(),
-					productList.getProductName(), productList.getProductPrice(), productList.getProductStock(), "판매중",
-					productList.getProductInfo());
+		for (int i=0;i<productsList.size();i++) {
+			System.out.printf("%d\t  %-10s\t %d\t %d\t %s\t %-10s", (i+1),
+					productsList.get(i).getProductName(), productsList.get(i).getProductPrice(), productsList.get(i).getProductStock(), "판매중",
+					productsList.get(i).getProductInfo());
 			System.out.println();
 		}
-		return true;
+		return productsList;
 	}
 
 	// 상품 디테일 보기
-	public static void viewProductDetail(int productId) {
-		ProductsDTO productDto = new ProductsDTO();
-		productDto = productDao.getProductDetail(productId);
+	public static void viewProductDetail(ProductsDTO productDto) {
 		System.out.println("상품 번호 |  상품 이름           | 상품 가격  | 상품 재고  | 상품 정보   |  상품 상태    |");
 		System.out.printf("%d\t  %-10s\t %d\t %d\t %s\t %-10s", productDto.getProductId(), productDto.getProductName(),
 				productDto.getProductPrice(), productDto.getProductStock(), "판매중", productDto.getProductInfo());
@@ -480,7 +477,7 @@ public class MainFunction {
 			int orderCommand = sc.nextInt();
 			if (orderCommand == 1) {
 				CartsDTO cartDto = new CartsDTO();
-				cartDto.setProductId(productId);
+				cartDto.setProductId(productDto.getProductId());
 				cartDto.setUserId(LoginSession.getLoginUserId());
 				cartDto.setProductCount(amount);
 				cartDao.insertCart(cartDto);
@@ -495,7 +492,7 @@ public class MainFunction {
 				System.out.println();
 				System.out.print("주소 선택: ");
 				int addressNum = sc.nextInt();
-				orderDao.insertUserOrderfromProductDetail(productId, LoginSession.getLoginUserId(),
+				orderDao.insertUserOrderfromProductDetail(productDto.getProductId(), LoginSession.getLoginUserId(),
 						userDto.getAddressDto().get(addressNum - 1).getAddress(), amount);
 			} else {
 				System.out.println("잘못된 선택입니다.");
@@ -582,7 +579,7 @@ public class MainFunction {
 			System.out.print((i + 1) + ". 주소: " + userDto.getAddressDto().get(i).getAddress() + "\n");
 		}
 		System.out.println();
-		System.out.println("주소를 선택해 주세요: ");
+		System.out.println("주소를 선택해 주세요");
 		System.out.print("번호 입력: ");
 		int addressNumber = sc.nextInt();
 		if (addressNumber < 1 || userDto.getAddressDto().size() < addressNumber) {
@@ -630,5 +627,22 @@ public class MainFunction {
 		java.sql.Date date = java.sql.Date.valueOf(birth);
 		userDto.setBirthday(date);
 		MainFunction.modifyUserInfo(userDto);// 입력받은 데이터로 정보 수정
+	}
+
+	public static void viewOrderList(String deliveryStatus, String userId) {
+		List<OrderDetailsDTO> orderDetailsList=new ArrayList<OrderDetailsDTO>();
+		orderDetailsList=orderDetailsDao.getOrderListForUser(deliveryStatus, userId);
+		if(orderDetailsList.isEmpty()) {
+			System.out.println("텅~");
+			System.out.println();
+			return;
+		}
+		System.out.println("|    상품 이름           |   상품 가격      |   구매 수량      |   구매 일자      |   배송 현황     |");
+		for(OrderDetailsDTO l: orderDetailsList) {
+			SimpleDateFormat simdate=new SimpleDateFormat("yyyy-MM-dd");
+			String date=simdate.format(l.getCreatedAt());
+			System.out.printf("%18s\t  %d\t\t %d\t %10s\t %5s\n",
+					l.getProductDto().getProductName(),l.getProductDto().getProductPrice(),l.getProductCount(),date,l.getDeliveryStatus());
+		}
 	}
 }
