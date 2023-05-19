@@ -150,13 +150,13 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 				ProductsDTO p = new ProductsDTO();
 				p.setProductName(rs.getString("productName"));
 				p.setProductStock(rs.getInt("productStock"));
-				orderDetailsDto.setProduct(p);
+				orderDetailsDto.setProductDto(p);
 
 				OrdersDTO o = new OrdersDTO();
 				o.setUserId(rs.getString("userId"));
 				o.setTotalPrice(rs.getInt("totalPrice"));
 				o.setAddress(rs.getString("address"));
-				orderDetailsDto.setOrder(o);
+				orderDetailsDto.setOrderDto(o);
 
 				orderDetailsDto.setOrderDetailId(rs.getInt("orderDetailId"));
 				orderDetailsDto.setOrderId(rs.getInt("orderId"));

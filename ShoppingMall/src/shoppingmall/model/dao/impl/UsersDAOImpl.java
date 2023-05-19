@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import shoppingmall.main.LoginSession;
 import shoppingmall.model.ShoppingMallDataSource;
 import shoppingmall.model.dao.UsersDAO;
 import shoppingmall.model.dto.UsersDTO;
@@ -77,7 +78,7 @@ public class UsersDAOImpl implements UsersDAO {
 	@Override
 	public int login(String userId, String password) {
 		int count = 0;
-		String sql = "SELECT USERID FROM USERS WHERE USERID = ? and PASSWORD = ?";
+		String sql = "SELECT USERID, isadmin FROM USERS WHERE USERID = ? and PASSWORD = ?";
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -85,9 +86,10 @@ public class UsersDAOImpl implements UsersDAO {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
 			stmt.setString(1, userId);
-			stmt.setNString(2, password);
+			stmt.setString(2, password);
 			rs = stmt.executeQuery();
 			if (rs.next()) {
+				LoginSession.isAdmin = rs.getInt("isAdmin");
 				return count + 1;
 			}
 		} catch (SQLException e) {

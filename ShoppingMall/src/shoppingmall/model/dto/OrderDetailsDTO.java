@@ -18,7 +18,7 @@ public class OrderDetailsDTO {
 	Timestamp createdAt;
 	Timestamp updatedAt;
 	// ----------------------
-	ProductsDTO product;
-	UsersDTO user;
-	OrdersDTO order;
+	ProductsDTO productDto;
+	UsersDTO userDto;
+	OrdersDTO orderDto;
 }
