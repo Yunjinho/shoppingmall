@@ -32,7 +32,7 @@ public class Application {
 				// 로그인 성공
 				if (result) {
 					// 관리자일 경우
-					if (LoginSession.getLoginUserId().equals("admin")) {
+					if (LoginSession.isAdmin == 1) {
 						// while문 탈출 시킬 flag
 						boolean adminFlag = true;
 						// 상품 등록/수정/삭제
@@ -149,6 +149,7 @@ public class Application {
 									// 잘못 입력
 									else {
 										System.out.println("숫자를 잘못 입력하였습니다.");
+										System.out.println();
 									}
 								}
 								// 주문 상태 변경
@@ -244,9 +245,9 @@ public class Application {
 								System.out.println();
 								System.out.println("----------------------[ 주소지 추가/수정 ]----------------------");
 								System.out.println();
-								
-								boolean addressFlag = true; 
-								while(addressFlag) {
+
+								boolean addressFlag = true;
+								while (addressFlag) {
 									System.out.println("1. 주소 목록 조회  | 2. 주소지 추가 | 3.주소지 수정 | 4. 주소지 삭제 | 5. 뒤로 가기");
 									System.out.print("번호를 입력하세요: ");
 									int addressCommand = sc.nextInt();
@@ -349,9 +350,8 @@ public class Application {
 								boolean cartFlag=true;
 								while(cartFlag) {
 									
-									List<CartsDTO> cartList=new ArrayList<CartsDTO>();
-									cartList=MainFunction.viewCartList(LoginSession.getLoginUserId());
-								
+									List<CartsDTO> cartsList=new ArrayList<CartsDTO>();
+									cartsList=MainFunction.viewCartList(LoginSession.getLoginUserId());
 									System.out.println("1. 장바구니 수정 | 2. 장바구니 상품 결제 | 3. 뒤로 가기");
 									System.out.print("번호를 입력하세요: ");
 									int cartCommand = sc.nextInt();
@@ -367,10 +367,10 @@ public class Application {
 											System.out.println();
 											if(modifyCommand==1) {
 												System.out.println("---------------[ 카테고리별 상품 보기 ] -> [ 장바구니 수정 ] ->[ 상품 수량 수정 ]---------------");
-												MainFunction.modifyCartProductCount(LoginSession.loginUserId,cartList);
+												MainFunction.modifyCartProductCount(LoginSession.loginUserId,cartsList);
 											}else if(modifyCommand==2) {
 												System.out.println("---------------[ 카테고리별 상품 보기 ] -> [ 장바구니 수정 ] ->[ 상품 삭제 ]---------------");
-												MainFunction.deleteCartProduct(LoginSession.loginUserId,cartList);
+												MainFunction.deleteCartProduct(LoginSession.loginUserId,cartsList);
 											}else if(modifyCommand==3) {
 												modifyFlag=false;
 											}else {
@@ -383,17 +383,17 @@ public class Application {
 									else if (cartCommand == 2) {
 										System.out.println();
 										System.out.println("----------------------[ 카테고리별 상품 보기 ] -> [ 장바구니 상품 결제 ]----------------------");
-										if(cartList.isEmpty()) {
+										if(cartsList.isEmpty()) {
 											System.out.println();
 											System.out.println("장바구니에 아무것도 없어요~");
 											continue;
 										}
-										MainFunction.orderFromCart(LoginSession.loginUserId,cartList);
+										MainFunction.orderFromCart(LoginSession.loginUserId, cartsList);
 									}
 									// 3. 뒤로가기
-									else if (cartCommand == 3) {	
-										cartFlag=false;
-									}else {
+									else if (cartCommand == 3) {
+										cartFlag = false;
+									} else {
 										System.out.println("잘못된 입력입니다.");
 										System.out.println();
 									}
@@ -404,7 +404,7 @@ public class Application {
 								System.out.println();
 								System.out.println("로그아웃 되었습니다.");
 								System.out.println();
-								userFlag=false;
+								userFlag = false;
 								LoginSession.loginUserId = "";
 								break;
 							}
