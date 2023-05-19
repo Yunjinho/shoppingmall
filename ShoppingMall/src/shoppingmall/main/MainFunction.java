@@ -607,7 +607,7 @@ public class MainFunction {
 				return false;
 			} else {
 				if (productDto.getProductStock() - l.getProductCount() < 0) {
-					System.out.println(productDto.getProductName() + "의 상품의 재고가"
+					System.out.println(productDto.getProductName() + " 상품의 재고가 "
 							+ Math.abs(productDto.getProductStock() - l.getProductCount())
 							+ "개 부족합니다 . 장바구니에서 수량을 수정해주세요.");
 					return false;
