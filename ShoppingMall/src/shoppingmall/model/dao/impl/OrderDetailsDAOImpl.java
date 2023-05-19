@@ -178,16 +178,16 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 	}
 
 	@Override
-	public int updateOrderStatus(int orderDetailId, String status) {
+	public int updateOrderStatus(int orderId, String status) {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "UPDATE ORDERDETAILS SET DELIVERYSTATUS = ? WHERE ORDERDETAILID = ?";
+		String sql = "UPDATE orderDetails SET deliveryStatus = ? WHERE orderId = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
 			stmt.setString(1, status);
-			stmt.setInt(2, orderDetailId);
+			stmt.setInt(2, orderId);
 			count = stmt.executeUpdate();
 		} catch (SQLException e) {
 			// TODO: handle exception
