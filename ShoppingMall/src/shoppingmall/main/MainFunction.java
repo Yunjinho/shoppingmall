@@ -233,6 +233,7 @@ public class MainFunction {
 			status = "판매중";
 		}
 
+		System.out.println();
 		System.out.println(updateProductId + "번 상품의 상태 [" + status + "] 변경");
 		System.out.println();
 	}
@@ -251,8 +252,6 @@ public class MainFunction {
 	public static int selectUpdateProductId() {
 		System.out.print("상품 번호를 선택하세요: ");
 		int productId = sc.nextInt();
-		sc.nextLine();
-		System.out.println();
 		return productId;
 	}
 
@@ -344,7 +343,7 @@ public class MainFunction {
 		System.out.println();
 		System.out.print("수정하고 싶은 주소 번호: ");
 		int modifyNum = sc.nextInt();
-		if(modifyNum<0||userDto.getAddressDto().size()<modifyNum) {
+		if (modifyNum < 0 || userDto.getAddressDto().size() < modifyNum) {
 			System.out.println("잘못된 번호 입니다.");
 			return;
 		}
