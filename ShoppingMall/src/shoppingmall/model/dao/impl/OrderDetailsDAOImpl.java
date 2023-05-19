@@ -138,7 +138,7 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		String sql = "SELECT od.orderDetailId, od.productCount, od.deliveryStatus, o.userId, o.totalPrice, o.address, p.productName, p.productStock "
+		String sql = "SELECT od.orderDetailId, od.orderId, od.productCount, od.deliveryStatus, o.userId, o.totalPrice, o.address, p.productName, p.productStock "
 				+ "FROM orderDetails od LEFT JOIN orders o ON o.orderId = od.orderId "
 				+ "LEFT JOIN products p on p.productId = od.productId";
 		try {
@@ -159,6 +159,7 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 				orderDetailsDto.setOrder(o);
 
 				orderDetailsDto.setOrderDetailId(rs.getInt("orderDetailId"));
+				orderDetailsDto.setOrderId(rs.getInt("orderId"));
 				orderDetailsDto.setProductCount(rs.getInt("productCount"));
 				orderDetailsDto.setDeliveryStatus(rs.getString("deliveryStatus"));
 
@@ -176,7 +177,8 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 	}
 
 	@Override
-	public int updateOrderStatus(int orderId, String status) {
+	public int updateOrderStatus(int orderDetailId, String status) {
+		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
 		String sql = "UPDATE ORDERDETAILS SET DELIVERYSTATUS = ? WHERE ORDERDETAILID = ?";
@@ -184,7 +186,8 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
 			stmt.setString(1, status);
-			stmt.setInt(2, orderId);
+			stmt.setInt(2, orderDetailId);
+			count = stmt.executeUpdate();
 		} catch (SQLException e) {
 			// TODO: handle exception
 			throw new RuntimeException(e);
@@ -192,7 +195,7 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 			ShoppingMallDataSource.closePreparedStatement(stmt);
 			ShoppingMallDataSource.closeConnection(con);
 		}
-		return 0;
+		return count;
 	}
 
 }

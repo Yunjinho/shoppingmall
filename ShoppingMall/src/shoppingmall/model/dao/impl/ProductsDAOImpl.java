@@ -95,7 +95,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		String sql="SELECT * FROM products WHERE productId=?";
+		String sql = "SELECT * FROM products WHERE productId=?";
 		/*
 		 * String sql =
 		 * "SELECT p.productId, p.productName, p.productPrice, p.productStock, p.productInfo, c.categoryName, p.updatedAt"
@@ -154,26 +154,6 @@ public class ProductsDAOImpl implements ProductsDAO {
 	}
 
 	@Override
-	public int deleteProduct(int productId) {
-		int count = 0;
-		Connection con = null;
-		PreparedStatement stmt = null;
-		String sql = "UPDATE PRODUCTS SET PRODUCTSTATUS = 0 WHERE PRODUCTID = ?";
-		try {
-			con = ShoppingMallDataSource.getConnection();
-			stmt = con.prepareStatement(sql);
-			stmt.setInt(1, productId);
-			count = stmt.executeUpdate();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		} finally {
-			ShoppingMallDataSource.closePreparedStatement(stmt);
-			ShoppingMallDataSource.closeConnection(con);
-		}
-		return count;
-	}
-
-	@Override
 	public int updateProductInfo(ProductsDTO productDto) {
 		int count = 0;
 		Connection con = null;
@@ -213,6 +193,28 @@ public class ProductsDAOImpl implements ProductsDAO {
 			stmt.setInt(2, productId);
 			count = stmt.executeUpdate();
 		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			ShoppingMallDataSource.closePreparedStatement(stmt);
+			ShoppingMallDataSource.closeConnection(con);
+		}
+		return count;
+	}
+
+	@Override
+	public int updateProductStatus(int updateProductId, int productStatus) {
+		int count = 0;
+		Connection con = null;
+		PreparedStatement stmt = null;
+		String sql = "UPDATE Products SET productStatus = ? WHERE productId = ?";
+		try {
+			con = ShoppingMallDataSource.getConnection();
+			stmt = con.prepareStatement(sql);
+			stmt.setInt(1, productStatus);
+			stmt.setInt(2, updateProductId);
+			count = stmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO: handle exception
 			throw new RuntimeException(e);
 		} finally {
 			ShoppingMallDataSource.closePreparedStatement(stmt);
