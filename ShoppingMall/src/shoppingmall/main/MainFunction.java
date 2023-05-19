@@ -260,6 +260,7 @@ public class MainFunction {
 	public static void getAllOrderList() {
 		List<OrdersDTO> ordersList = new ArrayList<>();
 		ordersList = orderDao.getAllOrders();
+
 		int currentPage = 0;
 		int currentIndex = 0;
 
@@ -270,7 +271,7 @@ public class MainFunction {
 
 		System.out.println("---------------모든 주문 내역---------------");
 		while (true) {
-			System.out.println("---------------" + (currentPage + 1) + " 페이지" + "---------------");
+			System.out.println("--------------- " + (currentPage + 1) + " 페이지 " + "---------------");
 			for (int i = currentIndex; i < (currentIndex + plus); i++) {
 				System.out.println("주문 내역 번호 : " + (i + 1));
 				// orderId
@@ -287,8 +288,8 @@ public class MainFunction {
 				System.out.println("핸드폰 번호 : " + ordersList.get(i).getUserDto().getPhoneNumber());
 				System.out.println("----------------------------------------------------");
 			}
-
-			System.out.println("1. 이전 페이지 | 2. 다음 페이지 | 3. 뒤로 가기");
+			System.out.println();
+			System.out.println("1. 이전 페이지 | 2. 다음 페이지 | 3. 주문 목록 상세 조회 | 4. 뒤로 가기");
 			System.out.print("숫자를 입력하세요: ");
 			int count = sc.nextInt();
 			// 1. 이전 페이지
@@ -318,10 +319,86 @@ public class MainFunction {
 						plus = 5;
 					}
 				}
+			} else if (count == 3) {
+				MainFunction.getAllOrderDetailsList();
 			}
 			// 나가기
 			else {
-				System.out.println();
+				break;
+			}
+		}
+	}
+
+	// 배송 상태 변경할 때 사용할 order 가져오는 함수
+	public static void getAllOrderListByPage() {
+		List<OrdersDTO> ordersList = new ArrayList<>();
+		ordersList = orderDao.getAllOrders();
+
+		int currentPage = 0;
+		int currentIndex = 0;
+
+		int lastIndex = ordersList.size();
+		int lastPage = lastIndex / 5;
+
+		int plus = 5;
+
+		System.out.println("---------------모든 주문 내역---------------");
+		while (true) {
+			System.out.println("--------------- " + (currentPage + 1) + " 페이지 " + "---------------");
+			for (int i = currentIndex; i < (currentIndex + plus); i++) {
+				System.out.println("주문 내역 번호 : " + (i + 1));
+				// orderId
+				System.out.println("주문 번호 : " + ordersList.get(i).getOrderId());
+				// 배송지
+				System.out.println("배송지 : " + ordersList.get(i).getAddress());
+				// deliveryStatus
+				System.out.println("배송 상태 : " + ordersList.get(i).getOrderDetailsDto().getDeliveryStatus());
+				// totalPrice
+				System.out.println("총 가격 : " + ordersList.get(i).getTotalPrice());
+				// userId
+				System.out.println("사용자 아이디 : " + ordersList.get(i).getUserId());
+				// userName
+				System.out.println("구매자 이름 : " + ordersList.get(i).getUserDto().getUserName());
+				// phoneNumber
+				System.out.println("핸드폰 번호 : " + ordersList.get(i).getUserDto().getPhoneNumber());
+				System.out.println("----------------------------------------------------");
+			}
+			System.out.println();
+			System.out.println("1. 이전 페이지 | 2. 다음 페이지 | 3. 주문 목록 상세 조회 | 4. 주문 상태 수정할 상품 번호 입력");
+			System.out.print("숫자를 입력하세요: ");
+			int count = sc.nextInt();
+			// 1. 이전 페이지
+			if (count == 1) {
+				if (currentPage == 0) {
+					System.out.println("처음 페이지 입니다.");
+					System.out.println();
+					continue;
+				}
+				currentPage -= 1;
+				currentIndex -= 5;
+				plus = 5;
+
+			}
+			// 2. 다음 페이지
+			else if (count == 2) {
+				if (currentPage == lastPage) {
+					System.out.println("마지막 페이지 입니다.");
+					System.out.println();
+					continue;
+				} else {
+					currentPage += 1;
+					currentIndex += 5;
+					if (currentPage == lastPage) {
+						plus = lastIndex - currentIndex;
+					} else {
+						plus = 5;
+					}
+				}
+			} else if (count == 3) {
+				MainFunction.getAllOrderDetailsList();
+			}
+			// 주문 상태 수정할 상품 번호 입력하러 가기
+			else {
 				break;
 			}
 		}
@@ -329,21 +406,72 @@ public class MainFunction {
 
 	// 주문 목록 상세 조회
 	public static void getAllOrderDetailsList() {
-		List<OrderDetailsDTO> orderDetailsDto = orderDetailsDao.getOrderDeatils();
-		System.out.println("----------------주문 목록 상세----------------");
-		for (OrderDetailsDTO orderDetailDto : orderDetailsDto) {
-			System.out.println("상세 주문 번호 : " + orderDetailDto.getOrderDetailId() + "번");
-			System.out.println("주문 번호: " + orderDetailDto.getOrderId() + "번");
-			System.out.println("상품 주문 개수 : " + orderDetailDto.getProductCount() + "개");
-			System.out.println("배송 상태 : " + orderDetailDto.getDeliveryStatus());
-			System.out.println("주문자 아이디 : " + orderDetailDto.getOrderDto().getUserId());
-			System.out.println("총 주문 금액 : " + orderDetailDto.getOrderDto().getTotalPrice());
-			System.out.println("배송지 : " + orderDetailDto.getOrderDto().getAddress());
-			System.out.println("주문 상품 이름 : " + orderDetailDto.getProductDto().getProductName());
-			System.out.println("남은 상품 재고 : " + orderDetailDto.getProductDto().getProductStock() + "개");
-			System.out.println("---------------------------------------");
+		List<OrderDetailsDTO> orderDetailsList = new ArrayList<>();
+		orderDetailsList = orderDetailsDao.getOrderDeatils();
+
+		int currentPage = 0;
+		int currentIndex = 0;
+
+		int lastIndex = orderDetailsList.size();
+		int lastPage = lastIndex / 5;
+
+		int plus = 5;
+
+		System.out.println("--------------------- 주문 상세 목록 조회 ---------------------");
+		while (true) {
+			System.out.println("--------------- " + (currentPage + 1) + " 페이지 " + "---------------");
+			for (int i = currentIndex; i < (currentIndex + plus); i++) {
+				System.out.println("상세 주문 번호 : " + orderDetailsList.get(i).getOrderDetailId() + "번");
+				System.out.println("주문 번호: " + orderDetailsList.get(i).getOrderId() + "번");
+				System.out.println("상품 주문 개수 : " + orderDetailsList.get(i).getProductCount() + "개");
+				System.out.println("배송 상태 : " + orderDetailsList.get(i).getDeliveryStatus());
+				System.out.println("주문자 아이디 : " + orderDetailsList.get(i).getOrderDto().getUserId());
+				System.out.println("총 주문 금액 : " + orderDetailsList.get(i).getOrderDto().getTotalPrice());
+				System.out.println("배송지 : " + orderDetailsList.get(i).getOrderDto().getAddress());
+				System.out.println("주문 상품 이름 : " + orderDetailsList.get(i).getProductDto().getProductName());
+				System.out.println("남은 상품 재고 : " + orderDetailsList.get(i).getProductDto().getProductStock() + "개");
+				System.out.println("--------------------------------------------------------");
+			}
+			System.out.println("--------------------- 주문 상세 목록 조회 ---------------------");
+			System.out.println();
+			System.out.println("1. 이전 페이지 | 2. 다음 페이지 | 3. 뒤로 가기");
+
+			System.out.print("숫자를 입력하세요: ");
+			int count = sc.nextInt();
+			System.out.println();
+			// 1. 이전 페이지
+			if (count == 1) {
+				if (currentPage == 0) {
+					System.out.println("처음 페이지 입니다.");
+					System.out.println();
+					continue;
+				}
+				currentPage -= 1;
+				currentIndex -= 5;
+				plus = 5;
+
+			}
+			// 2. 다음 페이지
+			else if (count == 2) {
+				if (currentPage == lastPage) {
+					System.out.println("마지막 페이지 입니다.");
+					System.out.println();
+					continue;
+				} else {
+					currentPage += 1;
+					currentIndex += 5;
+					if (currentPage == lastPage) {
+						plus = lastIndex - currentIndex;
+					} else {
+						plus = 5;
+					}
+				}
+			}
+			// 3. 나가기
+			else {
+				break;
+			}
 		}
-		System.out.println();
 	}
 
 	// 주문 상태 변경
@@ -452,11 +580,11 @@ public class MainFunction {
 	public static List<ProductsDTO> viewProductsByCategory(int categoryNumber, int pageNum) {
 		List<ProductsDTO> productsList = new ArrayList<ProductsDTO>();
 		productsList = productDao.getProductListByCategory(categoryNumber, pageNum);
-		
+
 		System.out.println("상품 번호 |  상품 이름           | 상품 가격  | 상품 재고  | 상품 정보   |  상품 상태    |");
-		for (int i=0;i<productsList.size();i++) {
-			System.out.printf("%d\t  %-10s\t %d\t %d\t %s\t %-10s", (i+1),
-					productsList.get(i).getProductName(), productsList.get(i).getProductPrice(), productsList.get(i).getProductStock(), "판매중",
+		for (int i = 0; i < productsList.size(); i++) {
+			System.out.printf("%d\t  %-10s\t %d\t %d\t %s\t %-10s", (i + 1), productsList.get(i).getProductName(),
+					productsList.get(i).getProductPrice(), productsList.get(i).getProductStock(), "판매중",
 					productsList.get(i).getProductInfo());
 			System.out.println();
 		}
@@ -630,19 +758,19 @@ public class MainFunction {
 	}
 
 	public static void viewOrderList(String deliveryStatus, String userId) {
-		List<OrderDetailsDTO> orderDetailsList=new ArrayList<OrderDetailsDTO>();
-		orderDetailsList=orderDetailsDao.getOrderListForUser(deliveryStatus, userId);
-		if(orderDetailsList.isEmpty()) {
+		List<OrderDetailsDTO> orderDetailsList = new ArrayList<OrderDetailsDTO>();
+		orderDetailsList = orderDetailsDao.getOrderListForUser(deliveryStatus, userId);
+		if (orderDetailsList.isEmpty()) {
 			System.out.println("텅~");
 			System.out.println();
 			return;
 		}
 		System.out.println("|    상품 이름           |   상품 가격      |   구매 수량      |   구매 일자      |   배송 현황     |");
-		for(OrderDetailsDTO l: orderDetailsList) {
-			SimpleDateFormat simdate=new SimpleDateFormat("yyyy-MM-dd");
-			String date=simdate.format(l.getCreatedAt());
-			System.out.printf("%18s\t  %d\t\t %d\t %10s\t %5s\n",
-					l.getProductDto().getProductName(),l.getProductDto().getProductPrice(),l.getProductCount(),date,l.getDeliveryStatus());
+		for (OrderDetailsDTO l : orderDetailsList) {
+			SimpleDateFormat simdate = new SimpleDateFormat("yyyy-MM-dd");
+			String date = simdate.format(l.getCreatedAt());
+			System.out.printf("%18s\t  %d\t\t %d\t %10s\t %5s\n", l.getProductDto().getProductName(),
+					l.getProductDto().getProductPrice(), l.getProductCount(), date, l.getDeliveryStatus());
 		}
 	}
 }
