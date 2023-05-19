@@ -32,62 +32,94 @@ public class Application {
 						boolean adminFlag = true;
 						// 상품 등록/수정/삭제
 						while (adminFlag) {
-							System.out
-									.println("1. 상품 목록 조회 | 2. 상품 등록 | 3. 상품 수정 | 4. 상품 삭제 | 5. 배송 목록 조회 | 6. 로그 아웃 ");
+							System.out.println("---------------------------관리자 페이지---------------------------");
+							System.out.println("1. 상품 목록 조회 | 2. 상품 등록 | 3. 상품 수정 | 4. 배송 목록 조회 | 5. 로그 아웃 ");
 							System.out.print("번호를 입력하세요: ");
 							int adminCommand = sc.nextInt();
+							sc.nextLine();
+							System.out.println();
 							switch (adminCommand) {
 							// 1. 상품 목록 조회
 							case 1:
-								System.out.println("상품 목록 조회입니다.");
+								System.out.println(
+										"------------------------- [관리자 페이지] -> [상품 목록 조회] -----------------------");
 								MainFunction.getAllProducts();
 								break;
 							// 2. 상품 등록
 							case 2:
-								System.out.println("상품 등록 페이지 입니다.");
-								int count = MainFunction.registerProduct();
-								System.out.println();
-								break;
-							// 3. 상품 수정
+								System.out.println(
+										"------------------------- [관리자 페이지] -> [상품 등록] --------------------------");
+								System.out.println("1.[상품 등록 하기] | 2.[뒤로 가기]");
+								System.out.print("번호를 입력하세요: ");
+								int registerNumber = sc.nextInt();
+								sc.nextLine();
+								if (registerNumber == 1) {
+									int count = MainFunction.registerProduct();
+									System.out.println();
+									break;
+								} else {
+									System.out.println("뒤로가기를 눌렀습니다.");
+									System.out.println();
+									break;
+								}
+								// 3. 상품 수정
 							case 3:
-								System.out.println("상품 수정 페이지 입니다.");
+								System.out.println(
+										"------------------------- [관리자 페이지] -> [상품 수정] --------------------------");
 								System.out.println();
 								// 상품 목록 보여주고 선택
 								boolean productFlag = true;
 								while (productFlag) {
-									System.out.println("1. 상품 수정 | 2. 상품 수량 수정 | 3. 뒤로 가기");
+									System.out.println("1.[상품 수정] | 2.[상품 재고 변경] | 3.[상품 상태 변경] | 4.[뒤로 가기]");
 									System.out.print("번호를 입력하세요: ");
 									int productCommand = sc.nextInt();
 									// 1. 상품 수정
 									if (productCommand == 1) {
+										System.out.println(
+												"---------------------- [관리자 페이지] -> [상품 수정] -> [상품 수정] ----------------------");
+										// 전체 상품 보여주기
+										MainFunction.getAllProducts();
+										//
 										MainFunction.updateProductByProductId();
 										System.out.println();
 									}
-									// 2. 상품 수량 수정
+									// 2. 상품 재고 변경
 									else if (productCommand == 2) {
+										System.out.println(
+												"-------------------- [관리자 페이지] -> [상품 수정] -> [상품 재고 변경] --------------------");
+										// 전체 상품 보여주기
+										MainFunction.getAllProducts();
+										// 상품 재고 변경
 										MainFunction.updateProductStock();
 										System.out.println();
-									} else if (productCommand == 3) {
+									}
+									// 3. 상품 상태 변경
+									else if (productCommand == 3) {
+										System.out.println(
+												"-------------------- [관리자 페이지] -> [상품 수정] -> [상품 상태 변경] --------------------");
+										MainFunction.getAllProducts();
+
+										// 전체 상품 보여주기
+										// 상품 아이디로 상품 상태 변경
+										MainFunction.updateProductStatusByProductId();
+									}
+									// 4. 잘못 입력
+									else if (productCommand == 4) {
 										System.out.println("뒤로가기를 눌렀습니다.");
+										System.out.println();
 										productFlag = false;
 									} else {
 										System.out.println("번호를 잘못 입력하였습니다.");
 									}
 								}
 								break;
-							// 4. 상품 삭제
+							// 4. 배송 목록 조회
 							case 4:
-								System.out.println("상품 삭제 페이지 입니다.");
-								MainFunction.deleteProductByProductId();
-								System.out.println();
-								break;
-							// 5. 배송 목록 조회
-							// conflict
-							case 5:
-								System.out.println("배송 목록 조회 페이지 입니다.");
+								System.out.println(
+										"------------------------- [관리자 페이지] -> [배송 목록 조회] --------------------------");
 								System.out.println();
 
-								System.out.println("1. 주문 목록 조회 | 2. 주문 상태 변경 | 3. 뒤로 가기");
+								System.out.println("1.[전체 주문 목록 조회 ] | 2.[배송 상태 변경] | 3.[뒤로 가기]");
 								System.out.print("번호를 입력하세요: ");
 								int n = sc.nextInt();
 								sc.nextLine();
@@ -95,7 +127,7 @@ public class Application {
 								// 주문 목록 조회
 								if (n == 1) {
 									MainFunction.getAllOrderList();
-									System.out.println("1. 주문 상세 조회 | 2. 뒤로 가기");
+									System.out.println("1.[주문 상세 조회] | 2.[뒤로 가기]");
 									System.out.print("번호를 입력하세요: ");
 									int r = sc.nextInt();
 									sc.nextLine();
@@ -107,6 +139,7 @@ public class Application {
 									// 뒤로가기
 									else if (r == 2) {
 										System.out.println("뒤로 가기를 눌렀습니다.");
+										System.out.println();
 									}
 									// 잘못 입력
 									else {
@@ -116,12 +149,15 @@ public class Application {
 								// 주문 상태 변경
 								else if (n == 2) {
 									MainFunction.getAllOrderDetailsList();
-									System.out.print("주문 상태를 변경할 주문 상세 번호를 입력하세요: ");
-									int orderId = sc.nextInt();
+									System.out.print("배송 상태를 변경할 주문 상세 번호를 입력하세요: ");
+									int orderDetailId = sc.nextInt();
 									sc.nextLine();
-									System.out.println("주문 상태를 입력하세요: ");
-									String status = sc.nextLine();
-									MainFunction.updateOrderStatus(orderId, status);
+
+									System.out.print("배송 상태를 입력하세요 [1.상품 준비중 | 2.배송중 | 3.배송 완료] : ");
+									int statusId = sc.nextInt();
+									sc.nextLine();
+
+									MainFunction.updateOrderStatus(orderDetailId, statusId);
 								}
 								// 뒤로 가기
 								else if (n == 3) {
@@ -133,7 +169,7 @@ public class Application {
 								System.out.println();
 								break;
 							// 6. 로그아웃
-							case 7:
+							case 5:
 								System.out.println("로그아웃 되었습니다.");
 								System.out.println();
 								LoginSession.setLoginUserId("");
@@ -143,7 +179,8 @@ public class Application {
 								System.out.println();
 								break;
 							}
-							if (adminCommand == 6)
+							// while문 탈출
+							if (adminCommand == 5)
 								break;
 						}
 					}
