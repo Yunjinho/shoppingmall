@@ -307,6 +307,7 @@ public class Application {
 													System.out.println();
 													System.out.print("상품 번호를 입력하세요: ");
 													int selectProduct = sc.nextInt();
+													System.out.println();
 													MainFunction.viewProductDetail(selectProduct);
 												} else if (pageCommand == 3) {
 													flag = false;

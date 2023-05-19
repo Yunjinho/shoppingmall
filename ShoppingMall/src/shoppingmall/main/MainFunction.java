@@ -371,6 +371,10 @@ public class MainFunction {
 		System.out.println();
 		System.out.print("삭제하고 싶은 주소 번호: ");
 		int modifyNum = sc.nextInt();
+		if(modifyNum<1 || userDto.getAddressDto().size()<modifyNum) {
+			System.out.println("잘못된 입력입니다.");
+			return;
+		}
 		addressDto = userDto.getAddressDto().get(modifyNum - 1);
 		sc.nextLine();
 		System.out.println();
@@ -455,8 +459,8 @@ public class MainFunction {
 			}
 		} else {
 			System.out.println("재고가 부족합니다.");
-
-		}
+			System.out.println();
+		}	
 
 	}
 
@@ -477,6 +481,7 @@ public class MainFunction {
 				totalPrice += cartDao.getCartTotalPrice(l.getCartId());
 			}
 			System.out.println("총 금액: " + totalPrice);
+			System.out.println();
 		} else {
 			System.out.println("텅~");
 			System.out.println();
