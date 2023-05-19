@@ -45,7 +45,6 @@ public class MainFunction {
 		// 로그인 성공
 		if (check > 0) {
 			System.out.println("로그인 되었습니다.");
-			System.out.println();
 			LoginSession.setLoginUserId(userId);
 			return true;
 		}
@@ -338,7 +337,6 @@ public class MainFunction {
 	public static void modifyAddress(String userId) {
 		UsersDTO userDto = new UsersDTO();
 		AddressesDTO addressDto = new AddressesDTO();
-
 		userDto.setAddressDto(addressDao.getUserAddresses(userId));
 		for (int i = 0; i < userDto.getAddressDto().size(); i++) {
 			System.out.print((i + 1) + "번. 주소: " + userDto.getAddressDto().get(i).getAddress() + "\n");
@@ -346,6 +344,10 @@ public class MainFunction {
 		System.out.println();
 		System.out.print("수정하고 싶은 주소 번호: ");
 		int modifyNum = sc.nextInt();
+		if(modifyNum<0||userDto.getAddressDto().size()<modifyNum) {
+			System.out.println("잘못된 번호 입니다.");
+			return;
+		}
 		addressDto = userDto.getAddressDto().get(modifyNum - 1);
 		System.out.println();
 		sc.nextLine();
@@ -477,6 +479,7 @@ public class MainFunction {
 			System.out.println("총 금액: " + totalPrice);
 		} else {
 			System.out.println("텅~");
+			System.out.println();
 		}
 		return cartsList;
 	}
@@ -567,5 +570,17 @@ public class MainFunction {
 			}
 		}
 		return true;
+	}
+
+	public static void insertUserInfo(UsersDTO userDto) {
+		System.out.print("이름: ");
+		userDto.setUserName(sc.next());
+		System.out.print("핸드폰 번호[010-1234-1234]: ");
+		userDto.setPhoneNumber(sc.next());
+		System.out.print("생일[YYYY-MM-DD]: ");
+		String birth = sc.next();
+		java.sql.Date date = java.sql.Date.valueOf(birth);
+		userDto.setBirthday(date);
+		MainFunction.modifyUserInfo(userDto);// 입력받은 데이터로 정보 수정
 	}
 }

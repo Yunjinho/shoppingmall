@@ -11,9 +11,11 @@ public class Application {
 	private static Scanner sc = new Scanner(System.in);
 
 	public static void main(String[] args) {
-
+		try {
+		
 		while (true) {
 			System.out.println("1. 회원가입 | 2. 로그인 | 3. 나가기");
+			System.out.print("번호 입력: ");
 			int cmd = sc.nextInt();
 			switch (cmd) {
 			// 1. 회원가입
@@ -194,58 +196,45 @@ public class Application {
 						// while문 탈출 시킬 flag
 						boolean userFlag = true;
 						while (userFlag) {
+							System.out.println();
+							System.out.println("---------------------------Shopping Mall---------------------------");
 							System.out.println(
 									"1. 사용자 정보 수정 | 2. 주소지 추가/수정  | 3. 카테고리별 상품 보기 | 4. 장바구니 목록 조회 및 결제 | 5. 로그아웃");
 							System.out.print("번호를 입력하세요: ");
 							int userCommand = sc.nextInt();
 							switch (userCommand) {
 							case 1: {
-								System.out.println("사용자 정보 수정페이지 입니다.");
+								System.out.println();
+								System.out.println("---------------------------[ 사용자 정보 수정 ]--------------------------");
 								System.out.println();
 								UsersDTO userDto = null;
-								try {
-									userDto = MainFunction.viewUserInfo(LoginSession.getLoginUserId());
-								} catch (RuntimeException e) {
-									System.out.println(e.getMessage());
-								}
-
+								userDto = MainFunction.viewUserInfo(LoginSession.getLoginUserId());
+								System.out.println();
 								boolean flag = true;
 
 								while (flag) {
 									System.out.println("1. 일반 정보 수정 | 2. 비밀번호 변경 | 3. 뒤로가기");
 									System.out.print("번호를 입력하세요: ");
 									int command = sc.nextInt();
+									System.out.println();
 									switch (command) {
 									case 1:
-										System.out.println("-----수정 정보 입력----");
-										System.out.print("이름: ");
-										userDto.setUserName(sc.next());
-										System.out.print("핸드폰 번호[010-1234-1234]: ");
-										userDto.setPhoneNumber(sc.next());
-										System.out.print("생일[YYYY-MM-DD]: ");
-										String birth = sc.next();
-										java.sql.Date date = java.sql.Date.valueOf(birth);
-										userDto.setBirthday(date);
-										try {
-											MainFunction.modifyUserInfo(userDto);// 입력받은 데이터로 정보 수정
-										} catch (RuntimeException e) {
-											System.out.println(e.getMessage());
-										}
+										System.out.println("-------------------[ 사용자 정보 수정 ] -> [ 일반 정보 수정 ]------------------");
+										System.out.println("-------------------------[ 수정 정보 입력 ]-----------------------------");
+										MainFunction.insertUserInfo(userDto);//
 										flag = false;
 										break;
 									case 2:
-										System.out.println("-----수정 비밀번호 입력----");
+										System.out.println("-------------------[ 사용자 정보 수정 ] -> [ 비밀번호 수정 ]------------------");
+										System.out.println("-----------------------[ 수정 비밀 번호 입력 ]----------------------------");
 										System.out.print("비밀번호: ");
 										userDto.setPassword(sc.next());
-										try {
-											MainFunction.modifyUserInfo(userDto);// 입력받은 데이터로 정보 수정
-										} catch (RuntimeException e) {
-											System.out.println(e.getMessage());
-										}
+										MainFunction.modifyUserInfo(userDto);// 입력받은 데이터로 정보 수정
 										flag = false;
 										break;
 									case 3:
 										flag = false;
+										break;
 									default:
 										System.out.println("다시 입력 하세요.");
 									}
@@ -253,7 +242,8 @@ public class Application {
 								break;
 							}
 							case 2: {
-								System.out.println("주소지 추가/수정 페이지 입니다.");
+								System.out.println();
+								System.out.println("----------------------[ 주소지 추가/수정 ]----------------------");
 								System.out.println();
 
 								boolean addressFlag = true;
@@ -266,18 +256,22 @@ public class Application {
 									// 뒤로가기 하려면 if문 / 상관없으면 switch
 									// 1.주소 목록 조회
 									if (addressCommand == 1) {
+										System.out.println("----------------------[ 주소지 추가/수정 ] -> [ 주소지 목록 조회 ]----------------------");
 										MainFunction.viewAddress(LoginSession.getLoginUserId());
 									}
 									// 2. 주소지 추가
 									else if (addressCommand == 2) {
+										System.out.println("----------------------[ 주소지 추가/수정 ] -> [ 주소지 추가 ]----------------------");
 										MainFunction.addAddress(LoginSession.getLoginUserId());
 									}
 									// 3. 주소지 수정
 									else if (addressCommand == 3) {
+										System.out.println("----------------------[ 주소지 추가/수정 ] -> [ 주소지 수정 ]----------------------");
 										MainFunction.modifyAddress(LoginSession.getLoginUserId());
 									}
 									// 4. 주소지 삭제
 									else if (addressCommand == 4) {
+										System.out.println("----------------------[ 주소지 추가/수정 ] -> [ 주소지 삭제 ]----------------------");
 										MainFunction.deleteAddress(LoginSession.getLoginUserId());
 									}
 									// 5. 뒤로 가기
@@ -288,7 +282,8 @@ public class Application {
 								break;
 							}
 							case 3: {
-								System.out.println("카테고리별 상품 보기 페이지입니다.");
+								System.out.println();
+								System.out.println("----------------------[ 카테고리별 상품 보기 ]----------------------");
 								System.out.println();
 								int categoryNumber = MainFunction.viewProductsCategory();
 								int currentPage = 0;
@@ -303,6 +298,7 @@ public class Application {
 										if (existProduct) {
 											beforePage = currentPage;
 											if (currentPage == 0) {
+												System.out.println();
 												System.out.println("1. 다음  | 2. 상품 선택 | 3. 뒤로가기");
 												int pageCommand = sc.nextInt();
 												if (pageCommand == 1) {
@@ -317,8 +313,8 @@ public class Application {
 												} else {
 													System.out.println("잘못 입력하셨습니다.");
 												}
-												System.out.println();
 											} else {
+												System.out.println();
 												System.out.println("1. 이전  | 2. 다음  | 3.상품 선택  | 4.뒤로가기");
 												int pageCommand = sc.nextInt();
 												if (pageCommand == 1) {
@@ -326,7 +322,7 @@ public class Application {
 												} else if (pageCommand == 2) {
 													currentPage++;
 												} else if (pageCommand == 3) {
-
+													System.out.println();
 													System.out.print("상품 번호를 입력하세요: ");
 													int selectProduct = sc.nextInt();
 													MainFunction.viewProductDetail(selectProduct);
@@ -335,9 +331,9 @@ public class Application {
 												} else {
 													System.out.println("잘못 입력 하셨습니다.");
 												}
-												System.out.println();
 											}
 										} else {
+											System.out.println();
 											System.out.println("더 이상 페이지를 이동할 수 없습니다.");
 											System.out.println();
 											currentPage = beforePage;
@@ -347,35 +343,37 @@ public class Application {
 								break;
 							}
 							case 4: {
-								System.out.println("장바구니 목록 조회 페이지 입니다.");
 								System.out.println();
-								// 조회 페이지 들어가면 바로 카트 리스트 출력
-								boolean cartFlag = true;
-								while (cartFlag) {
-
-									List<CartsDTO> cartList = new ArrayList<CartsDTO>();
-									cartList = MainFunction.viewCartList(LoginSession.getLoginUserId());
-
-									System.out.println();
+								System.out.println("----------------------[ 카테고리별 상품 보기 ] -> [ 장바구니 목록 조회 ]----------------------");
+								System.out.println();
+								//조회 페이지 들어가면 바로 카트 리스트 출력
+								boolean cartFlag=true;
+								while(cartFlag) {
+									
+									List<CartsDTO> cartsList=new ArrayList<CartsDTO>();
+									cartsList=MainFunction.viewCartList(LoginSession.getLoginUserId());
 									System.out.println("1. 장바구니 수정 | 2. 장바구니 상품 결제 | 3. 뒤로 가기");
 									System.out.print("번호를 입력하세요: ");
 									int cartCommand = sc.nextInt();
 									System.out.println();
 									// 1. 장바구니 수정
 									if (cartCommand == 1) {
-										boolean modifyFlag = true;
-										while (modifyFlag) {
-											System.out.println();
+										boolean modifyFlag=true;
+										while(modifyFlag) {
+											System.out.println("----------------------[ 카테고리별 상품 보기 ] -> [ 장바구니 수정 ]----------------------");
 											System.out.println("1. 상품 수량 수정 | 2. 상품 삭제 | 3. 뒤로 가기");
 											System.out.print("번호를 입력하세요: ");
 											int modifyCommand = sc.nextInt();
-											if (modifyCommand == 1) {
-												MainFunction.modifyCartProductCount(LoginSession.loginUserId, cartList);
-											} else if (modifyCommand == 2) {
-												MainFunction.deleteCartProduct(LoginSession.loginUserId, cartList);
-											} else if (modifyCommand == 3) {
-												modifyFlag = false;
-											} else {
+											System.out.println();
+											if(modifyCommand==1) {
+												System.out.println("---------------[ 카테고리별 상품 보기 ] -> [ 장바구니 수정 ] ->[ 상품 수량 수정 ]---------------");
+												MainFunction.modifyCartProductCount(LoginSession.loginUserId,cartsList);
+											}else if(modifyCommand==2) {
+												System.out.println("---------------[ 카테고리별 상품 보기 ] -> [ 장바구니 수정 ] ->[ 상품 삭제 ]---------------");
+												MainFunction.deleteCartProduct(LoginSession.loginUserId,cartsList);
+											}else if(modifyCommand==3) {
+												modifyFlag=false;
+											}else {
 												System.out.println("잘못된 입력입니다.");
 												System.out.println();
 											}
@@ -383,11 +381,14 @@ public class Application {
 									}
 									// 2. 장바구니 상품결제
 									else if (cartCommand == 2) {
-										if (cartList.isEmpty()) {
+										System.out.println();
+										System.out.println("----------------------[ 카테고리별 상품 보기 ] -> [ 장바구니 상품 결제 ]----------------------");
+										if(cartsList.isEmpty()) {
+											System.out.println();
 											System.out.println("장바구니에 아무것도 없어요~");
 											continue;
 										}
-										MainFunction.orderFromCart(LoginSession.loginUserId, cartList);
+										MainFunction.orderFromCart(LoginSession.loginUserId, cartsList);
 									}
 									// 3. 뒤로가기
 									else if (cartCommand == 3) {
@@ -400,6 +401,7 @@ public class Application {
 								break;
 							}
 							case 5: {
+								System.out.println();
 								System.out.println("로그아웃 되었습니다.");
 								System.out.println();
 								userFlag = false;
@@ -435,6 +437,9 @@ public class Application {
 			}
 			}
 
+		}
+		}catch(RuntimeException e) {
+			System.out.println(e.getMessage());
 		}
 	}
 }
