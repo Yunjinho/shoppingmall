@@ -14,6 +14,7 @@ public class OrdersDTO {
 	int totalPrice;
 
 	// --------------
-	UsersDTO user;
+	UsersDTO userDto;
 	int currentSeqNumber;
+	OrderDetailsDTO orderDetailsDto;
 }

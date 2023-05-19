@@ -45,52 +45,53 @@ public class OrdersDAOImpl implements OrdersDAO {
 	}
 
 	@Override
-	public int insertUserOrderfromCart(String userId, String address,int cartTotalPrice,List<CartsDTO> cartList) {
+	public int insertUserOrderfromCart(String userId, String address, int cartTotalPrice, List<CartsDTO> cartList) {
 		int count = 0;
 		CartsDAOImpl cartsDaoImpl = new CartsDAOImpl();
-		OrderDetailsDAOImpl orderDetailsDaoImpl=new OrderDetailsDAOImpl();
+		OrderDetailsDAOImpl orderDetailsDaoImpl = new OrderDetailsDAOImpl();
 		ProductsDAOImpl productsDaoImpl = new ProductsDAOImpl();
-		
+
 		Connection con = null;
 		PreparedStatement stmt = null;
 		PreparedStatement stmt2 = null;
-		ResultSet rs=null;
-		
+		ResultSet rs = null;
+
 		String sql = "INSERT INTO orders VALUES(?,?,?,?)";
 		String sql2 = "SELECT ORDERS_SEQ.NEXTVAL AS currentSeqNumber FROM dual";
-		
+
 		try {
 			con = ShoppingMallDataSource.getConnection();
-			
-			//order 테이블에 넣기
-			stmt2=con.prepareStatement(sql2);
-			rs=stmt2.executeQuery();
-			int orderPk=0;
-			if(rs.next()) {
-				orderPk=rs.getInt("currentSeqNumber");
+
+			// order 테이블에 넣기
+			stmt2 = con.prepareStatement(sql2);
+			rs = stmt2.executeQuery();
+			int orderPk = 0;
+			if (rs.next()) {
+				orderPk = rs.getInt("currentSeqNumber");
 			}
-			
+
 			stmt = con.prepareStatement(sql);
 			stmt.setInt(1, orderPk);
 			stmt.setString(2, userId);
 			stmt.setInt(3, cartTotalPrice);
 			stmt.setString(4, address);
 			count = stmt.executeUpdate();
-			
-			//오더 디테일에 넣어주기
-			for(CartsDTO l:cartList) {
-				OrderDetailsDTO orderDetailsDto=new OrderDetailsDTO();
+
+			// 오더 디테일에 넣어주기
+			for (CartsDTO l : cartList) {
+				OrderDetailsDTO orderDetailsDto = new OrderDetailsDTO();
 				ProductsDTO productDto = new ProductsDTO();
-				productDto=productsDaoImpl.getProductDetail(l.getProductId());
-				
+				productDto = productsDaoImpl.getProductDetail(l.getProductId());
+
 				orderDetailsDto.setOrderId(orderPk);
 				orderDetailsDto.setProductId(l.getProductId());
 				orderDetailsDto.setProductCount(l.getProductCount());
 				orderDetailsDaoImpl.insertOrderProduct(orderDetailsDto);
-				//상품 수량 수정
-				productsDaoImpl.updateProductStock(l.getProductId(), productDto.getProductStock()-l.getProductCount());
+				// 상품 수량 수정
+				productsDaoImpl.updateProductStock(l.getProductId(),
+						productDto.getProductStock() - l.getProductCount());
 			}
-			
+
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
@@ -105,7 +106,7 @@ public class OrdersDAOImpl implements OrdersDAO {
 		int count = 0;
 		int cartTotalPrice = 0;
 		ProductsDAOImpl productsDaoImpl = new ProductsDAOImpl();
-		OrderDetailsDAOImpl orderDetailsDaoImpl=new OrderDetailsDAOImpl();
+		OrderDetailsDAOImpl orderDetailsDaoImpl = new OrderDetailsDAOImpl();
 		ProductsDTO productDto = new ProductsDTO();
 		productDto = productsDaoImpl.getProductDetail(productId);
 		cartTotalPrice = productDto.getProductPrice() * amount;
@@ -113,40 +114,39 @@ public class OrdersDAOImpl implements OrdersDAO {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		PreparedStatement stmt2 = null;
-		ResultSet rs=null;
+		ResultSet rs = null;
 
 		String sql = "INSERT INTO ORDERS VALUES(?,?,?,?)";
-		String sql2= "select ORDERS_SEQ.NEXTVAL as currentSeqNumber from dual";
+		String sql2 = "select ORDERS_SEQ.NEXTVAL as currentSeqNumber from dual";
 		try {
-		
-			
-			productDto=productsDaoImpl.getProductDetail(productId);
-			cartTotalPrice=productDto.getProductPrice()*amount;
+
+			productDto = productsDaoImpl.getProductDetail(productId);
+			cartTotalPrice = productDto.getProductPrice() * amount;
 			con = ShoppingMallDataSource.getConnection();
-			
-			//order 테이블에 넣기
-			stmt2=con.prepareStatement(sql2);
-			rs=stmt2.executeQuery();
-			int orderPk=0;
-			if(rs.next()) {
-				orderPk=rs.getInt("currentSeqNumber");
+
+			// order 테이블에 넣기
+			stmt2 = con.prepareStatement(sql2);
+			rs = stmt2.executeQuery();
+			int orderPk = 0;
+			if (rs.next()) {
+				orderPk = rs.getInt("currentSeqNumber");
 			}
-			
+
 			stmt = con.prepareStatement(sql);
 			stmt.setInt(1, orderPk);
 			stmt.setString(2, userId);
 			stmt.setInt(3, cartTotalPrice);
 			stmt.setString(4, address);
 			count = stmt.executeUpdate();
-			//위에서 넣었던 오더테이블 pk 얻어오기
-			OrderDetailsDTO orderDetailsDto=new OrderDetailsDTO();
+			// 위에서 넣었던 오더테이블 pk 얻어오기
+			OrderDetailsDTO orderDetailsDto = new OrderDetailsDTO();
 			orderDetailsDto.setOrderId(orderPk);
 			orderDetailsDto.setProductId(productId);
 			orderDetailsDto.setProductCount(amount);
 			orderDetailsDaoImpl.insertOrderProduct(orderDetailsDto);
-			//상품 수량 수정
-			productsDaoImpl.updateProductStock(productId, productDto.getProductStock()-amount);
-			
+			// 상품 수량 수정
+			productsDaoImpl.updateProductStock(productId, productDto.getProductStock() - amount);
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} finally {
@@ -165,22 +165,31 @@ public class OrdersDAOImpl implements OrdersDAO {
 		ResultSet rs = null;
 		ArrayList<OrdersDTO> ordersList = new ArrayList<>();
 
-		String sql = "SELECT o.orderId, o.userId, o.totalPrice, o.address, u.userName, u.phoneNumber "
-				+ "FROM ORDERS o JOIN USERS u ON o.userId = u.userId ORDER BY ORDERID";
+		String sql = "SELECT o.orderId, o.userId, o.totalPrice, o.address, u.userName, u.phoneNumber, od.deliveryStatus "
+				+ "FROM orders o LEFT JOIN users u ON o.userId = u.userId "
+				+ "LEFT JOIN orderDetails od ON od.orderId = o.orderId ORDER BY o.orderId";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
 			rs = stmt.executeQuery();
 			while (rs.next()) {
+				// 주문 정보
 				OrdersDTO ordersDto = new OrdersDTO();
 				ordersDto.setOrderId(rs.getInt("orderId"));
 				ordersDto.setUserId(rs.getString("userId"));
 				ordersDto.setTotalPrice(rs.getInt("totalPrice"));
 				ordersDto.setAddress(rs.getString("address"));
+
+				// 사용자 정보
 				UsersDTO u = new UsersDTO();
 				u.setUserName(rs.getString("userName"));
 				u.setPhoneNumber(rs.getString("phoneNumber"));
-				ordersDto.setUser(u);
+				ordersDto.setUserDto(u);
+
+				// 배송 정보
+				OrderDetailsDTO o = new OrderDetailsDTO();
+				o.setDeliveryStatus(rs.getString("deliveryStatus"));
+				ordersDto.setOrderDetailsDto(o);
 
 				ordersList.add(ordersDto);
 			}

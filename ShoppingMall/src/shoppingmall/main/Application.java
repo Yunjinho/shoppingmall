@@ -149,18 +149,19 @@ public class Application {
 											System.out.println();
 										}
 									}
-									// 주문 상태 변경
+									// 배송 상태 변경 By order
 									else if (n == 2) {
-										MainFunction.getAllOrderDetailsList();
-										System.out.print("배송 상태를 변경할 주문 상세 번호를 입력하세요: ");
-										int orderDetailId = sc.nextInt();
+										MainFunction.getAllOrderList();
+										System.out.print("배송 상태를 변경할 주문 번호를 입력하세요: ");
+										int orderId = sc.nextInt();
 										sc.nextLine();
 
 										System.out.print("배송 상태를 입력하세요 [1.상품 준비중 | 2.배송중 | 3.배송 완료] : ");
 										int statusId = sc.nextInt();
 										sc.nextLine();
 
-										MainFunction.updateOrderStatus(orderDetailId, statusId);
+										System.out.println();
+										MainFunction.updateOrderStatus(orderId, statusId);
 									}
 									// 뒤로 가기
 									else if (n == 3) {
