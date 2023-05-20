@@ -9,9 +9,8 @@ public interface OrderDetailsDAO {
 	ArrayList<OrderDetailsDTO> getUserOrderProducts(int orderDetailId); // 사용자 주문 상품 조회
 
 	ArrayList<OrderDetailsDTO> getOrderDeatils();
-	
-	List<OrderDetailsDTO> getOrderListForUser(String deliverySatuts,String userId);//유저 구매목록 조회
-	
+
+	List<OrderDetailsDTO> getOrderListForUser(String deliverySatuts, String userId);// 유저 구매목록 조회
 
 	int insertOrderProduct(OrderDetailsDTO orderDetailsDto); // 사용자 상품 주문
 
@@ -21,6 +20,6 @@ public interface OrderDetailsDAO {
 
 	int deleteOrderProduct(int orderDetailId); // 사용자 주문 삭제
 
-	int updateOrderStatus(int orderId, String status); // 주문 상태 수정
+	int updateOrderDetailStatusByOrderId(int orderId, String status); // 주문 상태 수정
 
 }

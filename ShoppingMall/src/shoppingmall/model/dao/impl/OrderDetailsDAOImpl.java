@@ -141,7 +141,7 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 		ResultSet rs = null;
 		String sql = "SELECT od.orderDetailId, od.orderId, od.productCount, od.deliveryStatus, o.userId, o.totalPrice, o.address, p.productName, p.productStock "
 				+ "FROM orderDetails od LEFT JOIN orders o ON o.orderId = od.orderId "
-				+ "LEFT JOIN products p on p.productId = od.productId";
+				+ "LEFT JOIN products p on p.productId = od.productId ORDER BY orderId";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -178,7 +178,7 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 	}
 
 	@Override
-	public int updateOrderStatus(int orderId, String status) {
+	public int updateOrderDetailStatusByOrderId(int orderId, String status) {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
@@ -201,24 +201,23 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 
 	@Override
 	public List<OrderDetailsDTO> getOrderListForUser(String deliverySatuts, String userId) {
-		List<OrderDetailsDTO> orderDetailsList=new ArrayList<OrderDetailsDTO>();
-		
-		Connection con= null;
-		PreparedStatement stmt=null;
-		ResultSet rs=null;
-		String sql="SELECT p.productname AS productname, p.productprice AS productprice, od.productcount AS productcount,od.deliverystatus AS deliverystatus,od.createdAT AS createdAT FROM orderDetails od "+
-					"join orders o on od.orderid=o.orderid "+
-					"join products p on od.productid=p.productId "+
-					"WHERE od.deliverystatus=? AND o.userId=? order by createdAt";
+		List<OrderDetailsDTO> orderDetailsList = new ArrayList<OrderDetailsDTO>();
+
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		String sql = "SELECT p.productname AS productname, p.productprice AS productprice, od.productcount AS productcount,od.deliverystatus AS deliverystatus,od.createdAT AS createdAT FROM orderDetails od "
+				+ "join orders o on od.orderid=o.orderid " + "join products p on od.productid=p.productId "
+				+ "WHERE od.deliverystatus=? AND o.userId=? order by createdAt";
 		try {
-			con=ShoppingMallDataSource.getConnection();
-			stmt=con.prepareStatement(sql);
+			con = ShoppingMallDataSource.getConnection();
+			stmt = con.prepareStatement(sql);
 			stmt.setString(1, deliverySatuts);
 			stmt.setNString(2, userId);
-			rs=stmt.executeQuery();
-			while(rs.next()) {
-				OrderDetailsDTO orderDetailsDto=new OrderDetailsDTO();
-				ProductsDTO productDto=new ProductsDTO();
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				OrderDetailsDTO orderDetailsDto = new OrderDetailsDTO();
+				ProductsDTO productDto = new ProductsDTO();
 				productDto.setProductPrice(rs.getInt("productprice"));
 				productDto.setProductName(rs.getString("productname"));
 				orderDetailsDto.setProductDto(productDto);
@@ -226,11 +225,11 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 				orderDetailsDto.setDeliveryStatus(rs.getString("deliverystatus"));
 				orderDetailsDto.setCreatedAt(rs.getTimestamp("createdAt"));
 				orderDetailsList.add(orderDetailsDto);
-				
+
 			}
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
-		}finally {
+		} finally {
 			ShoppingMallDataSource.closeConnection(con);
 			ShoppingMallDataSource.closePreparedStatement(stmt);
 			ShoppingMallDataSource.closeResultSet(rs);
