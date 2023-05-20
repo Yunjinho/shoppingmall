@@ -205,4 +205,32 @@ public class OrdersDAOImpl implements OrdersDAO {
 		return ordersList;
 	}
 
+	@Override
+	public boolean orderCheckByOrderId(int orderId) {
+		int count = 0;
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+
+		String sql = "SELECT orderId FROM Orders WHERE orderId = ?";
+		try {
+			con = ShoppingMallDataSource.getConnection();
+			stmt = con.prepareStatement(sql);
+			stmt.setInt(1, orderId);
+			rs = stmt.executeQuery();
+			int pId;
+			if (rs.next()) {
+				pId = rs.getInt("produtId");
+				// 존재 하면 true
+				return true;
+			}
+
+		} catch (SQLException e) {
+			// TODO: handle exception
+			throw new RuntimeException(e);
+		}
+		// 존재 하지 않으면 false
+		return false;
+	}
+
 }

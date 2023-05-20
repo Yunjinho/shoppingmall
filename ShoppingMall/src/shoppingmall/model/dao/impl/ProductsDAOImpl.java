@@ -96,13 +96,6 @@ public class ProductsDAOImpl implements ProductsDAO {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		String sql = "SELECT * FROM products WHERE productId=?";
-		/*
-		 * String sql =
-		 * "SELECT p.productId, p.productName, p.productPrice, p.productStock, p.productInfo, c.categoryName, p.updatedAt"
-		 * + "FROM PRODUCTS p LEFT JOIN CATEGORIES c" +
-		 * " ON p.categoryId = c.categoryId WHERE p.categoryId = ? and p.productId = ? ORDER BY ProductId;"
-		 * ;
-		 */
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -116,7 +109,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 				productDto.setProductStock(rs.getInt("productStock")); // 상품 재고
 				productDto.setProductInfo(rs.getString("productinfo")); // 상품 정보
 				productDto.setUpdatedAt(rs.getTimestamp("updatedAt")); // 최신 등록일
-				productDto.setProductStatus(rs.getInt("productStatus"));//판매상태
+				productDto.setProductStatus(rs.getInt("productStatus"));// 판매상태
 			}
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -159,7 +152,9 @@ public class ProductsDAOImpl implements ProductsDAO {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "UPDATE PRODUCTS SET PRODUCTNAME = ?, PRODUCTPRICE = ?, PRODUCTSTOCK = ?,PRODUCTINFO = ?, CATEGORYID = ?,UPDATEDAT = SYSDATE WHERE PRODUCTID = ?";
+		String sql = "UPDATE PRODUCTS "
+				+ "SET PRODUCTNAME = ?, PRODUCTPRICE = ?, PRODUCTSTOCK = ?,PRODUCTINFO = ?, CATEGORYID = ?,UPDATEDAT = SYSDATE, productStatus = ? "
+				+ "WHERE PRODUCTID = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -169,8 +164,8 @@ public class ProductsDAOImpl implements ProductsDAO {
 			stmt.setInt(3, productDto.getProductStock());
 			stmt.setString(4, productDto.getProductInfo());
 			stmt.setInt(5, productDto.getCategoryId());
-			stmt.setInt(6, productDto.getProductId());
-
+			stmt.setInt(6, productDto.getProductStatus());
+			stmt.setInt(7, productDto.getProductId());
 			count = stmt.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -203,7 +198,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 	}
 
 	@Override
-	public int updateProductStatus(int updateProductId, int productStatus) {
+	public int updateProductStatus(int productId, int productStatus) {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
@@ -212,7 +207,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
 			stmt.setInt(1, productStatus);
-			stmt.setInt(2, updateProductId);
+			stmt.setInt(2, productId);
 			count = stmt.executeUpdate();
 		} catch (SQLException e) {
 			// TODO: handle exception
@@ -222,6 +217,35 @@ public class ProductsDAOImpl implements ProductsDAO {
 			ShoppingMallDataSource.closeConnection(con);
 		}
 		return count;
+	}
+
+	@Override
+	public boolean productCheckByProductId(int productId) {
+		// TODO Auto-generated method stub
+		int count = 0;
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+
+		String sql = "SELECT productId FROM Products WHERE productId = ?";
+		try {
+			con = ShoppingMallDataSource.getConnection();
+			stmt = con.prepareStatement(sql);
+			stmt.setInt(1, productId);
+			rs = stmt.executeQuery();
+			int pId;
+			if (rs.next()) {
+				pId = rs.getInt("produtId");
+				// 존재 하면 true
+				return true;
+			}
+
+		} catch (SQLException e) {
+			// TODO: handle exception
+			throw new RuntimeException(e);
+		}
+		// 존재 하지 않으면 false
+		return false;
 	}
 
 }
