@@ -83,7 +83,9 @@ public class MainUserFunction {
 		// DB에서 가져온 사용자 이름과 핸드폰 번호
 		UsersDTO checkUserDto = userDao.checkUserInfo(user.getUserName(), user.getPhoneNumber());
 		// 가져온 정보가 있다면
-		if (checkUserDto.getPhoneNumber().equals(phoneNumber)) {
+		if (checkUserDto.getPhoneNumber() == null) {
+
+		} else if (checkUserDto.getPhoneNumber().equals(phoneNumber)) {
 			System.out.println("이미 존재하는 회원정보 입니다.");
 			System.out.println();
 			return result;
@@ -444,36 +446,37 @@ public class MainUserFunction {
 					l.getProductDto().getProductPrice(), l.getProductCount(), date, l.getDeliveryStatus());
 		}
 	}
-	//비밀번호 찾기 변경
+
+	// 비밀번호 찾기 변경
 	public static void changeUserPassword() {
 		UsersDTO user = new UsersDTO();
 		System.out.print("아이디: ");
-		String userId=sc.next();
-		
-		//아이디 체크
+		String userId = sc.next();
+
+		// 아이디 체크
 		if (userDao.checkUserId(userId) == true) {
 			System.out.println("존재하지 않는 아이디 입니다.");
 			System.out.println();
 			return;
 		}
-		user=userDao.getUserInfo(userId);
+		user = userDao.getUserInfo(userId);
 		System.out.println("회원가입 때 사용한 성함과 핸드폰 번호를 입력해주세요");
 		System.out.print("이름: ");
-		String name=sc.next();
+		String name = sc.next();
 		System.out.print("핸드폰 번호[010-1234-1234]: ");
-		String phoneNuber=sc.next();
-		if(user.getUserName().equals(name) && user.getPhoneNumber().equals(phoneNuber)) {
-			
+		String phoneNuber = sc.next();
+		if (user.getUserName().equals(name) && user.getPhoneNumber().equals(phoneNuber)) {
+
 			System.out.print("변경할 비밀번호: ");
 			user.setPassword(sc.next());
-			//정보 변경
+			// 정보 변경
 			userDao.updateUsersInformation(user);
 			System.out.println("완료 되었습니다.");
 			System.out.println();
-			
+
 			return;
 		}
 		System.out.println("입력하신 정보가 일치하지 않습니다.");
-		
+
 	}
 }

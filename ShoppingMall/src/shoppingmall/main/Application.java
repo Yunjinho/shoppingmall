@@ -17,7 +17,7 @@ public class Application {
 	public static void main(String[] args) {
 		try {
 			while (true) {
-				System.out.println("1.[회원가입] | 2.[로그인] | 3.[아이디찾기] | 4.[비밀번호 찾기] | 5..[프로그램 종료]");
+				System.out.println("1.[회원가입] | 2.[로그인] | 3.[아이디찾기] | 4.[비밀번호 찾기] | 5.[프로그램 종료]");
 				System.out.print("번호 입력: ");
 				int cmd = sc.nextInt();
 				switch (cmd) {
