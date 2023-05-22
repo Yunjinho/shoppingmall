@@ -77,8 +77,13 @@ public class MainUserFunction {
 		user.setUserName(sc.next());
 
 		System.out.print("핸드폰 번호[010-1234-1234]: ");
-		user.setPhoneNumber(sc.next());
-		if (userDao.checkUserInfoExists(user.getUserName(), user.getPhoneNumber()) == false) {
+		String phoneNumber = sc.next();
+		user.setPhoneNumber(phoneNumber);
+
+		// DB에서 가져온 사용자 이름과 핸드폰 번호
+		UsersDTO checkUserDto = userDao.checkUserInfo(user.getUserName(), user.getPhoneNumber());
+		// 가져온 정보가 있다면
+		if (checkUserDto.getPhoneNumber().equals(phoneNumber)) {
 			System.out.println("이미 존재하는 회원정보 입니다.");
 			System.out.println();
 			return result;
@@ -106,6 +111,28 @@ public class MainUserFunction {
 			System.out.println();
 		}
 		return result;
+	}
+
+	// 아이디 찾기
+	public static void findUserId() {
+		boolean result = true;
+		UsersDTO userInfo = new UsersDTO();
+
+		System.out.print("사용자 이름을 입력하세요: ");
+		String userName = sc.next();
+
+		System.out.print("사용자 핸드폰 번호를 입력하세요: ");
+		String phoneNumber = sc.next();
+
+		userInfo = userDao.findUserIdByNameAndPhoneNumber(userName, phoneNumber);
+		System.out.println();
+		if (userInfo.getUserId() == null) {
+			System.out.println("회원이 아닙니다.");
+			System.out.println();
+		} else {
+			System.out.println("사용자 아이디 : " + userInfo.getUserId());
+			System.out.println();
+		}
 	}
 
 	// 유저 정보 조회

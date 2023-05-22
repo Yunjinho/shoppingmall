@@ -384,6 +384,7 @@ public class Application {
 				}
 				// 3. 아이디 찾기
 				case 3: {
+					MainUserFunction.findUserId();
 					break;
 				}
 				// 4. 비밀번호 찾기

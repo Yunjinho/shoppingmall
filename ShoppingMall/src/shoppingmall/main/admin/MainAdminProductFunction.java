@@ -130,6 +130,7 @@ public class MainAdminProductFunction {
 						plus = 5;
 					}
 				}
+
 				// 전에 보여준 상품이 5개 미만이라면
 				else {
 					plus += 1;
