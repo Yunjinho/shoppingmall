@@ -63,9 +63,8 @@ public class MainUserFunction {
 		boolean result = false;
 		System.out.print("아이디: ");
 		user.setUserId(sc.next());
-		boolean idCheck = userDao.checkUserId(user.getUserId());
 		// 아이디가 존재할 경우
-		if (idCheck == false) {
+		if (userDao.checkUserId(user.getUserId()) == false) {
 			System.out.println("이미 존재하는 아이디입니다. 다른 아이디를 입력해주세요.");
 			System.out.println();
 			return result;
@@ -79,6 +78,11 @@ public class MainUserFunction {
 
 		System.out.print("핸드폰 번호[010-1234-1234]: ");
 		user.setPhoneNumber(sc.next());
+		if (userDao.checkUserInfoExists(user.getUserName(), user.getPhoneNumber()) == false) {
+			System.out.println("이미 존재하는 회원정보 입니다.");
+			System.out.println();
+			return result;
+		}
 
 		System.out.print("생일[YYYY-MM-DD]: ");
 		String birth = sc.next();

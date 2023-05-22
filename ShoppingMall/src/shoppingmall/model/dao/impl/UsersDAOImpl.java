@@ -36,6 +36,30 @@ public class UsersDAOImpl implements UsersDAO {
 	};
 
 	@Override
+	public boolean checkUserInfoExists(String userName, String phoneNumber) {
+		String sql = "SELECT phoneNumber FROM USERS WHERE userName = ? and phoneNumber = ?";
+		Connection con = null;
+		PreparedStatement stmt = null;
+		try {
+			con = ShoppingMallDataSource.getConnection();
+			stmt = con.prepareStatement(sql);
+			stmt.setString(1, userName);
+			stmt.setString(2, phoneNumber);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				return false;
+			} else {
+				return true;
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			ShoppingMallDataSource.closePreparedStatement(stmt);
+			ShoppingMallDataSource.closeConnection(con);
+		}
+	};
+
+	@Override
 	public int signUp(UsersDTO userDto, String address) {
 
 		int count = 0;
@@ -158,6 +182,6 @@ public class UsersDAOImpl implements UsersDAO {
 		}
 
 		return userDto;
-	};
+	}
 
 }

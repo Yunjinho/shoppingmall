@@ -17,7 +17,7 @@ public class Application {
 	public static void main(String[] args) {
 		try {
 			while (true) {
-				System.out.println("1.[회원가입] | 2.[로그인] | 3.[프로그램 종료]");
+				System.out.println("1.[회원가입] | 2.[로그인] | 3.[아이디찾기] | 4.[비밀번호 찾기] | 5..[프로그램 종료]");
 				System.out.print("번호 입력: ");
 				int cmd = sc.nextInt();
 				switch (cmd) {
@@ -382,8 +382,16 @@ public class Application {
 					// case2 로그아웃 하는 break;
 					break;
 				}
-				// 3. 나가기
+				// 3. 아이디 찾기
 				case 3: {
+					break;
+				}
+				// 4. 비밀번호 찾기
+				case 4: {
+					break;
+				}
+				// 3. 나가기
+				case 5: {
 					System.out.println("프로그램이 종료되었습니다.");
 					System.exit(0);
 					break;
