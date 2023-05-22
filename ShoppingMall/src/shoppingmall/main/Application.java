@@ -40,7 +40,7 @@ public class Application {
 							while (true) {
 								System.out.println(
 										"--------------------------------- [관리자 페이지] ---------------------------------");
-								System.out.println("1. [상품 관리] | 2. [배송 관리] | 3. [로그 아웃]");
+								System.out.println("1. [상품 관리] | 2. [주문 관리] | 3. [로그 아웃]");
 								System.out.print("번호를 입력하세요: ");
 								int adminCommand = sc.nextInt();
 								sc.nextLine();
@@ -66,7 +66,7 @@ public class Application {
 								// 2. 배송 관리
 								case 2: {
 									System.out.println(
-											"------------------------- [관리자 페이지] -> [배송 관리] -> [주문 내역] --------------------------");
+											"------------------------- [관리자 페이지] -> [주문 관리] -> [주문 내역] --------------------------");
 									MainAdminOrderFunction.orderManagement();
 									System.out.println("");
 									break;

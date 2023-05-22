@@ -154,6 +154,8 @@ public class MainUserFunction {
 	// 유저 정보 수정
 	public static void modifyUserPassword(UsersDTO userDto) {
 		userDao.updateUsersInformation(userDto);// 입력받은 데이터로 정보 수정
+		System.out.println("비밀번호 변경이 완료되었습니다.");
+		System.out.println();
 	}
 
 	// 주소목록 조회
@@ -175,6 +177,7 @@ public class MainUserFunction {
 		String address = sc.nextLine();
 
 		addressDao.insertAddresses(userId, address);
+		System.out.println();
 
 	}
 
@@ -428,6 +431,8 @@ public class MainUserFunction {
 		java.sql.Date date = java.sql.Date.valueOf(birth);
 		userDto.setBirthday(date);
 		MainUserFunction.modifyUserPassword(userDto);// 입력받은 데이터로 정보 수정
+		System.out.println("사용자 정보가 수정되었습니다.");
+		System.out.println();
 	}
 
 	public static void viewOrderList(String deliveryStatus, String userId) {

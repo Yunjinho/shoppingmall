@@ -153,7 +153,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		String sql = "UPDATE PRODUCTS "
-				+ "SET PRODUCTNAME = ?, PRODUCTPRICE = ?, PRODUCTSTOCK = ?,PRODUCTINFO = ?, CATEGORYID = ?,UPDATEDAT = SYSDATE, productStatus = ? "
+				+ "SET productName = ?, productPrice = ?, productStock = ?, productInfo = ?, categoryId = ?,UPDATEDAT = SYSDATE, productStatus = ? "
 				+ "WHERE PRODUCTID = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
@@ -233,9 +233,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 			stmt = con.prepareStatement(sql);
 			stmt.setInt(1, productId);
 			rs = stmt.executeQuery();
-			int pId;
 			if (rs.next()) {
-				pId = rs.getInt("produtId");
 				// 존재 하면 true
 				return true;
 			}
