@@ -223,7 +223,7 @@ public class MainUserFunction {
 
 		System.out.println("상품 번호 |  상품 이름           | 상품 가격  | 상품 재고  | 상품 정보   |  상품 상태    |");
 		for (int i = 0; i < productsList.size(); i++) {
-			System.out.printf("%d\t  %-10s\t %d\t %d\t %s\t %-10s", (i + 1), productsList.get(i).getProductName(),
+			System.out.printf("%d\t%-10s     \t%d\t%d\t%s\t%s", (i + 1), productsList.get(i).getProductName(),
 					productsList.get(i).getProductPrice(), productsList.get(i).getProductStock(), "판매중",
 					productsList.get(i).getProductInfo());
 			System.out.println();
