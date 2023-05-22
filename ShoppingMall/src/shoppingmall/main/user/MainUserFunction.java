@@ -150,7 +150,7 @@ public class MainUserFunction {
 	}
 
 	// 유저 정보 수정
-	public static void modifyUserInfo(UsersDTO userDto) {
+	public static void modifyUserPassword(UsersDTO userDto) {
 		userDao.updateUsersInformation(userDto);// 입력받은 데이터로 정보 수정
 	}
 
@@ -254,7 +254,7 @@ public class MainUserFunction {
 
 		System.out.println("상품 번호 |  상품 이름           | 상품 가격  | 상품 재고  | 상품 정보   |  상품 상태    |");
 		for (int i = 0; i < productsList.size(); i++) {
-			System.out.printf("%d\t  %-10s\t %d\t %d\t %s\t %-10s", (i + 1), productsList.get(i).getProductName(),
+			System.out.printf("%d\t%-10s     \t%d\t%d\t%s\t%s", (i + 1), productsList.get(i).getProductName(),
 					productsList.get(i).getProductPrice(), productsList.get(i).getProductStock(), "판매중",
 					productsList.get(i).getProductInfo());
 			System.out.println();
@@ -416,7 +416,7 @@ public class MainUserFunction {
 		return true;
 	}
 
-	public static void insertUserInfo(UsersDTO userDto) {
+	public static void modifyUserInfo(UsersDTO userDto) {
 		System.out.print("이름: ");
 		userDto.setUserName(sc.next());
 		System.out.print("핸드폰 번호[010-1234-1234]: ");
@@ -425,7 +425,7 @@ public class MainUserFunction {
 		String birth = sc.next();
 		java.sql.Date date = java.sql.Date.valueOf(birth);
 		userDto.setBirthday(date);
-		MainUserFunction.modifyUserInfo(userDto);// 입력받은 데이터로 정보 수정
+		MainUserFunction.modifyUserPassword(userDto);// 입력받은 데이터로 정보 수정
 	}
 
 	public static void viewOrderList(String deliveryStatus, String userId) {
@@ -443,5 +443,37 @@ public class MainUserFunction {
 			System.out.printf("%18s\t  %d\t\t %d\t %10s\t %5s\n", l.getProductDto().getProductName(),
 					l.getProductDto().getProductPrice(), l.getProductCount(), date, l.getDeliveryStatus());
 		}
+	}
+	//비밀번호 찾기 변경
+	public static void changeUserPassword() {
+		UsersDTO user = new UsersDTO();
+		System.out.print("아이디: ");
+		String userId=sc.next();
+		
+		//아이디 체크
+		if (userDao.checkUserId(userId) == true) {
+			System.out.println("존재하지 않는 아이디 입니다.");
+			System.out.println();
+			return;
+		}
+		user=userDao.getUserInfo(userId);
+		System.out.println("회원가입 때 사용한 성함과 핸드폰 번호를 입력해주세요");
+		System.out.print("이름: ");
+		String name=sc.next();
+		System.out.print("핸드폰 번호[010-1234-1234]: ");
+		String phoneNuber=sc.next();
+		if(user.getUserName().equals(name) && user.getPhoneNumber().equals(phoneNuber)) {
+			
+			System.out.print("변경할 비밀번호: ");
+			user.setPassword(sc.next());
+			//정보 변경
+			userDao.updateUsersInformation(user);
+			System.out.println("완료 되었습니다.");
+			System.out.println();
+			
+			return;
+		}
+		System.out.println("입력하신 정보가 일치하지 않습니다.");
+		
 	}
 }

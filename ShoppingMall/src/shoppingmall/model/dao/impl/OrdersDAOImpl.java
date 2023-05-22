@@ -61,7 +61,7 @@ public class OrdersDAOImpl implements OrdersDAO {
 
 		try {
 			con = ShoppingMallDataSource.getConnection();
-
+			con.setAutoCommit(false);
 			// order 테이블에 넣기
 			stmt2 = con.prepareStatement(sql2);
 			rs = stmt2.executeQuery();
@@ -95,6 +95,7 @@ public class OrdersDAOImpl implements OrdersDAO {
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
+			try {con.setAutoCommit(true);} catch (SQLException e) {}
 			ShoppingMallDataSource.closePreparedStatement(stmt);
 			ShoppingMallDataSource.closeConnection(con);
 		}
@@ -123,7 +124,7 @@ public class OrdersDAOImpl implements OrdersDAO {
 			productDto = productsDaoImpl.getProductDetail(productId);
 			cartTotalPrice = productDto.getProductPrice() * amount;
 			con = ShoppingMallDataSource.getConnection();
-
+			con.setAutoCommit(false);
 			// order 테이블에 넣기
 			stmt2 = con.prepareStatement(sql2);
 			rs = stmt2.executeQuery();
@@ -150,6 +151,7 @@ public class OrdersDAOImpl implements OrdersDAO {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} finally {
+			try {con.setAutoCommit(true);} catch (SQLException e) {}
 			ShoppingMallDataSource.closePreparedStatement(stmt);
 			ShoppingMallDataSource.closeConnection(con);
 		}
