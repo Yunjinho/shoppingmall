@@ -113,7 +113,7 @@ public class Application {
 													"-------------------[ 사용자 정보 수정 ] -> [ 일반 정보 수정 ]------------------");
 											System.out.println(
 													"-------------------------[ 수정 정보 입력 ]-----------------------------");
-											MainUserFunction.insertUserInfo(userDto);//
+											MainUserFunction.modifyUserInfo(userDto);//
 											flag = false;
 											break;
 										case 2:
@@ -123,7 +123,7 @@ public class Application {
 													"-----------------------[ 수정 비밀 번호 입력 ]----------------------------");
 											System.out.print("비밀번호: ");
 											userDto.setPassword(sc.next());
-											MainUserFunction.modifyUserInfo(userDto);// 입력받은 데이터로 정보 수정
+											MainUserFunction.modifyUserPassword(userDto);// 입력받은 데이터로 정보 수정
 											flag = false;
 											break;
 										case 3:
@@ -388,6 +388,7 @@ public class Application {
 				}
 				// 4. 비밀번호 찾기
 				case 4: {
+					MainUserFunction.changeUserPassword();
 					break;
 				}
 				// 3. 나가기
