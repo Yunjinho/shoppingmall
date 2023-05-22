@@ -94,13 +94,6 @@ public class OrdersDAOImpl implements OrdersDAO {
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
-<<<<<<< HEAD
-=======
-			try {
-				con.setAutoCommit(true);
-			} catch (SQLException e) {
-			}
->>>>>>> 6fabe67ca2b80336df90c7dfe274175444423daf
 			ShoppingMallDataSource.closePreparedStatement(stmt);
 			ShoppingMallDataSource.closeConnection(con);
 		}
@@ -156,13 +149,6 @@ public class OrdersDAOImpl implements OrdersDAO {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} finally {
-<<<<<<< HEAD
-=======
-			try {
-				con.setAutoCommit(true);
-			} catch (SQLException e) {
-			}
->>>>>>> 6fabe67ca2b80336df90c7dfe274175444423daf
 			ShoppingMallDataSource.closePreparedStatement(stmt);
 			ShoppingMallDataSource.closeConnection(con);
 		}

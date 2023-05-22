@@ -83,15 +83,9 @@ public class MainUserFunction {
 		// DB에서 가져온 사용자 이름과 핸드폰 번호
 		UsersDTO checkUserDto = userDao.checkUserInfo(user.getUserName(), user.getPhoneNumber());
 		// 가져온 정보가 있다면
-<<<<<<< HEAD
 		if(checkUserDto.getPhoneNumber()==null) {
 			
 		}else if(checkUserDto.getPhoneNumber().equals(phoneNumber)) {
-=======
-		if (checkUserDto.getPhoneNumber() == null) {
-
-		} else if (checkUserDto.getPhoneNumber().equals(phoneNumber)) {
->>>>>>> 6fabe67ca2b80336df90c7dfe274175444423daf
 			System.out.println("이미 존재하는 회원정보 입니다.");
 			System.out.println();
 			return result;
@@ -160,7 +154,7 @@ public class MainUserFunction {
 	// 유저 정보 수정
 	public static void modifyUserPassword(UsersDTO userDto) {
 		userDao.updateUsersInformation(userDto);// 입력받은 데이터로 정보 수정
-		System.out.println("비밀번호 변경이 완료되었습니다.");
+		System.out.println("수정이 완료되었습니다.");
 		System.out.println();
 	}
 
@@ -227,6 +221,7 @@ public class MainUserFunction {
 		int modifyNum = sc.nextInt();
 		if (modifyNum < 1 || userDto.getAddressDto().size() < modifyNum) {
 			System.out.println("잘못된 입력입니다.");
+			System.out.println();
 			return;
 		}
 		addressDto = userDto.getAddressDto().get(modifyNum - 1);
@@ -442,7 +437,6 @@ public class MainUserFunction {
 		java.sql.Date date = java.sql.Date.valueOf(birth);
 		userDto.setBirthday(date);
 		MainUserFunction.modifyUserPassword(userDto);// 입력받은 데이터로 정보 수정
-		System.out.println("사용자 정보가 수정되었습니다.");
 		System.out.println();
 	}
 
