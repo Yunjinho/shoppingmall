@@ -19,10 +19,10 @@ public class ProductsDAOImpl implements ProductsDAO {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 
-		String sql = "select rowNumber,productId,productName,productPrice,productStock,productinfo,categoryId,createdAt,updatedAt from "
-				+ "(select rownum as rowNumber,productId,productName,productPrice,productStock,productinfo,categoryId,createdAt,updatedAt from "
-				+ "(select * from products p where p.categoryId=? and p.productStock > 0 and p.productstatus=1 order by createdAt desc)) "
-				+ "where rowNumber between ? and ?";
+		String sql = "SELECT rowNumber, productId, productName, productPrice, productStock, productinfo, categoryId, createdAt, updatedAt FROM "
+				+ "(SELECT rownum as rowNumber,productId,productName,productPrice,productStock,productinfo,categoryId,createdAt,updatedAt FROM "
+				+ "(SELECT * FROM products p WHERE p.categoryId = ? and p.productStock > 0 and p.productstatus = 1 ORDER BY createdAt DESC)) "
+				+ "WHERE rowNumber BETWEEN ? AND ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -60,7 +60,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		String sql = "SELECT p.productId, c.categoryName, p.productName, p.productPrice, p.productStock, p.productInfo, p.productStatus"
-				+ " FROM PRODUCTS p LEFT JOIN CATEGORIES c ON p.categoryId = c.categoryId ORDER BY p.productId";
+				+ " FROM products p LEFT JOIN categories c ON p.categoryId = c.categoryId ORDER BY p.productId";
 
 		try {
 			con = ShoppingMallDataSource.getConnection();
@@ -95,7 +95,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		String sql = "SELECT * FROM products WHERE productId=?";
+		String sql = "SELECT * FROM products WHERE productId = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -127,7 +127,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "INSERT INTO PRODUCTS (PRODUCTID, PRODUCTNAME, PRODUCTPRICE, PRODUCTSTOCK, PRODUCTINFO, CATEGORYID)"
+		String sql = "INSERT INTO products (productId, productName, productPrice, productStock, productInfo, categoryId)"
 				+ " VALUES (PRODUCTS_SEQ.NEXTVAL, ?, ?, ?, ?, ?)";
 		try {
 			con = ShoppingMallDataSource.getConnection();
@@ -152,9 +152,9 @@ public class ProductsDAOImpl implements ProductsDAO {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "UPDATE PRODUCTS "
+		String sql = "UPDATE products "
 				+ "SET productName = ?, productPrice = ?, productStock = ?, productInfo = ?, categoryId = ?,UPDATEDAT = SYSDATE, productStatus = ? "
-				+ "WHERE PRODUCTID = ?";
+				+ "WHERE productId = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -181,7 +181,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "UPDATE PRODUCTS SET PRODUCTSTOCK = ?, UPDATEDAT = SYSDATE WHERE PRODUCTID = ?";
+		String sql = "UPDATE products SET productStock = ?, updatedAt = SYSDATE WHERE productId = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -202,7 +202,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "UPDATE Products SET productStatus = ? WHERE productId = ?";
+		String sql = "UPDATE products SET productStatus = ? WHERE productId = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -227,7 +227,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 
-		String sql = "SELECT productId FROM Products WHERE productId = ?";
+		String sql = "SELECT productId FROM products WHERE productId = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);

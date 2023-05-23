@@ -21,7 +21,7 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		String sql = "select * from where orderId=?";
+		String sql = "SELECT * FROM WHERE orderId = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -52,7 +52,7 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "insert into orderDetails values (orderDetails_seq.nextval,?,?,?,'상품 준비중',sysdate,sysdate)";
+		String sql = "INSERT INTO orderDetails VALUES (orderDetails_seq.nextval,?,?,?,'상품 준비중',sysdate,sysdate)";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -74,7 +74,7 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "update oderderDetails set productCount=? where orderDetailId=?";
+		String sql = "UPDATE oderderDetails SET productCount = ? WHERE orderDetailId = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -96,7 +96,7 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "update oderderDetails set deliveryStatus=? where orderDetailId=?";
+		String sql = "UPDATE oderderDetails SET deliveryStatus = ? WHERE orderDetailId = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -117,7 +117,7 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "delete from orderDetails where orderDetailId=?";
+		String sql = "DELETE FROM orderDetails WHERE orderDetailId = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -206,8 +206,9 @@ public class OrderDetailsDAOImpl implements OrderDetailsDAO {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		String sql = "SELECT p.productname AS productname, p.productprice AS productprice, od.productcount AS productcount,od.deliverystatus AS deliverystatus,od.createdAT AS createdAT FROM orderDetails od "
-				+ "join orders o on od.orderid=o.orderid " + "join products p on od.productid=p.productId "
+		String sql = "SELECT p.productname, p.productprice, od.productcount,od.deliverystatus ,od.createdAT "
+				+ "FROM orderDetails od " + "JOIN orders o ON od.orderid=o.orderid "
+				+ "JOIN products p ON od.productid=p.productId "
 				+ "WHERE od.deliverystatus=? AND o.userId=? order by createdAt";
 		try {
 			con = ShoppingMallDataSource.getConnection();
