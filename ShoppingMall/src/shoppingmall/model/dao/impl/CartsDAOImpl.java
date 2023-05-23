@@ -18,7 +18,7 @@ public class CartsDAOImpl implements CartsDAO {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		String sql = "SELECT * FROM carts c JOIN products p ON c.productid=p.productid WHERE USERID=?";
+		String sql = "SELECT * FROM carts c JOIN products p ON c.productid = p.productid WHERE userId = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -55,7 +55,7 @@ public class CartsDAOImpl implements CartsDAO {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "INSERT INTO CARTS(cartId,userId,productId,productCount) VALUES(CARTS_SEQ.NEXTVAL,?,?,?)";
+		String sql = "INSERT INTO carts(cartId,userId,productId,productCount) VALUES(CARTS_SEQ.NEXTVAL,?,?,?)";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -77,7 +77,7 @@ public class CartsDAOImpl implements CartsDAO {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "DELETE FROM CARTS WHERE CARTID=?";
+		String sql = "DELETE FROM carts WHERE cartId = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -93,11 +93,11 @@ public class CartsDAOImpl implements CartsDAO {
 	}
 
 	@Override
-	public int updateFromCart(CartsDTO cartsDto) {
+	public int updateCart(CartsDTO cartsDto) {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "UPDATE CARTS SET PRODUCTCOUNT=?,UPDATEDAt=SYSDATE WHERE CARTID=?";
+		String sql = "UPDATE carts SET productCount = ?,updatedAt = SYSDATE WHERE cartId = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -119,7 +119,9 @@ public class CartsDAOImpl implements CartsDAO {
 		Connection con=null;
 		PreparedStatement stmt=null;
 		ResultSet rs=null;
-		String sql="select sum(c.productcount*p.productprice) as cartTotalPrice from carts c join products p on c.productId=p.productId where cartId=?";
+		String sql="SELECT SUM(c.productcount*p.productprice) AS cartTotalPrice "+
+					"FROM carts c JOIN products p ON c.productId = p.productId "+
+					"WEHRE cartId = ?";
 		try {
 			con=ShoppingMallDataSource.getConnection();
 			stmt=con.prepareStatement(sql);
@@ -143,7 +145,7 @@ public class CartsDAOImpl implements CartsDAO {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "DELETE FROM carts WHERE userId=?";
+		String sql = "DELETE FROM carts WHERE userId = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -156,6 +158,35 @@ public class CartsDAOImpl implements CartsDAO {
 			ShoppingMallDataSource.closeConnection(con);
 		}
 		return count;
+	}
+	@Override
+	public CartsDTO checkExistProduct(int productId) {
+			Connection con = null;
+			PreparedStatement stmt = null;
+			ResultSet rs=null;
+			String sql = "SELECT * FROM carts WHERE productId = ?";
+			CartsDTO cart=new CartsDTO();
+			try {
+				con = ShoppingMallDataSource.getConnection();
+				stmt = con.prepareStatement(sql);
+				stmt.setInt(1, productId);
+				rs=stmt.executeQuery();
+				if(rs.next()) {
+					cart.setCartId(rs.getInt("cartId"));
+					cart.setProductCount(rs.getInt("productCount"));
+					cart.setProductId(rs.getInt("productId"));
+					cart.setUserId(rs.getString("userId"));
+					
+					return cart;
+				}
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			} finally {
+				ShoppingMallDataSource.closeResultSet(rs);
+				ShoppingMallDataSource.closePreparedStatement(stmt);
+				ShoppingMallDataSource.closeConnection(con);
+			}
+		return null;
 	}
 
 }

@@ -18,7 +18,9 @@ public class CategoriesDAOImpl implements CategoriesDAO {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
-			String sql = "select rowNumber,categoryId,categoryName from (select rownum as rowNumber,categoryId,categoryName from (select * from categories)) order by categoryId";
+			String sql = "SELECT rowNumber,categoryId,categoryName "+
+						"FROM (SELECT rownum AS rowNumber,categoryId,categoryName FROM (SELECT * FROM categories)) "+
+						"ORDER BY categoryId";
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
 			rs = stmt.executeQuery();
