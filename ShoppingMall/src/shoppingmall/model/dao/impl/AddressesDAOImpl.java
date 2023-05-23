@@ -17,7 +17,7 @@ public class AddressesDAOImpl implements AddressesDAO {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		String sql = "SELECT * FROM ADDRESSES WHERE USERID=?";
+		String sql = "SELECT * FROM addresses WHERE userId = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -47,7 +47,7 @@ public class AddressesDAOImpl implements AddressesDAO {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "INSERT INTO ADDRESSES VALUES(ADDRESSES_SEQ.NEXTVAL,?,?,SYSDATE,SYSDATE)";
+		String sql = "INSERT INTO addresses VALUES(ADDRESSES_SEQ.NEXTVAL,?,?,SYSDATE,SYSDATE)";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -68,7 +68,7 @@ public class AddressesDAOImpl implements AddressesDAO {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "DELETE FROM ADDRESSES WHERE addressId=?";
+		String sql = "DELETE FROM addresses WHERE addressId = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -88,7 +88,7 @@ public class AddressesDAOImpl implements AddressesDAO {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "UPDATE ADDRESSES SET ADDRESS=?,UPDATEDAT=sysdate WHERE ADDRESSID=?";
+		String sql = "UPDATE addresses SET address = ?,updatedAt = SYSDATE WHERE addressId=?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);

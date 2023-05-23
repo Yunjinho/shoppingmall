@@ -19,10 +19,10 @@ public class ProductsDAOImpl implements ProductsDAO {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 
-		String sql = "select rowNumber,productId,productName,productPrice,productStock,productinfo,categoryId,createdAt,updatedAt from "
-				+ "(select rownum as rowNumber,productId,productName,productPrice,productStock,productinfo,categoryId,createdAt,updatedAt from "
-				+ "(select * from products p where p.categoryId=? and p.productStock > 0 and p.productstatus=1 order by createdAt desc)) "
-				+ "where rowNumber between ? and ?";
+		String sql = "SELECT rowNumber,productId,productName,productPrice,productStock,productinfo,categoryId,createdAt,updatedAt from "
+				+ "(SELECT rownum as rowNumber,productId,productName,productPrice,productStock,productinfo,categoryId,createdAt,updatedAt from "
+				+ "(SELECT * from products p where p.categoryId=? and p.productStock > 0 and p.productstatus=1 order by createdAt desc)) "
+				+ "WHERE rowNumber BETWEEN ? and ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
