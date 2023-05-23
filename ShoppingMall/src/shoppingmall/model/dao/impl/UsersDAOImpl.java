@@ -14,7 +14,7 @@ public class UsersDAOImpl implements UsersDAO {
 
 	@Override
 	public boolean checkUserId(String userId) {
-		String sql = "SELECT USERID FROM USERS WHERE USERID = ?";
+		String sql = "SELECT userId FROM users WHERE userId = ?";
 		Connection con = null;
 		PreparedStatement stmt = null;
 		try {
@@ -38,7 +38,7 @@ public class UsersDAOImpl implements UsersDAO {
 	@Override
 	public UsersDTO checkUserInfo(String userName, String phoneNumber) {
 		UsersDTO userDto = new UsersDTO();
-		String sql = "SELECT userId, phoneNumber FROM USERS WHERE userName = ? and phoneNumber = ?";
+		String sql = "SELECT userId, phoneNumber FROM users WHERE userName = ? and phoneNumber = ?";
 		Connection con = null;
 		PreparedStatement stmt = null;
 
@@ -64,7 +64,7 @@ public class UsersDAOImpl implements UsersDAO {
 	@Override
 	public UsersDTO findUserIdByNameAndPhoneNumber(String userName, String phoneNumber) {
 		UsersDTO userDto = new UsersDTO();
-		String sql = "SELECT userId, phoneNumber FROM USERS WHERE userName = ? and phoneNumber = ?";
+		String sql = "SELECT userId, phoneNumber FROM users WHERE userName = ? and phoneNumber = ?";
 		Connection con = null;
 		PreparedStatement stmt = null;
 
@@ -92,9 +92,9 @@ public class UsersDAOImpl implements UsersDAO {
 
 		int count = 0;
 		int count2 = 0;
-		String sql = "INSERT INTO USERS (USERID, PASSWORD, USERNAME, PHONENUMBER, BIRTHDAY, GENDER) "
+		String sql = "INSERT INTO users (userId, password, userName, phoneNumber, birthday, gender) "
 				+ "VALUES (?,?,?,?," + "TO_DATE('" + userDto.getBirthday() + "', 'yy/MM/dd'),?)";
-		String addressSql = "INSERT INTO ADDRESSES(ADDRESSID, USERID, ADDRESS) VALUES (ADDRESSES_SEQ.NEXTVAL, ?, ?)";
+		String addressSql = "INSERT INTO addresses(addressId, userId, address) VALUES (ADDRESSES_SEQ.NEXTVAL, ?, ?)";
 
 		Connection con = null;
 		PreparedStatement stmt = null;
@@ -130,7 +130,7 @@ public class UsersDAOImpl implements UsersDAO {
 	@Override
 	public int login(String userId, String password) {
 		int count = 0;
-		String sql = "SELECT USERID, isadmin FROM USERS WHERE USERID = ? and PASSWORD = ?";
+		String sql = "SELECT userId, isAdmin FROM users WHERE userId = ? and password = ?";
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -185,7 +185,7 @@ public class UsersDAOImpl implements UsersDAO {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		String sql = "SELECT * FROM users WHERE userId=?";
+		String sql = "SELECT * FROM users WHERE userId = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
