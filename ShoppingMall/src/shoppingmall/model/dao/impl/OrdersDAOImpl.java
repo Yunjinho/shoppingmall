@@ -22,7 +22,7 @@ public class OrdersDAOImpl implements OrdersDAO {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		String sql = "SELECT * FROM ORDERS WHERE USERID = ?";
+		String sql = "SELECT * FROM orders WHERE userId = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
@@ -115,7 +115,7 @@ public class OrdersDAOImpl implements OrdersDAO {
 		PreparedStatement stmt2 = null;
 		ResultSet rs = null;
 
-		String sql = "INSERT INTO ORDERS VALUES(?,?,?,?)";
+		String sql = "INSERT INTO orders VALUES(?,?,?,?)";
 		String sql2 = "select ORDERS_SEQ.NEXTVAL as currentSeqNumber from dual";
 		try {
 
@@ -144,7 +144,6 @@ public class OrdersDAOImpl implements OrdersDAO {
 			orderDetailsDaoImpl.insertOrderProduct(orderDetailsDto);
 			// 상품 수량 수정
 			productsDaoImpl.updateProductStock(productId, productDto.getProductStock() - amount);
-			
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);

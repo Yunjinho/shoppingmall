@@ -14,7 +14,7 @@ public class UsersDAOImpl implements UsersDAO {
 
 	@Override
 	public boolean checkUserId(String userId) {
-		String sql = "SELECT USERID FROM USERS WHERE USERID = ?";
+		String sql = "SELECT userId FROM users WHERE userId = ?";
 		Connection con = null;
 		PreparedStatement stmt = null;
 		try {
@@ -38,7 +38,7 @@ public class UsersDAOImpl implements UsersDAO {
 	@Override
 	public UsersDTO checkUserInfo(String userName, String phoneNumber) {
 		UsersDTO userDto = new UsersDTO();
-		String sql = "SELECT userId, phoneNumber FROM USERS WHERE userName = ? and phoneNumber = ?";
+		String sql = "SELECT userId, phoneNumber FROM users WHERE userName = ? and phoneNumber = ?";
 		Connection con = null;
 		PreparedStatement stmt = null;
 
@@ -64,7 +64,7 @@ public class UsersDAOImpl implements UsersDAO {
 	@Override
 	public UsersDTO findUserIdByNameAndPhoneNumber(String userName, String phoneNumber) {
 		UsersDTO userDto = new UsersDTO();
-		String sql = "SELECT userId, phoneNumber FROM USERS WHERE userName = ? and phoneNumber = ?";
+		String sql = "SELECT userId, phoneNumber FROM users WHERE userName = ? and phoneNumber = ?";
 		Connection con = null;
 		PreparedStatement stmt = null;
 
@@ -92,9 +92,9 @@ public class UsersDAOImpl implements UsersDAO {
 
 		int count = 0;
 		int count2 = 0;
-		String sql = "INSERT INTO USERS (USERID, PASSWORD, USERNAME, PHONENUMBER, BIRTHDAY, GENDER) "
-				+ "VALUES (?,?,?,?," + "TO_DATE('" + userDto.getBirthday() + "', 'yy/MM/dd'),?)";
-		String addressSql = "INSERT INTO ADDRESSES(ADDRESSID, USERID, ADDRESS) VALUES (ADDRESSES_SEQ.NEXTVAL, ?, ?)";
+		String sql = "INSERT INTO users (userId, password, userName, phoneNumber, birthday, gender) "
+				+ "VALUES (?,?,?,?,TO_DATE(?, 'yy/MM/dd'),?)";
+		String addressSql = "INSERT INTO addresses(addressId, userId, address) VALUES (ADDRESSES_SEQ.NEXTVAL, ?, ?)";
 
 		Connection con = null;
 		PreparedStatement stmt = null;
@@ -107,7 +107,8 @@ public class UsersDAOImpl implements UsersDAO {
 			stmt.setString(2, userDto.getPassword()); // PASSWORD
 			stmt.setString(3, userDto.getUserName()); // USERNAME
 			stmt.setString(4, userDto.getPhoneNumber()); // PHONENUMBER
-			stmt.setString(5, String.valueOf(userDto.getGender())); // GENDER
+			stmt.setDate(5, userDto.getBirthday());//BIRTHDAY
+			stmt.setString(6, String.valueOf(userDto.getGender())); // GENDER
 			count = stmt.executeUpdate();
 
 			stmt2 = con.prepareStatement(addressSql);
@@ -130,7 +131,7 @@ public class UsersDAOImpl implements UsersDAO {
 	@Override
 	public int login(String userId, String password) {
 		int count = 0;
-		String sql = "SELECT USERID, isadmin FROM USERS WHERE USERID = ? and PASSWORD = ?";
+		String sql = "SELECT userId, isAdmin FROM users WHERE userId = ? and password = ?";
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -160,15 +161,15 @@ public class UsersDAOImpl implements UsersDAO {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "UPDATE users SET password=?, userName=? , phoneNumber=? ,birthday= " + "TO_DATE('"
-				+ userDto.getBirthday() + "', 'yy/MM/dd'), updatedAt=sysdate where userId=?";
+		String sql = "UPDATE users SET password=?, userName=? , phoneNumber=? ,birthday = TO_DATE(?, 'yy/MM/dd'), updatedAt = sysdate where userId=?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
 			stmt.setString(1, userDto.getPassword());
 			stmt.setString(2, userDto.getUserName());
 			stmt.setString(3, userDto.getPhoneNumber());
-			stmt.setString(4, userDto.getUserId());
+			stmt.setDate(4, userDto.getBirthday());
+			stmt.setString(5, userDto.getUserId());
 			count = stmt.executeUpdate();
 		} catch (Exception e) {
 			throw new RuntimeException();
@@ -185,7 +186,7 @@ public class UsersDAOImpl implements UsersDAO {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		String sql = "SELECT * FROM users WHERE userId=?";
+		String sql = "SELECT * FROM users WHERE userId = ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);

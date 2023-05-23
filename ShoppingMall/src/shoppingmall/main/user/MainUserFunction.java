@@ -83,9 +83,11 @@ public class MainUserFunction {
 		// DB에서 가져온 사용자 이름과 핸드폰 번호
 		UsersDTO checkUserDto = userDao.checkUserInfo(user.getUserName(), user.getPhoneNumber());
 		// 가져온 정보가 있다면
-		if(checkUserDto.getPhoneNumber()==null) {
-			
-		}else if(checkUserDto.getPhoneNumber().equals(phoneNumber)) {
+
+		if (checkUserDto.getPhoneNumber() == null) {
+
+		} else if (checkUserDto.getPhoneNumber().equals(phoneNumber)) {
+
 			System.out.println("이미 존재하는 회원정보 입니다.");
 			System.out.println();
 			return result;
@@ -305,7 +307,7 @@ public class MainUserFunction {
 				System.out.println();
 				System.out.print("주소 선택: ");
 				int addressNum = sc.nextInt();
-				if(addressNum<1 || userDto.getAddressDto().size()<addressNum) {
+				if (addressNum < 1 || userDto.getAddressDto().size() < addressNum) {
 					System.out.println("잘못 선택하셨습니다.");
 					System.out.println();
 					return;
