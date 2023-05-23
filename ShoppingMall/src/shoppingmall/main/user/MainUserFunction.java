@@ -298,11 +298,19 @@ public class MainUserFunction {
 			System.out.print("번호 입력: ");
 			int orderCommand = sc.nextInt();
 			if (orderCommand == 1) {
-				CartsDTO cartDto = new CartsDTO();
-				cartDto.setProductId(productDto.getProductId());
-				cartDto.setUserId(LoginSession.getLoginUserId());
-				cartDto.setProductCount(amount);
-				cartDao.insertCart(cartDto);
+				CartsDTO cartDto=null;;
+				cartDto=cartDao.checkExistProduct(productDto.getProductId());
+				if(cartDto!=null) {
+					int count=cartDto.getProductCount();
+					cartDto.setProductCount(count+amount);
+					cartDao.updateCart(cartDto);
+				}else {
+					cartDto=new CartsDTO();
+					cartDto.setProductId(productDto.getProductId());
+					cartDto.setUserId(LoginSession.getLoginUserId());
+					cartDto.setProductCount(amount);
+					cartDao.insertCart(cartDto);
+				}
 			} else if (orderCommand == 2) {
 				UsersDTO userDto = new UsersDTO();
 				userDto.setAddressDto(addressDao.getUserAddresses(LoginSession.getLoginUserId()));
@@ -377,7 +385,7 @@ public class MainUserFunction {
 			System.out.println("수량을 다시 확인해 주세요 :)");
 		} else {
 			cartDto.setProductCount(productCount);
-			cartDao.updateFromCart(cartDto);
+			cartDao.updateCart(cartDto);
 		}
 	}
 
@@ -453,7 +461,7 @@ public class MainUserFunction {
 		String birth = sc.next();
 		java.sql.Date date = java.sql.Date.valueOf(birth);
 		userDto.setBirthday(date);
-		MainUserFunction.modifyUserPassword(userDto);// 입력받은 데이터로 정보 수정
+		userDao.updateUsersInformation(userDto);// 입력받은 데이터로 정보 수정
 		System.out.println();
 	}
 

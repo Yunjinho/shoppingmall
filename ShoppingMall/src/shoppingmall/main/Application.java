@@ -191,10 +191,7 @@ public class Application {
 										boolean flag = true;
 										while (flag) {
 											List<ProductsDTO> productList = new ArrayList<ProductsDTO>();
-											productList = MainUserFunction.viewProductsByCategory(categoryNumber,
-													currentPage);
-											System.out.println();
-											// 페이징 처리
+											productList = MainUserFunction.viewProductsByCategory(categoryNumber,currentPage);
 											if (!productList.isEmpty()) {
 												beforePage = currentPage;
 												if (currentPage == 0) {
@@ -209,12 +206,9 @@ public class Application {
 														System.out.println();
 														// 상품번호 범위 초과
 														if (selectProduct < 1 || productList.size() < selectProduct) {
-															System.out.println("잘못 입력하셨습니다.");
-															System.out.println();
-															continue;
+															System.out.println("잘못 입력하셨습니다.");continue;
 														}
-														MainUserFunction
-																.viewProductDetail(productList.get(selectProduct - 1));
+														MainUserFunction.viewProductDetail(productList.get(selectProduct - 1));
 													} else if (pageCommand == 3) {
 														flag = false;
 													} else {
@@ -228,27 +222,19 @@ public class Application {
 													} else if (pageCommand == 2) {
 														currentPage++;
 													} else if (pageCommand == 3) {
-														System.out.println();
 														System.out.print("상품 번호를 입력하세요: ");
 														int selectProduct = sc.nextInt();
 														// 상품번호 범위 초과
 														if (selectProduct < 1 || productList.size() < selectProduct) {
-															System.out.println("잘못 입력하셨습니다.");
-															System.out.println();
-															continue;
+															System.out.println("잘못 입력하셨습니다.");continue;
 														}
-														MainUserFunction
-																.viewProductDetail(productList.get(selectProduct - 1));
+														MainUserFunction.viewProductDetail(productList.get(selectProduct - 1));
 													} else if (pageCommand == 4) {
 														flag = false;
-													} else {
-														System.out.println("잘못 입력 하셨습니다.");
-													}
+													} else System.out.println("잘못 입력 하셨습니다.");
 												}
 											} else {
-												System.out.println();
 												System.out.println("더 이상 페이지를 이동할 수 없습니다.");
-												System.out.println();
 												currentPage = beforePage;
 											}
 										}

@@ -20,4 +20,5 @@ public interface ProductsDAO {
 	int updateProductStatus(int productId, int productStatus); // 상품 상태 변경
 
 	boolean productCheckByProductId(int productId); // 상품이 존재하는지 체크
+	
 }

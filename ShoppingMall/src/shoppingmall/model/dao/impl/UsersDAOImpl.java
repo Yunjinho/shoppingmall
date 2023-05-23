@@ -93,7 +93,7 @@ public class UsersDAOImpl implements UsersDAO {
 		int count = 0;
 		int count2 = 0;
 		String sql = "INSERT INTO users (userId, password, userName, phoneNumber, birthday, gender) "
-				+ "VALUES (?,?,?,?," + "TO_DATE('" + userDto.getBirthday() + "', 'yy/MM/dd'),?)";
+				+ "VALUES (?,?,?,?,TO_DATE(?, 'yy/MM/dd'),?)";
 		String addressSql = "INSERT INTO addresses(addressId, userId, address) VALUES (ADDRESSES_SEQ.NEXTVAL, ?, ?)";
 
 		Connection con = null;
@@ -106,7 +106,8 @@ public class UsersDAOImpl implements UsersDAO {
 			stmt.setString(2, userDto.getPassword()); // PASSWORD
 			stmt.setString(3, userDto.getUserName()); // USERNAME
 			stmt.setString(4, userDto.getPhoneNumber()); // PHONENUMBER
-			stmt.setString(5, String.valueOf(userDto.getGender())); // GENDER
+			stmt.setDate(5, userDto.getBirthday());//BIRTHDAY
+			stmt.setString(6, String.valueOf(userDto.getGender())); // GENDER
 			count = stmt.executeUpdate();
 
 			stmt2 = con.prepareStatement(addressSql);
@@ -156,15 +157,15 @@ public class UsersDAOImpl implements UsersDAO {
 		int count = 0;
 		Connection con = null;
 		PreparedStatement stmt = null;
-		String sql = "UPDATE users SET password=?, userName=? , phoneNumber=? ,birthday= " + "TO_DATE('"
-				+ userDto.getBirthday() + "', 'yy/MM/dd'), updatedAt=sysdate where userId=?";
+		String sql = "UPDATE users SET password=?, userName=? , phoneNumber=? ,birthday = TO_DATE(?, 'yy/MM/dd'), updatedAt = sysdate where userId=?";
 		try {
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
 			stmt.setString(1, userDto.getPassword());
 			stmt.setString(2, userDto.getUserName());
 			stmt.setString(3, userDto.getPhoneNumber());
-			stmt.setString(4, userDto.getUserId());
+			stmt.setDate(4, userDto.getBirthday());
+			stmt.setString(5, userDto.getUserId());
 			count = stmt.executeUpdate();
 		} catch (Exception e) {
 			throw new RuntimeException();
