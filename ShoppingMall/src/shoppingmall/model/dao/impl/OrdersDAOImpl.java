@@ -144,7 +144,6 @@ public class OrdersDAOImpl implements OrdersDAO {
 			orderDetailsDaoImpl.insertOrderProduct(orderDetailsDto);
 			// 상품 수량 수정
 			productsDaoImpl.updateProductStock(productId, productDto.getProductStock() - amount);
-			
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);
