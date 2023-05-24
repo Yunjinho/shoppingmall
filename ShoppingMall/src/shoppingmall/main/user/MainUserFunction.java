@@ -440,7 +440,7 @@ public class MainUserFunction {
 			return;
 		}
 		// 상품 수량 체크
-		if (checkProductStock(cartsList)) {
+		if (checkProduct(cartsList)) {
 			// 오더테이블에 넣기
 			orderDao.insertUserOrderfromCart(userId, userDto.getAddressDto().get(addressNumber - 1).getAddress(),
 					cartDao.getCartTotalPrice(cartsList.get(0).getCartId()), cartsList);
@@ -450,7 +450,7 @@ public class MainUserFunction {
 	}
 
 	// 구매목록에 넣기전 수량 체크
-	private static boolean checkProductStock(List<CartsDTO> cartsList) {
+	private static boolean checkProduct(List<CartsDTO> cartsList) {
 		ProductsDTO productDto = new ProductsDTO();
 		// 카트 리스트 순회
 		for (CartsDTO l : cartsList) {
