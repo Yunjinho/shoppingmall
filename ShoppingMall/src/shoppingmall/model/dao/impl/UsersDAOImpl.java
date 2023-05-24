@@ -38,7 +38,7 @@ public class UsersDAOImpl implements UsersDAO {
 	@Override
 	public UsersDTO checkUserInfo(String userName, String phoneNumber) {
 		UsersDTO userDto = new UsersDTO();
-		String sql = "SELECT userId, phoneNumber FROM users WHERE userName = ? and phoneNumber = ?";
+		String sql = "SELECT userId, phoneNumber FROM users " + "WHERE userName = ? and phoneNumber = ?";
 		Connection con = null;
 		PreparedStatement stmt = null;
 
@@ -100,7 +100,6 @@ public class UsersDAOImpl implements UsersDAO {
 		PreparedStatement stmt = null;
 		PreparedStatement stmt2 = null;
 		try {
-//			con.setAutoCommit(false);
 			con = ShoppingMallDataSource.getConnection();
 			stmt = con.prepareStatement(sql);
 			stmt.setString(1, userDto.getUserId()); // USERID
@@ -115,12 +114,9 @@ public class UsersDAOImpl implements UsersDAO {
 			stmt2.setString(1, userDto.getUserId());
 			stmt2.setString(2, address);
 			count2 = stmt2.executeUpdate();
-//			con.commit();
 		} catch (SQLException e) {
-//			con.rollback();
 			throw new RuntimeException(e);
 		} finally {
-//			con.setAutoCommit(true);
 			ShoppingMallDataSource.closePreparedStatement(stmt);
 			ShoppingMallDataSource.closePreparedStatement(stmt2);
 			ShoppingMallDataSource.closeConnection(con);
