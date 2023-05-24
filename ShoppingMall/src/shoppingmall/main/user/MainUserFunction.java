@@ -1,13 +1,11 @@
 package shoppingmall.main.user;
 
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import shoppingmall.main.LoginSession;
-import shoppingmall.main.SHA256;
 import shoppingmall.model.dao.impl.AddressesDAOImpl;
 import shoppingmall.model.dao.impl.CartsDAOImpl;
 import shoppingmall.model.dao.impl.CategoriesDAOImpl;
@@ -35,99 +33,86 @@ public class MainUserFunction {
 
 	// 로그인
 	public static boolean login() {
-		boolean result = false;
 		String userId;
 		String password;
+
 		System.out.print("아이디를 입력하세요: ");
 		userId = sc.next();
 
 		System.out.print("비밀번호를 입력하세요: ");
-		SHA256 Sha256 = new SHA256();
 		password = sc.next();
 
-		try {
-			String encryptPassword = Sha256.encrypt(password);
-			int check = userDao.login(userId, encryptPassword);
-			// 로그인 성공
-			if (check > 0) {
-				System.out.println("로그인 되었습니다.");
-				LoginSession.setLoginUserId(userId);
-				result = true;
-			}
-			// 로그인 실패
-			else {
-				System.out.println("아이디나 비밀번호가 틀렸습니다. 다시 선택해 주세요.");
-				System.out.println();
-				result = false;
-			}
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(e);
+		int check = userDao.login(userId, password);
+		// 로그인 성공
+		if (check > 0) {
+			System.out.println("로그인 되었습니다.");
+			LoginSession.setLoginUserId(userId);
+			return true;
 		}
-		return result;
+		// 로그인 실패
+		else {
+			System.out.println("아이디나 비밀번호가 틀렸습니다. 다시 선택해 주세요.");
+			System.out.println();
+			return false;
+		}
 	}
 
 	// 회원 가입
 	public static boolean signUpUserInfo() {
+		UsersDTO user = new UsersDTO();
 		boolean result = false;
-		try {
-			UsersDTO user = new UsersDTO();
-			System.out.print("아이디: ");
-			user.setUserId(sc.next());
-			// 아이디가 존재할 경우
-			if (userDao.checkUserId(user.getUserId()) == false) {
-				System.out.println("이미 존재하는 아이디입니다. 다른 아이디를 입력해주세요.");
-				System.out.println();
-				return result;
-			}
+		System.out.print("아이디: ");
+		user.setUserId(sc.next());
+		// 아이디가 존재할 경우
+		if (userDao.checkUserId(user.getUserId()) == false) {
+			System.out.println("이미 존재하는 아이디입니다. 다른 아이디를 입력해주세요.");
+			System.out.println();
+			return result;
+		}
 
-			System.out.print("비밀번호: ");
+		System.out.print("비밀번호: ");
+		user.setPassword(sc.next());
 
-			SHA256 Sha256 = new SHA256();
-			String password = sc.next();
-			String encryptPassword;
-			encryptPassword = Sha256.encrypt(password);
-			user.setPassword(encryptPassword);
+		System.out.print("이름: ");
+		user.setUserName(sc.next());
 
-			System.out.print("이름: ");
-			user.setUserName(sc.next());
+		System.out.print("핸드폰 번호[010-1234-1234]: ");
+		String phoneNumber = sc.next();
+		user.setPhoneNumber(phoneNumber);
 
-			System.out.print("핸드폰 번호[010-1234-1234]: ");
-			String phoneNumber = sc.next();
-			user.setPhoneNumber(phoneNumber);
+		// DB에서 가져온 사용자 이름과 핸드폰 번호
+		UsersDTO checkUserDto = userDao.checkUserInfo(user.getUserName(), user.getPhoneNumber());
+		// 가져온 정보가 있다면
 
-			// DB에서 가져온 사용자 이름과 핸드폰 번호
-			UsersDTO checkUserDto = userDao.checkUserInfo(user.getUserName(), user.getPhoneNumber());
-			// 가져온 정보가 있다면
-			if (checkUserDto.getPhoneNumber() == null) {
-			} else if (checkUserDto.getPhoneNumber().equals(phoneNumber)) {
-				System.out.println("이미 존재하는 회원정보 입니다.");
-				System.out.println();
-				return result;
-			}
+		if (checkUserDto.getPhoneNumber() == null) {
 
-			System.out.print("생일[YYYY-MM-DD]: ");
-			String birth = sc.next();
-			java.sql.Date date = java.sql.Date.valueOf(birth);
-			user.setBirthday(date);
+		} else if (checkUserDto.getPhoneNumber().equals(phoneNumber)) {
 
-			System.out.print("성별[W/M]: ");
-			user.setGender(sc.next().charAt(0));
-			sc.nextLine();
+			System.out.println("이미 존재하는 회원정보 입니다.");
+			System.out.println();
+			return result;
+		}
 
-			System.out.print("주소: ");
-			String address = sc.nextLine();
-			int check = userDao.signUp(user, address);
-			// 회원가입 성공 시
-			if (check >= 1) {
-				result = true;
-				System.out.println("회원가입이 완료되었습니다. 로그인 해주세요.");
-				System.out.println();
-			} else {
-				System.out.println("회원가입에 실패하였습니다. 다시 선택해주세요.");
-				System.out.println();
-			}
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(e);
+		System.out.print("생일[YYYY-MM-DD]: ");
+		String birth = sc.next();
+		java.sql.Date date = java.sql.Date.valueOf(birth);
+		user.setBirthday(date);
+
+		System.out.print("성별[W/M]: ");
+		user.setGender(sc.next().charAt(0));
+		sc.nextLine();
+
+		System.out.print("주소: ");
+		String address = sc.nextLine();
+		int check = userDao.signUp(user, address);
+		// 회원가입 성공 시
+		if (check >= 1) {
+			result = true;
+			System.out.println("회원가입이 완료되었습니다. 로그인 해주세요.");
+			System.out.println();
+		} else {
+			System.out.println("회원가입에 실패하였습니다. 다시 선택해주세요.");
+			System.out.println();
 		}
 		return result;
 	}
@@ -437,7 +422,7 @@ public class MainUserFunction {
 		// 카트 리스트 순회
 		for (CartsDTO l : cartsList) {
 			productDto = productDao.getProductDetail(l.getProductId());
-			if (productDto.getProductStatus() == 0) {
+			if (productDto.getProductStatus() == 0) {	
 				System.out.println(productDto.getProductName() + "의 상품은 판매 중지 상태입니다. 장바구니에서 제거해주세요.");
 				return false;
 			} else {
@@ -484,40 +469,34 @@ public class MainUserFunction {
 
 	// 비밀번호 찾기 변경
 	public static void changeUserPassword() {
-		try {
-			UsersDTO user = new UsersDTO();
-			System.out.print("아이디: ");
-			String userId = sc.next();
+		UsersDTO user = new UsersDTO();
+		System.out.print("아이디: ");
+		String userId = sc.next();
 
-			// 아이디 체크
-			if (userDao.checkUserId(userId) == true) {
-				System.out.println("존재하지 않는 아이디 입니다.");
-				System.out.println();
-				return;
-			}
-			user = userDao.getUserInfo(userId);
-			System.out.println("회원가입 때 사용한 성함과 핸드폰 번호를 입력해주세요");
-			System.out.print("이름: ");
-			String name = sc.next();
-			System.out.print("핸드폰 번호[010-1234-1234]: ");
-			String phoneNuber = sc.next();
-			if (user.getUserName().equals(name) && user.getPhoneNumber().equals(phoneNuber)) {
-
-				System.out.print("변경할 비밀번호: ");
-				SHA256 Sha256 = new SHA256();
-				String password = sc.next();
-				String encryptPassword = Sha256.encrypt(password);
-				user.setPassword(encryptPassword);
-				// 정보 변경
-				userDao.updateUsersInformation(user);
-				System.out.println("완료 되었습니다.");
-				System.out.println();
-
-				return;
-			}
-			System.out.println("입력하신 정보가 일치하지 않습니다.");
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(e);
+		// 아이디 체크
+		if (userDao.checkUserId(userId) == true) {
+			System.out.println("존재하지 않는 아이디 입니다.");
+			System.out.println();
+			return;
 		}
+		user = userDao.getUserInfo(userId);
+		System.out.println("회원가입 때 사용한 성함과 핸드폰 번호를 입력해주세요");
+		System.out.print("이름: ");
+		String name = sc.next();
+		System.out.print("핸드폰 번호[010-1234-1234]: ");
+		String phoneNuber = sc.next();
+		if (user.getUserName().equals(name) && user.getPhoneNumber().equals(phoneNuber)) {
+
+			System.out.print("변경할 비밀번호: ");
+			user.setPassword(sc.next());
+			// 정보 변경
+			userDao.updateUsersInformation(user);
+			System.out.println("완료 되었습니다.");
+			System.out.println();
+
+			return;
+		}
+		System.out.println("입력하신 정보가 일치하지 않습니다.");
+
 	}
 }
