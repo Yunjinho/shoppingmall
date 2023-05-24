@@ -66,6 +66,17 @@ public class MainUserFunction {
 		return result;
 	}
 
+	// 핸드폰 정규표현식 확인
+	public static boolean checkPhoneNumber(String phoneNumber) {
+		String phoneRegExp = "^01(?:0|1|[6-9])-(?:\\d{3}|\\d{4})-\\d{4}$";
+		if (!phoneNumber.matches(phoneRegExp)) {
+			System.out.println("핸드폰 번호를 형식에 맞게 입력하세요.");
+			System.out.println();
+			return false;
+		}
+		return true;
+	}
+
 	// 회원 가입
 	public static boolean signUpUserInfo() {
 		boolean result = false;
@@ -92,7 +103,13 @@ public class MainUserFunction {
 			user.setUserName(sc.next());
 
 			System.out.print("핸드폰 번호[010-1234-1234]: ");
+			String phoneRegExp = "^01(?:0|1|[6-9])-(?:\\d{3}|\\d{4})-\\d{4}$";
 			String phoneNumber = sc.next();
+			if (!checkPhoneNumber(phoneRegExp)) {
+				System.out.println("핸드폰 번호를 형식에 맞게 입력하세요.");
+				System.out.println();
+				return result;
+			}
 			user.setPhoneNumber(phoneNumber);
 
 			// DB에서 가져온 사용자 이름과 핸드폰 번호
@@ -298,14 +315,15 @@ public class MainUserFunction {
 			System.out.print("번호 입력: ");
 			int orderCommand = sc.nextInt();
 			if (orderCommand == 1) {
-				CartsDTO cartDto=null;;
-				cartDto=cartDao.checkExistProduct(productDto.getProductId());
-				if(cartDto!=null) {
-					int count=cartDto.getProductCount();
-					cartDto.setProductCount(count+amount);
+				CartsDTO cartDto = null;
+				;
+				cartDto = cartDao.checkExistProduct(productDto.getProductId());
+				if (cartDto != null) {
+					int count = cartDto.getProductCount();
+					cartDto.setProductCount(count + amount);
 					cartDao.updateCart(cartDto);
-				}else {
-					cartDto=new CartsDTO();
+				} else {
+					cartDto = new CartsDTO();
 					cartDto.setProductId(productDto.getProductId());
 					cartDto.setUserId(LoginSession.getLoginUserId());
 					cartDto.setProductCount(amount);
