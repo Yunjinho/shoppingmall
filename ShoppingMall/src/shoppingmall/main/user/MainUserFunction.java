@@ -66,17 +66,6 @@ public class MainUserFunction {
 		return result;
 	}
 
-	// 핸드폰 정규표현식 확인
-	public static boolean checkPhoneNumber(String phoneNumber) {
-		String phoneRegExp = "^01(?:0|1|[6-9])-(?:\\d{3}|\\d{4})-\\d{4}$";
-		if (!phoneNumber.matches(phoneRegExp)) {
-			System.out.println("핸드폰 번호를 형식에 맞게 입력하세요.");
-			System.out.println();
-			return false;
-		}
-		return true;
-	}
-
 	// 회원 가입
 	public static boolean signUpUserInfo() {
 		boolean result = false;
@@ -103,11 +92,8 @@ public class MainUserFunction {
 			user.setUserName(sc.next());
 
 			System.out.print("핸드폰 번호[010-1234-1234]: ");
-			String phoneRegExp = "^01(?:0|1|[6-9])-(?:\\d{3}|\\d{4})-\\d{4}$";
 			String phoneNumber = sc.next();
-			if (!checkPhoneNumber(phoneRegExp)) {
-				System.out.println("핸드폰 번호를 형식에 맞게 입력하세요.");
-				System.out.println();
+			if (!checkPhoneNumber(phoneNumber)) {
 				return result;
 			}
 			user.setPhoneNumber(phoneNumber);
@@ -124,6 +110,9 @@ public class MainUserFunction {
 
 			System.out.print("생일[YYYY-MM-DD]: ");
 			String birth = sc.next();
+			if (!checkDate(birth)) {
+				return result;
+			}
 			java.sql.Date date = java.sql.Date.valueOf(birth);
 			user.setBirthday(date);
 
@@ -159,7 +148,9 @@ public class MainUserFunction {
 
 		System.out.print("사용자 핸드폰 번호를 입력하세요: ");
 		String phoneNumber = sc.next();
-
+		if (!checkPhoneNumber(phoneNumber)) {
+			return;
+		}
 		userInfo = userDao.findUserIdByNameAndPhoneNumber(userName, phoneNumber);
 		System.out.println();
 		if (userInfo.getUserId() == null) {
@@ -473,10 +464,19 @@ public class MainUserFunction {
 	public static void modifyUserInfo(UsersDTO userDto) {
 		System.out.print("이름: ");
 		userDto.setUserName(sc.next());
+
 		System.out.print("핸드폰 번호[010-1234-1234]: ");
-		userDto.setPhoneNumber(sc.next());
+		String phoneNumber = sc.next();
+		userDto.setPhoneNumber(phoneNumber);
+		if (!checkPhoneNumber(phoneNumber)) {
+			return;
+		}
+
 		System.out.print("생일[YYYY-MM-DD]: ");
 		String birth = sc.next();
+		if (!checkDate(birth)) {
+			return;
+		}
 		java.sql.Date date = java.sql.Date.valueOf(birth);
 		userDto.setBirthday(date);
 		userDao.updateUsersInformation(userDto);// 입력받은 데이터로 정보 수정
@@ -513,13 +513,19 @@ public class MainUserFunction {
 				System.out.println();
 				return;
 			}
+
 			user = userDao.getUserInfo(userId);
 			System.out.println("회원가입 때 사용한 성함과 핸드폰 번호를 입력해주세요");
 			System.out.print("이름: ");
 			String name = sc.next();
+
 			System.out.print("핸드폰 번호[010-1234-1234]: ");
-			String phoneNuber = sc.next();
-			if (user.getUserName().equals(name) && user.getPhoneNumber().equals(phoneNuber)) {
+			String phoneNumber = sc.next();
+			if (!checkPhoneNumber(phoneNumber)) {
+				return;
+			}
+
+			if (user.getUserName().equals(name) && user.getPhoneNumber().equals(phoneNumber)) {
 
 				System.out.print("변경할 비밀번호: ");
 				SHA256 Sha256 = new SHA256();
@@ -537,5 +543,27 @@ public class MainUserFunction {
 		} catch (NoSuchAlgorithmException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	// 핸드폰 확인 정규표현식
+	public static boolean checkPhoneNumber(String phoneNumber) {
+		String phoneRegExp = "^01(?:0|1|[6-9])-(?:\\d{3}|\\d{4})-\\d{4}$";
+		if (!phoneNumber.matches(phoneRegExp)) {
+			System.out.println("핸드폰 번호를 형식에 맞게 입력하세요.");
+			System.out.println();
+			return false;
+		}
+		return true;
+	}
+
+	// 날짜 확인하는 정규표현식
+	public static boolean checkDate(String date) {
+		String dateRegExp = "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$";
+		if (!date.matches(dateRegExp)) {
+			System.out.println("날짜 형식에 맞게 입력하세요.");
+			System.out.println();
+			return false;
+		}
+		return true;
 	}
 }
