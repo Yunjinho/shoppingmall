@@ -106,7 +106,7 @@ public class UsersDAOImpl implements UsersDAO {
 			stmt.setString(2, userDto.getPassword()); // PASSWORD
 			stmt.setString(3, userDto.getUserName()); // USERNAME
 			stmt.setString(4, userDto.getPhoneNumber()); // PHONENUMBER
-			stmt.setDate(5, userDto.getBirthday());//BIRTHDAY
+			stmt.setDate(5, userDto.getBirthday());// BIRTHDAY
 			stmt.setString(6, String.valueOf(userDto.getGender())); // GENDER
 			count = stmt.executeUpdate();
 
