@@ -116,7 +116,7 @@ public class OrdersDAOImpl implements OrdersDAO {
 		ResultSet rs = null;
 
 		String sql = "INSERT INTO orders VALUES(?,?,?,?)";
-		String sql2 = "select ORDERS_SEQ.NEXTVAL as currentSeqNumber from dual";
+		String sql2 = "SELECT ORDERS_SEQ.NEXTVAL AS currentSeqNumber FROM dual";
 		try {
 
 			productDto = productsDaoImpl.getProductDetail(productId);

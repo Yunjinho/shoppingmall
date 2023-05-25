@@ -21,7 +21,7 @@ public class ProductsDAOImpl implements ProductsDAO {
 
 		String sql = "SELECT rowNumber, productId, productName, productPrice, productStock, productinfo, categoryId, createdAt, updatedAt FROM "
 				+ "(SELECT rownum as rowNumber,productId,productName,productPrice,productStock,productinfo,categoryId,createdAt,updatedAt FROM "
-				+ "(SELECT * FROM products p WHERE p.categoryId = ? and p.productStock > 0 and p.productstatus = 1 ORDER BY createdAt DESC)) "
+				+ "(SELECT * FROM products p WHERE p.categoryId = ? AND p.productStock > 0 AND p.productstatus = 1 ORDER BY createdAt DESC)) "
 				+ "WHERE rowNumber BETWEEN ? AND ?";
 		try {
 			con = ShoppingMallDataSource.getConnection();

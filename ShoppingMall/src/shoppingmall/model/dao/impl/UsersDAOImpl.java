@@ -127,7 +127,7 @@ public class UsersDAOImpl implements UsersDAO {
 	@Override
 	public int login(String userId, String password) {
 		int count = 0;
-		String sql = "SELECT userId, isAdmin FROM users WHERE userId = ? and password = ?";
+		String sql = "SELECT userId, isAdmin FROM users WHERE userId = ? AND password = ?";
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;

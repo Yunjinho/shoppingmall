@@ -105,7 +105,7 @@ public class CartsDAOImpl implements CartsDAO {
 			stmt.setInt(2, cartsDto.getCartId());
 			count = stmt.executeUpdate();
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException(e);	
 		} finally {
 			ShoppingMallDataSource.closePreparedStatement(stmt);
 			ShoppingMallDataSource.closeConnection(con);
@@ -115,13 +115,15 @@ public class CartsDAOImpl implements CartsDAO {
 
 	@Override
 	public int getCartTotalPrice(int cartId) {
+		String sql="SELECT SUM(c.productcount*p.productprice) AS cartTotalPrice "+
+				"FROM carts c JOIN products p ON c.productId = p.productId "+
+				"WEHRE cartId = ?";
+
+		
 		int totalPrice=0;
 		Connection con=null;
 		PreparedStatement stmt=null;
 		ResultSet rs=null;
-		String sql="SELECT SUM(c.productcount*p.productprice) AS cartTotalPrice "+
-					"FROM carts c JOIN products p ON c.productId = p.productId "+
-					"WEHRE cartId = ?";
 		try {
 			con=ShoppingMallDataSource.getConnection();
 			stmt=con.prepareStatement(sql);
